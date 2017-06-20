@@ -1,18 +1,18 @@
 {
   "login": {
-    "title": "Sign in to ng2-admin",
-    "signup_link": "New to ng2-admin? Sign up!",
+    "title": "登录酒店管理平台",
+    "signup_link": "没有账户? 注册!",
     "email": "Email",
-    "password": "Password",
-    "sign_in": "Sign in",
-    "forgot_password": "Forgot password?",
+    "password": "密码",
+    "sign_in": "登录",
+    "forgot_password": "忘记密码?",
     "sign_from_app_text": "or Sign in with one click",
     "share_on_facebook": "Share on Facebook",
     "share_on_twitter": "Share on Twitter",
     "share_on_google_plus": "Share on Google Plus"
   },
   "general": {
-    "akveo": "Akveo",
+    "akveo": "liquanchun",
     "home": "Home",
     "forms": {
       "option1": "Option 1"
