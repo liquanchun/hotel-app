@@ -3,6 +3,7 @@
     "title": "登录酒店管理平台",
     "signup_link": "没有账户? 注册!",
     "email": "Email",
+    "userId": "用户ID",
     "password": "密码",
     "sign_in": "登录",
     "forgot_password": "忘记密码?",
@@ -18,7 +19,7 @@
       "option1": "Option 1"
     },
     "menu": {
-      "dashboard": "Dashboard",
+      "dashboard": "控制面板",
       "editors": "Editors",
       "ck_editor": "CKEditor",
       "components": "Components",
