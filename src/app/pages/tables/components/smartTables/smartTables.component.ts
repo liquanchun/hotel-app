@@ -30,7 +30,8 @@ export class SmartTables {
     columns: {
       id: {
         title: 'ID',
-        type: 'number'
+        type: 'number',
+        editable:false
       },
       firstName: {
         title: 'First Name',
