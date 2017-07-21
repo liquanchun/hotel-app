@@ -208,14 +208,14 @@ export const PAGES_MENU = [
               }
             }
           },
-           {
-             path: 'hottables',
-             data: {
-               menu: {
-                 title: 'Hot Tables',
-               }
-             }
-           }
+          {
+            path: 'hottables',
+            data: {
+              menu: {
+                title: 'Hot Tables',
+              }
+            }
+          }
         ]
       },
       {
@@ -350,17 +350,37 @@ export const PAGES_MENU = [
         }
       },
       {
-        path: 'new',  // path for our page
+        path: 'sys',  // path for our page
         data: { // custom menu declaration
           menu: {
-            title: 'New Page', // menu title
+            title: '系统管理', // menu title
             icon: 'ion-android-home', // menu icon
             pathMatch: 'prefix', // use it if item children not displayed in menu
             selected: false,
             expanded: false,
             order: 900
           }
-        }
+        },
+        children: [
+          {
+            path: 'user-role',
+            data: {
+              menu: {
+                title: '用户角色',
+                icon: 'ion-navicon',
+              }
+            }
+          },
+          {
+            path: 'role-function',
+            data: {
+              menu: {
+                title: '角色权限',
+                icon: 'ion-navicon',
+              }
+            }
+          }
+        ]
       }
     ]
   }
