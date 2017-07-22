@@ -8,7 +8,7 @@ import { SysComponent } from './sys.component';
 import { UserRoleComponent } from './user-role/user-role.component';
 import { RoleFunctionComponent } from './role-function/role-function.component';
 import { routing } from './sys.routing';
-
+import { DynamicFormModule } from '../../theme/components/dynamic-form/dynamic-form.module';
 
 @NgModule({
   imports: [
@@ -17,6 +17,7 @@ import { routing } from './sys.routing';
     FormsModule,
     NgaModule,
     routing,
+    DynamicFormModule,
   ],
   declarations: [
     SysComponent,
