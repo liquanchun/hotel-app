@@ -1,20 +1,15 @@
-import { Component, ViewChild, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import * as $ from 'jquery';
 import * as _ from 'lodash';
-import { RoleService } from './role.services';
-import { UserService } from './user.services';
-
-import { RoleModel } from '../models/role.model';
 
 @Component({
-  selector: 'app-user-role',
-  templateUrl: './user-role.component.html',
-  styleUrls: ['./user-role.component.scss'],
-  providers: [RoleService, UserService],
+  selector: 'app-sys-menu',
+  templateUrl: './menu.component.html',
+  styleUrls: ['./menu.component.scss']
 })
-export class UserRoleComponent implements OnInit, AfterViewInit {
+export class MenuComponent implements OnInit, AfterViewInit {
 
   private isNewRole: boolean;
   private isNewUser: boolean;
@@ -42,12 +37,7 @@ export class UserRoleComponent implements OnInit, AfterViewInit {
 
   private editUser: any;
 
-  constructor(
-    private modalService: NgbModal,
-    private roleService: RoleService,
-    private userService: UserService,
-    fb: FormBuilder) {
-
+  constructor(private modalService: NgbModal, fb: FormBuilder) {
     this.userForm = fb.group({
       'userid': ['', Validators.compose([Validators.required, Validators.minLength(3)])],
       'username': ['', Validators.compose([Validators.required, Validators.minLength(3)])],
@@ -69,9 +59,7 @@ export class UserRoleComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.isNewRole = true;
-    // this.roles = [{ role_id: 100000, role_name: '管理员' }, { role_id: 100002, role_name: '前台' }];
-    this.getRoles();
-
+    this.roles = [{ role_id: 100000, role_name: '管理员' }, { role_id: 100002, role_name: '前台' }];
     this.smartTableData = [
       {
         id: 1,
@@ -109,15 +97,6 @@ export class UserRoleComponent implements OnInit, AfterViewInit {
     });
   }
 
-  getRoles(): void {
-    const that = this;
-    this.roleService
-      .getRoles()
-      .then(function (roles) {
-        that.roles = roles;
-      });
-  }
-
   onSubmit(values: Object): void {
     this.submitted = true;
 
@@ -133,31 +112,24 @@ export class UserRoleComponent implements OnInit, AfterViewInit {
         pwd: this.password.value,
         isvalid: this.isvalid.value,
       });
-      // sessionStorage.setItem('userId', this.userId.value);
+      //sessionStorage.setItem('userId', this.userId.value);
     }
   }
 
   onSaveRole(event) {
-    const that = this;
     this.isNewRole = !this.isNewRole;
     if (this.isNewRole) {
       if (this.newRoleName) {
         // TODO
-        this.roleService
-          .create(that.newRoleName)
-          .then(function (role) {
-            that.roles.push(role);
-            that.newRoleName = '';
-          });
+        this.roles.push({ role_id: 100004, role_name: this.newRoleName });
+        this.newRoleName = '';
       } else {
         alert('角色名称不能为空。');
       }
     }
   }
-
   // 删除选择的角色
   onDeleteRole(content) {
-
     let that = this;
     this.onDelCallBack(content, `${this.selectedRole.role_name}角色`, function () {
       _.remove(that.roles, r => r['role_id'] === that.selectedRole.role_id);
