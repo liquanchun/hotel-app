@@ -1,26 +1,26 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, OnInit, AfterViewInit } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import * as $ from 'jquery';
 import * as _ from 'lodash';
+import { UserService } from './user.services';
+
+import { UserModel } from '../../models/user.model';
+
+import { GlobalState } from '../../../../global.state';
 
 @Component({
   selector: 'app-sys-user',
   templateUrl: './user.component.html',
-  styleUrls: ['./user.component.scss']
+  styleUrls: ['./user.component.scss'],
+  providers: [UserService],
 })
 export class UserComponent implements OnInit, AfterViewInit {
 
-  private isNewRole: boolean;
   private isNewUser: boolean;
 
-  private roles: any;
-  private closeResult: string;
   private message: string;
-  private selectedRole: any;
   private selectedUser: any;
-
-  private newRoleName: string;
 
   private smartTableData: any;
 
@@ -37,7 +37,13 @@ export class UserComponent implements OnInit, AfterViewInit {
 
   private editUser: any;
 
-  constructor(private modalService: NgbModal, fb: FormBuilder) {
+  private roles: any;
+  constructor(
+    private _state: GlobalState,
+    private modalService: NgbModal,
+    private userService: UserService,
+    fb: FormBuilder) {
+
     this.userForm = fb.group({
       'userid': ['', Validators.compose([Validators.required, Validators.minLength(3)])],
       'username': ['', Validators.compose([Validators.required, Validators.minLength(3)])],
@@ -55,11 +61,13 @@ export class UserComponent implements OnInit, AfterViewInit {
     this.email = this.userForm.controls['email'];
     this.password = this.userForm.controls['password'];
     this.isvalid = this.userForm.controls['isvalid'];
+
+    this._state.subscribe('role.dataChanged', (roles) => {
+      this.roles = roles;
+    });
   }
 
   ngOnInit() {
-    this.isNewRole = true;
-    this.roles = [{ role_id: 100000, role_name: '管理员' }, { role_id: 100002, role_name: '前台' }];
     this.smartTableData = [
       {
         id: 1,
@@ -80,13 +88,8 @@ export class UserComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    let that = this;
-    jQuery('#myList a').click(function (e) {
-      e.preventDefault();
-      jQuery('#myList a').removeClass('active');
-      jQuery(this).tab('show');
-    });
-    jQuery('tbody tr td').click(function (e) {
+    const that = this;
+    jQuery('.app-sys-user tbody tr td').click(function (e) {
       e.preventDefault();
       jQuery(this).parent().parent().children('tr').children('td').removeClass('selectedcolor');
       jQuery(this).parent().children('td').addClass('selectedcolor');
@@ -95,6 +98,13 @@ export class UserComponent implements OnInit, AfterViewInit {
         user_name: jQuery(this).parent().children('td:eq(2)').text()
       };
     });
+  }
+
+  onTdClicked(item) {
+    this.selectedUser = {
+      user_id: item.firstName,
+      user_name: item.lastName
+    };
   }
 
   onSubmit(values: Object): void {
@@ -112,33 +122,8 @@ export class UserComponent implements OnInit, AfterViewInit {
         pwd: this.password.value,
         isvalid: this.isvalid.value,
       });
-      //sessionStorage.setItem('userId', this.userId.value);
+      // sessionStorage.setItem('userId', this.userId.value);
     }
-  }
-
-  onSaveRole(event) {
-    this.isNewRole = !this.isNewRole;
-    if (this.isNewRole) {
-      if (this.newRoleName) {
-        // TODO
-        this.roles.push({ role_id: 100004, role_name: this.newRoleName });
-        this.newRoleName = '';
-      } else {
-        alert('角色名称不能为空。');
-      }
-    }
-  }
-  // 删除选择的角色
-  onDeleteRole(content) {
-    let that = this;
-    this.onDelCallBack(content, `${this.selectedRole.role_name}角色`, function () {
-      _.remove(that.roles, r => r['role_id'] === that.selectedRole.role_id);
-      that.selectedRole = null;
-    });
-  }
-
-  onSelectedRole(role) {
-    this.selectedRole = role;
   }
 
   onNewUser() {
@@ -165,7 +150,6 @@ export class UserComponent implements OnInit, AfterViewInit {
   onDelCallBack(content, keystring, callback) {
     this.message = `你确定要删除${keystring}吗？`;
     this.modalService.open(content, { backdrop: 'static', size: 'sm', keyboard: false }).result.then((result) => {
-      this.closeResult = `Closed with: ${result}`;
       if (result === 'yes') {
         callback();
       }

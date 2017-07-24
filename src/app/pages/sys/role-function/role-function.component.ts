@@ -5,6 +5,8 @@ import { Validators } from '@angular/forms';
 import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
 import { DynamicFormComponent } from '../../../theme/components/dynamic-form/containers/dynamic-form/dynamic-form.component';
 
+import { RoleComponent } from '../components/role/role.component';
+import { UserComponent } from '../components/user/user.component';
 @Component({
   selector: 'app-role-function',
   templateUrl: './role-function.component.html',

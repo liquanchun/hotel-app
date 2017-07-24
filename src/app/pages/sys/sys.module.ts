@@ -17,6 +17,8 @@ import { RoleComponent } from './components/role/role.component';
 import { UserComponent } from './components/user/user.component';
 
 import { Config } from '../../providers/config';
+
+import { GlobalState } from '../../global.state';
 @NgModule({
   imports: [
     CommonModule,
@@ -36,7 +38,7 @@ import { Config } from '../../providers/config';
     RoleComponent,
     UserComponent,
   ],
-  providers: [Config]
+  providers: [GlobalState, Config]
 })
 export class SysModule { }
 
