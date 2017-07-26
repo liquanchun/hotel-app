@@ -5,7 +5,6 @@ import * as _ from 'lodash';
 import { RoleService } from './role.services';
 
 import { RoleModel } from '../../models/role.model';
-
 import { GlobalState } from '../../../../global.state';
 
 @Component({
@@ -16,7 +15,7 @@ import { GlobalState } from '../../../../global.state';
 })
 export class RoleComponent implements OnInit, AfterViewInit {
 
-  @ViewChild('myList') mylist: ElementRef;
+  @ViewChild('content') content: ElementRef;
 
   private isNewRole: boolean;
   private roles: any;
@@ -26,13 +25,11 @@ export class RoleComponent implements OnInit, AfterViewInit {
 
   constructor(
     private _state: GlobalState,
-    private modalService: NgbModal,
     private roleService: RoleService) {
   }
 
   ngOnInit() {
     this.isNewRole = true;
-    // this.roles = [{ role_id: 100000, role_name: '管理员' }, { role_id: 100002, role_name: '前台' }];
     this.getRoles();
   }
 
@@ -69,25 +66,18 @@ export class RoleComponent implements OnInit, AfterViewInit {
   }
 
   // 删除选择的角色
-  onDeleteRole(content) {
+  onDeleteRole() {
     const that = this;
-    this.onDelCallBack(content, `${this.selectedRole.role_name}角色`, function () {
-      _.remove(that.roles, r => r['role_id'] === that.selectedRole.role_id);
-      that.selectedRole = null;
+    that._state.notifyDataChanged('delete.confirm', `${that.selectedRole.role_name}角色`);
+    that._state.subscribe('delete.confirm.result', (result) => {
+      that.roleService.delete(that.selectedRole.role_id).then(() => {
+        _.remove(that.roles, r => r['role_id'] === that.selectedRole.role_id);
+        that.selectedRole = null;
+      });
     });
   }
 
   onSelectedRole(role) {
     this.selectedRole = role;
   }
-
-  onDelCallBack(content, keystring, callback) {
-    this.message = `你确定要删除${keystring}吗？`;
-    this.modalService.open(content, { backdrop: 'static', size: 'sm', keyboard: false }).result.then((result) => {
-      if (result === 'yes') {
-        callback();
-      }
-    }, (reason) => { });
-  }
-
 }

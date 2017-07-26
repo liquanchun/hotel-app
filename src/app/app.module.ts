@@ -17,11 +17,14 @@ import { GlobalState } from './global.state';
 import { NgaModule } from './theme/nga.module';
 import { PagesModule } from './pages/pages.module';
 
-
+import { HttpService } from './providers/httpClient';
+import { Config } from './providers/config';
 // Application wide providers
 const APP_PROVIDERS = [
   AppState,
-  GlobalState
+  GlobalState,
+  HttpService,
+  Config
 ];
 
 export type StoreType = {

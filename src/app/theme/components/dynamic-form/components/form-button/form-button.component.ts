@@ -9,13 +9,15 @@ import { FieldConfig } from '../../models/field-config.interface';
   styleUrls: ['form-button.component.scss'],
   template: `
     <div 
-      class="dynamic-field form-button"
+      class="dynamic-field form-button row"
       [formGroup]="group">
-      <button
+      <div class="offset-sm-2 col-sm-10">
+      <button class="btn btn-info"
         [disabled]="config.disabled"
         type="submit">
-        {{ config.label }}
+        <i class="fa fa-floppy-o" aria-hidden="true"></i> {{ config.label }}
       </button>
+       </div>
     </div>
   `
 })
