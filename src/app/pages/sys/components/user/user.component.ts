@@ -8,6 +8,7 @@ import { UserService } from './user.services';
 import { UserModel } from '../../models/user.model';
 
 import { GlobalState } from '../../../../global.state';
+import { IMultiSelectOption, IMultiSelectTexts, IMultiSelectSettings } from 'angular-2-dropdown-multiselect';
 
 @Component({
   selector: 'app-sys-user',
@@ -38,6 +39,42 @@ export class UserComponent implements OnInit, AfterViewInit {
   private editUser: any;
 
   private roles: any;
+
+  // Default selection
+  optionsModel: number[] = [1, 2];
+
+  // Settings configuration
+  mySettings: IMultiSelectSettings = {
+    enableSearch: true,
+    checkedStyle: 'fontawesome',
+    buttonClasses: 'btn btn-default btn-block',
+    dynamicTitleMaxItems: 3,
+    displayAllSelectedText: true
+  };
+
+  // Text configuration
+  myTexts: IMultiSelectTexts = {
+    checkAll: 'Select all',
+    uncheckAll: 'Unselect all',
+    checked: 'item selected',
+    checkedPlural: 'items selected',
+    searchPlaceholder: 'Find',
+    defaultTitle: 'Select',
+    allSelected: 'All selected',
+  };
+
+  // Labels / Parents
+  myOptions: IMultiSelectOption[] = [
+    { id: 1, name: 'Car brands', isLabel: true },
+    { id: 2, name: 'Volvo', parentId: 1 },
+    { id: 3, name: 'Honda', parentId: 1 },
+    { id: 4, name: 'BMW', parentId: 1 },
+    { id: 5, name: 'Colors', isLabel: true },
+    { id: 6, name: 'Blue', parentId: 5 },
+    { id: 7, name: 'Red', parentId: 5 },
+    { id: 8, name: 'White', parentId: 5 }
+  ];
+
   constructor(
     private _state: GlobalState,
     private modalService: NgbModal,
@@ -65,6 +102,8 @@ export class UserComponent implements OnInit, AfterViewInit {
     this._state.subscribe('role.dataChanged', (roles) => {
       this.roles = roles;
     });
+
+
   }
 
   ngOnInit() {
@@ -85,6 +124,11 @@ export class UserComponent implements OnInit, AfterViewInit {
         email: 'fat@yandex.ru',
         age: '45'
       }];
+
+    this.myOptions = [
+      { id: 1, name: 'Option 1' },
+      { id: 2, name: 'Option 2' },
+    ];
   }
 
   ngAfterViewInit() {
@@ -98,6 +142,8 @@ export class UserComponent implements OnInit, AfterViewInit {
         user_name: jQuery(this).parent().children('td:eq(2)').text()
       };
     });
+    //$('#example-getting-started').multiselect();
+    //$('.ui.dropdown').dropdown();
   }
 
   onTdClicked(item) {
@@ -156,4 +202,7 @@ export class UserComponent implements OnInit, AfterViewInit {
     }, (reason) => { });
   }
 
+  onChange() {
+    console.log(this.optionsModel);
+  }
 }

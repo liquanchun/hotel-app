@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NgUploaderModule } from 'ngx-uploader';
 import { AppTranslationModule } from '../app.translation.module';
-
+import { MultiselectDropdownModule } from 'angular-2-dropdown-multiselect';
 import {
   BaThemeConfig
 } from './theme.config';
@@ -112,7 +112,8 @@ const NGA_VALIDATORS = [
     FormsModule,
     ReactiveFormsModule,
     AppTranslationModule,
-    NgUploaderModule
+    NgUploaderModule,
+    MultiselectDropdownModule
   ],
   exports: [
     ...NGA_PIPES,

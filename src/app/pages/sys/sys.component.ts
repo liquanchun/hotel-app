@@ -12,14 +12,15 @@ export class SysComponent implements OnInit {
   constructor(private _state: GlobalState, private modalService: NgbModal) {
     const that = this;
     //删除提示对话框
-    this._state.subscribe('delete.confirm', (message) => {
-      this.message = `你确定要删除${message}吗？`;
+    this._state.subscribe('delete.confirm', (confirm) => {
+      this.message = `你确定要删除${confirm.message}吗？`;
       this.modalService
         .open(this.content, { backdrop: 'static', size: 'sm', keyboard: false })
         .result
         .then((result) => {
           if (result === 'yes') {
-            that._state.notifyDataChanged('delete.confirm.result', 'yes');
+            //that._state.notifyDataChanged('delete.confirm.result', 'yes');
+            confirm.callback();
           }
         }, (reason) => { });
     });

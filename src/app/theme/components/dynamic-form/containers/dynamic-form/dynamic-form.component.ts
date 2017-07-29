@@ -16,7 +16,8 @@ import { FieldConfig } from '../../models/field-config.interface';
         *ngFor="let field of config;"
         dynamicField
         [config]="field"
-        [group]="form">
+        [group]="form" 
+        (back)="back($event)">
       </ng-container>
     </form>
   `
@@ -27,6 +28,8 @@ export class DynamicFormComponent implements OnChanges, OnInit {
 
   @Output()
   submit: EventEmitter<any> = new EventEmitter<any>();
+
+  @Output() backTop = new EventEmitter();
 
   form: FormGroup;
 
@@ -94,5 +97,9 @@ export class DynamicFormComponent implements OnChanges, OnInit {
 
   setValue(name: string, value: any) {
     this.form.controls[name].setValue(value, {emitEvent: true});
+  }
+
+  back(event){
+    this.backTop.emit();
   }
 }

@@ -6,7 +6,8 @@
                     <app-sys-role></app-sys-role>
                 </div>
                 <div class="col-10 card">
-                    <dynamic-form [config]="config" #form="dynamicForm" (submit)="submit($event)">
+
+                    <dynamic-form [config]="config" #form="dynamicForm" (back)="backTop($event)" (submit)="submit($event)">
                     </dynamic-form>
                     {{ form.valid }} {{ form.value | json }}
                 </div>

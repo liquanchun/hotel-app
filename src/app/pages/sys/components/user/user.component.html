@@ -67,6 +67,14 @@
                     </div>
                 </div>
 
+
+                <div class="form-group row">
+                    <label for="email" class="col-sm-1 col-form-label  offset-sm-2">用户角色</label>
+                    <div class="col-sm-9">
+                        <ss-multiselect-dropdown [options]="myOptions" [texts]="myTexts" [settings]="mySettings"></ss-multiselect-dropdown>
+                    </div>
+                </div>
+
                 <div class="form-group row" [ngClass]="{'has-error': (!password.valid && password.touched), 'has-success': (password.valid && password.touched)}">
                     <label for="password" class="col-sm-1 col-form-label  offset-sm-2">密码</label>
                     <div class="col-sm-5">

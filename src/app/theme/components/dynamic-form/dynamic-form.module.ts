@@ -7,18 +7,28 @@ import { DynamicFormComponent } from './containers/dynamic-form/dynamic-form.com
 import { FormButtonComponent } from './components/form-button/form-button.component';
 import { FormInputComponent } from './components/form-input/form-input.component';
 import { FormSelectComponent } from './components/form-select/form-select.component';
+import { FormCheckComponent } from './components/form-check/form-check.component';
+import { FormDatepickerComponent } from './components/form-datepicker/form-datepicker.component';
+import { FormMultiSelectComponent } from './components/form-multiselect/form-multiselect.component';
 
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { MultiselectDropdownModule } from 'angular-2-dropdown-multiselect';
 @NgModule({
   imports: [
     CommonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgbModule,
+    MultiselectDropdownModule,
   ],
   declarations: [
     DynamicFieldDirective,
     DynamicFormComponent,
     FormButtonComponent,
     FormInputComponent,
-    FormSelectComponent
+    FormSelectComponent,
+    FormCheckComponent,
+    FormDatepickerComponent,
+    FormMultiSelectComponent
   ],
   exports: [
     DynamicFormComponent
@@ -26,7 +36,10 @@ import { FormSelectComponent } from './components/form-select/form-select.compon
   entryComponents: [
     FormButtonComponent,
     FormInputComponent,
-    FormSelectComponent
+    FormSelectComponent,
+    FormCheckComponent,
+    FormDatepickerComponent,
+    FormMultiSelectComponent
   ]
 })
-export class DynamicFormModule {}
+export class DynamicFormModule { }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter,Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 import { Field } from '../../models/field.interface';
@@ -17,6 +17,7 @@ import { FieldConfig } from '../../models/field-config.interface';
         type="submit">
         <i class="fa fa-floppy-o" aria-hidden="true"></i> {{ config.label }}
       </button>
+      <button type="button" (click)="onBack($event)" class="btn btn-info"><i class="fa fa-backward" aria-hidden="true"></i> 返回</button>
        </div>
     </div>
   `
@@ -24,4 +25,8 @@ import { FieldConfig } from '../../models/field-config.interface';
 export class FormButtonComponent implements Field {
   config: FieldConfig;
   group: FormGroup;
+  @Output() back = new EventEmitter();
+  onBack() {
+    this.back.emit();
+  }
 }

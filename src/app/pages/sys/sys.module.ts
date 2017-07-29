@@ -19,8 +19,10 @@ import { UserComponent } from './components/user/user.component';
 import { Config } from '../../providers/config';
 
 import { GlobalState } from '../../global.state';
+import { AppState } from '../../app.service';
 
 import { HttpService } from '../../providers/httpClient';
+import { MultiselectDropdownModule } from 'angular-2-dropdown-multiselect';
 
 @NgModule({
   imports: [
@@ -30,6 +32,7 @@ import { HttpService } from '../../providers/httpClient';
     NgaModule,
     routing,
     DynamicFormModule,
+    MultiselectDropdownModule,
   ],
   declarations: [
     SysComponent,
@@ -41,7 +44,7 @@ import { HttpService } from '../../providers/httpClient';
     RoleComponent,
     UserComponent,
   ],
-  providers: [GlobalState, Config, HttpService]
+  providers: [GlobalState, Config, HttpService, AppState]
 })
 export class SysModule { }
 

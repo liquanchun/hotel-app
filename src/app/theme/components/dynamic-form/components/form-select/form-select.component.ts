@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 import { Field } from '../../models/field.interface';
 import { FieldConfig } from '../../models/field-config.interface';
+import * as $ from 'jquery';
 
 @Component({
   selector: 'form-select',
@@ -23,7 +24,11 @@ import { FieldConfig } from '../../models/field-config.interface';
     </div>
   `
 })
-export class FormSelectComponent implements Field {
+export class FormSelectComponent implements Field, AfterViewInit {
   config: FieldConfig;
   group: FormGroup;
+
+    ngAfterViewInit() {
+        //$('.ui.dropdown').dropdown();
+    }
 }
