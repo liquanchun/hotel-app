@@ -42,14 +42,14 @@ export class RoleFunctionComponent implements OnInit, AfterViewInit {
       label: 'Favourite Food',
       name: 'foodmulti',
       options: [
-        { id: 1, name: 'Car brands', isLabel: true },
-        { id: 2, name: 'Volvo', parentId: 1 },
-        { id: 3, name: 'Honda', parentId: 1 },
-        { id: 4, name: 'BMW', parentId: 1 },
-        { id: 5, name: 'Colors', isLabel: true },
-        { id: 6, name: 'Blue', parentId: 5 },
-        { id: 7, name: 'Red', parentId: 5 },
-        { id: 8, name: 'White', parentId: 5 }
+        { id: 1, name: 'Car brands' },
+        { id: 2, name: 'Volvo' },
+        { id: 3, name: 'Honda' },
+        { id: 4, name: 'BMW' },
+        { id: 5, name: 'Colors' },
+        { id: 6, name: 'Blue' },
+        { id: 7, name: 'Red' },
+        { id: 8, name: 'White' }
       ],
       placeholder: 'Select an option',
       validation: [Validators.required],
@@ -71,9 +71,12 @@ export class RoleFunctionComponent implements OnInit, AfterViewInit {
       ]
     },
     {
-      label: 'Submit',
+      label: '保存',
       name: 'submit',
       type: 'button',
+      callback: function () {
+        console.log('back');
+      },
     },
   ];
 
@@ -96,6 +99,10 @@ export class RoleFunctionComponent implements OnInit, AfterViewInit {
 
     this.form.setDisabled('submit', true);
     this.form.setValue('name', 'Todd Motto');
+    this.form.setValue('food', 'Knakworstje');
+    this.form.setValue('foodmulti', [2]);
+    this.form.setValue('startdate', { "year": 2017, "month": 7, "day": 14 });
+    this.form.setValue('book', '2');
   }
 
   submit(value: { [name: string]: any }) {

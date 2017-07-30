@@ -10,4 +10,5 @@ export interface FieldConfig {
   validation?: ValidatorFn[],
   value?: any,
   check?: string,
+  callback?: any,
 }

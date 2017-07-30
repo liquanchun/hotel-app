@@ -14,8 +14,8 @@ import { IMultiSelectOption, IMultiSelectTexts, IMultiSelectSettings } from 'ang
     <div 
       class="dynamic-field form-select row"
       [formGroup]="group">
-      <label  for="config.name" class="col-sm-2 col-form-label">{{ config.label }}</label>
-      <div class="col-sm-10">
+      <label  for="config.name" class="col-md-2 col-form-label">{{ config.label }}</label>
+      <div class="col-md-10">
       <ss-multiselect-dropdown [formControlName]="config.name" [options]="myOptions" [texts]="myTexts" [settings]="mySettings">
       </ss-multiselect-dropdown>
       </div>  
@@ -35,8 +35,7 @@ export class FormMultiSelectComponent implements Field, AfterViewInit, OnInit {
     checkedStyle: 'fontawesome',
     buttonClasses: 'btn btn-default btn-block',
     dynamicTitleMaxItems: 10,
-    displayAllSelectedText: true,
-    pullRight: true
+    displayAllSelectedText: true
   };
 
   // Text configuration
@@ -62,8 +61,13 @@ export class FormMultiSelectComponent implements Field, AfterViewInit, OnInit {
       that.myOptions.push(opt);
     });
   }
-  ngAfterViewInit() {
 
+  ngAfterViewInit() {
+    // setTimeout(() => {
+    //   $('.dropdown-item a').each(function (index, item) {
+    //     $(item).css('color', 'red');
+    //   });
+    // }, 5000);
   }
 
   onChange() {

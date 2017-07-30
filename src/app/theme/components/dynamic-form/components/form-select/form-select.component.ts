@@ -12,8 +12,8 @@ import * as $ from 'jquery';
     <div 
       class="dynamic-field form-select row"
       [formGroup]="group">
-      <label  for="config.name" class="col-sm-2 col-form-label">{{ config.label }}</label>
-      <div class="col-sm-10">
+      <label  for="config.name" class="col-md-2 col-form-label">{{ config.label }}</label>
+      <div class="col-md-10">
       <select [formControlName]="config.name">
         <option value="">{{ config.placeholder }}</option>
         <option *ngFor="let option of config.options">

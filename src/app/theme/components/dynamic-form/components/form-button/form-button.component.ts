@@ -11,13 +11,13 @@ import { FieldConfig } from '../../models/field-config.interface';
     <div 
       class="dynamic-field form-button row"
       [formGroup]="group">
-      <div class="offset-sm-2 col-sm-10">
+      <div class="offset-md-2 col-md-10">
       <button class="btn btn-info"
         [disabled]="config.disabled"
         type="submit">
         <i class="fa fa-floppy-o" aria-hidden="true"></i> {{ config.label }}
       </button>
-      <button type="button" (click)="onBack($event)" class="btn btn-info"><i class="fa fa-backward" aria-hidden="true"></i> 返回</button>
+      <button type="button" (click)="config.callback($event)" class="btn btn-info"><i class="fa fa-backward" aria-hidden="true"></i> 返回</button>
        </div>
     </div>
   `
@@ -25,8 +25,4 @@ import { FieldConfig } from '../../models/field-config.interface';
 export class FormButtonComponent implements Field {
   config: FieldConfig;
   group: FormGroup;
-  @Output() back = new EventEmitter();
-  onBack() {
-    this.back.emit();
-  }
 }
