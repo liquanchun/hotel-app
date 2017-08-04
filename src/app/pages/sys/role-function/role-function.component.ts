@@ -7,6 +7,7 @@ import { DynamicFormComponent } from '../../../theme/components/dynamic-form/con
 
 import { RoleComponent } from '../components/role/role.component';
 import { UserComponent } from '../components/user/user.component';
+import { OrgComponent } from '../components/org/org.component';
 
 import * as $ from 'jquery';
 @Component({

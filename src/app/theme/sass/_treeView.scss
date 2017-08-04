@@ -1,27 +1,27 @@
 #tree-view .tree {
-  & .node-value {
-    color: white;
-  }
-  & .folding {
-    &.node-expanded::before {
-      color: white;
+    & .node-value {
+        color: #607B8B;
     }
-    &.node-collapsed::before  {
-      color: white;
+    & .folding {
+        &.node-expanded::before {
+            color: #53868B;
+        }
+        &.node-collapsed::before {
+            color: #4F4F4F;
+        }
+        &.node-leaf::before {
+            color: #2F4F4F;
+        }
     }
-    &.node-leaf::before {
-      color: white;
+    & .over-drop-target {
+        border: 4px solid ghostwhite;
     }
-  }
-  & .over-drop-target {
-    border: 4px solid ghostwhite;
-  }
-  & .node-value{
-    & .node-selected::after {
-      background-color: white;
+    & .node-value {
+        & .node-selected::after {
+            background-color: white;
+        }
+        &:after {
+            background-color: white;
+        }
     }
-    &:after {
-      background-color: white;
-    }
-  }
 }

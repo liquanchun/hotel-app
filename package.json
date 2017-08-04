@@ -56,6 +56,8 @@
     "amcharts3": "github:amcharts/amcharts3",
     "amexio-ng-extensions": "^1.0.42",
     "ammap3": "github:amcharts/ammap3",
+    "angular-2-dropdown-multiselect": "^1.5.2",
+    "angular-tree-component": "^4.0.0",
     "angular2-datatable": "0.6.0",
     "animate.css": "3.5.2",
     "bootstrap": "4.0.0-alpha.6",

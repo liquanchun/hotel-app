@@ -23,7 +23,7 @@ import { AppState } from '../../app.service';
 
 import { HttpService } from '../../providers/httpClient';
 import { MultiselectDropdownModule } from 'angular-2-dropdown-multiselect';
-
+import { TreeModule } from 'angular-tree-component';
 @NgModule({
   imports: [
     CommonModule,
@@ -33,6 +33,7 @@ import { MultiselectDropdownModule } from 'angular-2-dropdown-multiselect';
     routing,
     DynamicFormModule,
     MultiselectDropdownModule,
+    TreeModule,
   ],
   declarations: [
     SysComponent,

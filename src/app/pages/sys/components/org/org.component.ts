@@ -1,175 +1,182 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
+
+import { TreeNode, TreeModel, TREE_ACTIONS, KEYS, IActionMapping, ITreeOptions } from 'angular-tree-component';
+
 import * as $ from 'jquery';
 import * as _ from 'lodash';
+
+const actionMapping: IActionMapping = {
+  mouse: {
+    contextMenu: (tree, node, $event) => {
+      $event.preventDefault();
+      alert(`context menu for ${node.data.name}`);
+    },
+    dblClick: (tree, node, $event) => {
+      if (node.hasChildren) TREE_ACTIONS.TOGGLE_EXPANDED(tree, node, $event);
+    },
+    click: (tree, node, $event) => {
+      $event.shiftKey
+        ? TREE_ACTIONS.TOGGLE_SELECTED_MULTI(tree, node, $event)
+        : TREE_ACTIONS.TOGGLE_SELECTED(tree, node, $event);
+    },
+  },
+  keys: {
+    [KEYS.ENTER]: (tree, node, $event) => alert(`This is ${node.data.name}`),
+  },
+};
 
 @Component({
   selector: 'app-sys-org',
   templateUrl: './org.component.html',
-  styleUrls: ['./org.component.scss']
+  styleUrls: ['./org.component.scss'],
 })
 export class OrgComponent implements OnInit, AfterViewInit {
 
-  private isNewRole: boolean;
-  private isNewUser: boolean;
+  private isNewOrg: boolean;
 
-  private roles: any;
-  private closeResult: string;
-  private message: string;
-  private selectedRole: any;
-  private selectedUser: any;
+  private selectedOrg: any;
 
-  private newRoleName: string;
+  private newOrgName: string;
 
-  private smartTableData: any;
+  nodes = [
+    {
+      expanded: true,
+      name: 'root expanded',
+      subTitle: 'the root',
+      children: [
+        {
+          name: 'child1',
+          subTitle: 'a good child',
+          hasChildren: false
+        }, {
+          name: 'child2',
+          subTitle: 'a bad child',
+          hasChildren: false
+        }
+      ]
+    },
+    {
+      name: 'root2',
+      subTitle: 'the second root',
+      children: [
+        {
+          name: 'child2.1',
+          subTitle: 'new and improved',
+          uuid: '11',
+          hasChildren: false
+        }, {
+          name: 'child2.2',
+          subTitle: 'new and improved2',
+          children: [
+            {
+              uuid: 1001,
+              name: 'subsub',
+              subTitle: 'subsub',
+              hasChildren: false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      name: 'asyncroot',
+      hasChildren: true
+    }
+  ];
 
-  private userForm: FormGroup;
-  private userid: AbstractControl;
-  private username: AbstractControl;
-  private mobile: AbstractControl;
-  private weixin: AbstractControl;
-  private email: AbstractControl;
-  private password: AbstractControl;
-  private isvalid: AbstractControl;
 
-  private submitted: boolean = false;
 
-  private editUser: any;
+  customTemplateStringOptions: ITreeOptions = {
+    // displayField: 'subTitle',
+    isExpandedField: 'expanded',
+    idField: 'uuid',
+    //getChildren: this.getChildren.bind(this),
+    actionMapping,
+    nodeHeight: 23,
+    allowDrag: (node) => {
+      // console.log('allowDrag?');
+      return true;
+    },
+    allowDrop: (node) => {
+      // console.log('allowDrop?');
+      return true;
+    },
+    useVirtualScroll: true,
+    animateExpand: true,
+    animateSpeed: 30,
+    animateAcceleration: 1.2,
+  };
 
   constructor(private modalService: NgbModal, fb: FormBuilder) {
-    this.userForm = fb.group({
-      'userid': ['', Validators.compose([Validators.required, Validators.minLength(3)])],
-      'username': ['', Validators.compose([Validators.required, Validators.minLength(3)])],
-      'mobile': ['', Validators.compose([Validators.required, Validators.minLength(11)])],
-      'password': ['', Validators.compose([Validators.required, Validators.minLength(6)])],
-      'weixin': [''],
-      'email': [''],
-      'isvalid': [''],
-    });
-
-    this.userid = this.userForm.controls['userid'];
-    this.username = this.userForm.controls['username'];
-    this.mobile = this.userForm.controls['mobile'];
-    this.weixin = this.userForm.controls['weixin'];
-    this.email = this.userForm.controls['email'];
-    this.password = this.userForm.controls['password'];
-    this.isvalid = this.userForm.controls['isvalid'];
   }
-
   ngOnInit() {
-    this.isNewRole = true;
-    this.roles = [{ role_id: 100000, role_name: '管理员' }, { role_id: 100002, role_name: '前台' }];
-    this.smartTableData = [
-      {
-        id: 1,
-        firstName: 'Mark',
-        lastName: 'Otto',
-        username: '@mdo',
-        email: 'mdo@gmail.com',
-        age: '28'
-      },
-      {
-        id: 2,
-        firstName: 'Jacob',
-        lastName: 'Thornton',
-        username: '@fat',
-        email: 'fat@yandex.ru',
-        age: '45'
-      }];
+    this.isNewOrg = true;
   }
-
   ngAfterViewInit() {
-    let that = this;
-    jQuery('#myList a').click(function (e) {
-      e.preventDefault();
-      jQuery('#myList a').removeClass('active');
-      jQuery(this).tab('show');
-    });
-    jQuery('tbody tr td').click(function (e) {
-      e.preventDefault();
-      jQuery(this).parent().parent().children('tr').children('td').removeClass('selectedcolor');
-      jQuery(this).parent().children('td').addClass('selectedcolor');
-      that.selectedUser = {
-        user_id: jQuery(this).parent().children('td:eq(1)').text(),
-        user_name: jQuery(this).parent().children('td:eq(2)').text()
-      };
-    });
+
+  }
+  addNode(tree) {
   }
 
-  onSubmit(values: Object): void {
-    this.submitted = true;
-
-    if (this.userForm.valid) {
-      // your code goes here
-      console.log(values);
-      console.log({
-        user_id: this.userid.value,
-        user_name: this.username.value,
-        mobile: this.mobile.value,
-        weixin: this.weixin.value,
-        email: this.email.value,
-        pwd: this.password.value,
-        isvalid: this.isvalid.value,
-      });
-      //sessionStorage.setItem('userId', this.userId.value);
-    }
+  onInitialized(tree) {
+    tree.treeModel.expandAll();
+    console.log(_.flattenDeep(this.nodes));
   }
 
-  onSaveRole(event) {
-    this.isNewRole = !this.isNewRole;
-    if (this.isNewRole) {
-      if (this.newRoleName) {
+  onEvent(event) {
+    console.log(event);
+  }
+
+  onSaveOrg(tree) {
+    let fnode = this.getNode(this.nodes, 'child2');
+    fnode.children = [{name: 'child2.1',
+      subTitle: 'new and improved',
+      uuid: '112',
+      hasChildren: false}];
+
+    
+
+    this.isNewOrg = !this.isNewOrg;
+    if (this.isNewOrg) {
+      if (this.newOrgName) {
         // TODO
-        this.roles.push({ role_id: 100004, role_name: this.newRoleName });
-        this.newRoleName = '';
+        const focusNode = tree.treeModel.getFocusedNode();
+        if (focusNode.hasChildren) {
+          focusNode.children.push({
+            id: 20,
+            name: this.newOrgName,
+          });
+        } else {
+          focusNode.children = [{
+            id: 20,
+            name: this.newOrgName,
+          }];
+        }
+        tree.treeModel.update();
+        this.newOrgName = '';
       } else {
-        alert('角色名称不能为空。');
+        alert('子节点名称不能为空。');
       }
     }
   }
   // 删除选择的角色
-  onDeleteRole(content) {
-    let that = this;
-    this.onDelCallBack(content, `${this.selectedRole.role_name}角色`, function () {
-      _.remove(that.roles, r => r['role_id'] === that.selectedRole.role_id);
-      that.selectedRole = null;
-    });
+  onDeleteOrg(tree) {
+
   }
 
-  onSelectedRole(role) {
-    this.selectedRole = role;
-  }
-
-  onNewUser() {
-    this.isNewUser = true;
-  }
-
-  onSaveUser(event) {
-    console.log(this.editUser);
-    this.isNewUser = false;
-  }
-
-  onBack() {
-    this.isNewUser = false;
-  }
-  // 删除选择的用户
-  onDeleteUser(content) {
-    let that = this;
-    this.onDelCallBack(content, `${this.selectedUser.user_name}用户`, function () {
-      _.remove(that.smartTableData, r => r['firstName'] === that.selectedUser.user_id);
-      that.selectedUser = null;
-    });
-  }
-
-  onDelCallBack(content, keystring, callback) {
-    this.message = `你确定要删除${keystring}吗？`;
-    this.modalService.open(content, { backdrop: 'static', size: 'sm', keyboard: false }).result.then((result) => {
-      this.closeResult = `Closed with: ${result}`;
-      if (result === 'yes') {
-        callback();
+  getNode(nodeArr: any, name: string) {
+    let findNode: any = {};
+    _.each(nodeArr, (f) => {
+      if (f.name === name) {
+        findNode = f;
       }
-    }, (reason) => { });
-  }
+      if (f.children) {
+        return this.getNode(f.children, name);
+      }
+    });
 
+    return findNode;
+  }
 }
