@@ -27,7 +27,7 @@ export class FormCheckComponent implements Field, OnInit, AfterViewInit {
   config: FieldConfig;
   group: FormGroup;
 
-  selectVal: string = '';
+  selectVal: any = [];
   ngOnInit() {
   }
 
@@ -36,10 +36,9 @@ export class FormCheckComponent implements Field, OnInit, AfterViewInit {
 
     this.group.controls[this.config.name].valueChanges
       .subscribe(data => {
-        that.selectVal = data;
-        const selectValArray = data.split(',');
+        that.selectVal = data.split(',');
         $('.form-check-input').each(function (i, e) {
-          if (_.indexOf(selectValArray, $(this).attr('id')) > -1) {
+          if (_.indexOf(that.selectVal, $(this).attr('id')) > -1) {
             $(this).attr('checked', 'checked');
           }
         });
@@ -48,14 +47,16 @@ export class FormCheckComponent implements Field, OnInit, AfterViewInit {
 
   onCheck(id, event) {
     if (this.config.check === 'checkbox') {
-      if (this.selectVal.indexOf(id) > -1) {
-        this.selectVal = this.selectVal.replace(`${id}`, '');
+      if (_.indexOf(this.selectVal, id) > -1) {
+        _.remove(this.selectVal, function (n) {
+          return n === id;
+        });
       } else {
-        this.selectVal = `${this.selectVal},${id}`;
+        this.selectVal.push(id);
       }
     } else {
-      this.selectVal = id;
+      this.selectVal.push(id);
     }
-    this.group.controls[this.config.name].setValue(this.selectVal, { emitEvent: true });
+    this.group.controls[this.config.name].setValue(this.selectVal.toString(), { emitEvent: true });
   }
 }

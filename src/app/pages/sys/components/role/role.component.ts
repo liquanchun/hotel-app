@@ -39,12 +39,10 @@ export class RoleComponent implements OnInit, AfterViewInit {
 
   getRoles(): void {
     const that = this;
-    this.roleService
-      .getRoles()
-      .then(function (roles) {
-        that.roles = roles;
-        that._state.notifyDataChanged('role.dataChanged', roles);
-      });
+    this.roleService.getRoles().then(function (roles) {
+      that.roles = roles;
+      that._state.notifyDataChanged('role.dataChanged', roles);
+    });
   }
 
   onSaveRole(event) {
@@ -69,10 +67,10 @@ export class RoleComponent implements OnInit, AfterViewInit {
   onDeleteRole() {
     const that = this;
     const confirm = {
-      message: `${that.selectedRole.role_name}角色`,
-      callback: function () {
-        that.roleService.delete(that.selectedRole.role_id).then(() => {
-          _.remove(that.roles, r => r['role_id'] === that.selectedRole.role_id);
+      message: `${that.selectedRole.roleName}角色`,
+      callback: () => {
+        that.roleService.delete(that.selectedRole.Id).then(() => {
+          _.remove(that.roles, r => r['Id'] === that.selectedRole.Id);
           that.selectedRole = null;
         });
       },
@@ -83,5 +81,6 @@ export class RoleComponent implements OnInit, AfterViewInit {
 
   onSelectedRole(role) {
     this.selectedRole = role;
+    this._state.notifyDataChanged('role.selectedChanged', role);
   }
 }

@@ -1,9 +1,9 @@
 export class UserModel {
-    user_id: string;
-    user_name: string;
+    userId: string;
+    userName: string;
     mobile: string;
     weixin: string;
     email: string;
     pwd: string;
-    isvalid: number;
+    isValid: number;
 }

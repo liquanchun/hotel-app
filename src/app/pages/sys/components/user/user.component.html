@@ -16,6 +16,7 @@
                 <div class="btn-group margin8 pull-right" role="group" aria-label="Basic example">
                     <button (click)="onNewUser()" type="button" class="btn btn-info"><i class="fa fa-plus" aria-hidden="true"></i> 新增用户 </button>
                     <button (click)="onDeleteUser(content)" [disabled]="selectedUser==null" type="button" class="btn btn-info"><i class="fa fa-times" aria-hidden="true"></i> 删除</button>
+                    <button (click)="getUserList()" type="button" class="btn btn-info"><i class="fa fa-refresh" aria-hidden="true"></i> 刷新 </button>
                 </div>
             </div>
         </div>
@@ -59,9 +60,9 @@
                 <div class="form-group row">
                     <label for="email" class="col-sm-1 col-form-label  offset-sm-2">用户角色</label>
                     <div class="col-sm-9">
-                        <div *ngFor="let role of roles" class="form-check form-check-inline">
+                        <div *ngFor="let role of roles" [formControl]="roleids" name="roleids" class="form-check form-check-inline">
                             <label class="form-check-label">
-                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="{{role.role_id}}"> {{role.role_name}}
+                                            <input class="form-check-input" (click)="onCheck(option.id,$event)" type="checkbox" id="inlineCheckbox1" value="{{role.roleId}}"> {{role.roleName}}
                                         </label>
                         </div>
                     </div>
@@ -107,33 +108,17 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let item of smartTableData">
-                        <td class="table-id" (click)="onTdClicked(item)" [class.selectedcolor]="selectedUser && item['firstName'] === selectedUser['user_id']">{{ item.id }}</td>
-                        <td (click)="onTdClicked(item)" [class.selectedcolor]="selectedUser && item['firstName'] === selectedUser['user_id']">{{ item.firstName }}</td>
-                        <td (click)="onTdClicked(item)" [class.selectedcolor]="selectedUser && item['firstName'] === selectedUser['user_id']">{{ item.lastName }}</td>
-                        <td (click)="onTdClicked(item)" [class.selectedcolor]="selectedUser && item['firstName'] === selectedUser['user_id']">{{ item.username }}</td>
-                        <td (click)="onTdClicked(item)" [class.selectedcolor]="selectedUser && item['firstName'] === selectedUser['user_id']">{{ item.username }}</td>
-                        <td (click)="onTdClicked(item)" [class.selectedcolor]="selectedUser && item['firstName'] === selectedUser['user_id']"><a class="email-link" href="mailto:{{ item.email }}">{{ item.email }}</a></td>
-                        <td (click)="onTdClicked(item)" [class.selectedcolor]="selectedUser && item['firstName'] === selectedUser['user_id']">{{ item.age }}</td>
+                    <tr *ngFor="let item of users">
+                        <td class="table-id" (click)="onTdClicked(item)" [class.selectedcolor]="selectedUser && item['userId'] === selectedUser['userId']">{{ item.id }}</td>
+                        <td (click)="onTdClicked(item)" [class.selectedcolor]="selectedUser && item['userId'] === selectedUser['userId']">{{ item.userId }}</td>
+                        <td (click)="onTdClicked(item)" [class.selectedcolor]="selectedUser && item['userId'] === selectedUser['userId']">{{ item.userName }}</td>
+                        <td (click)="onTdClicked(item)" [class.selectedcolor]="selectedUser && item['userId'] === selectedUser['userId']">{{ item.mobile }}</td>
+                        <td (click)="onTdClicked(item)" [class.selectedcolor]="selectedUser && item['userId'] === selectedUser['userId']">{{ item.weixin }}</td>
+                        <td (click)="onTdClicked(item)" [class.selectedcolor]="selectedUser && item['userId'] === selectedUser['userId']"><a class="email-link" href="mailto:{{ item.email }}">{{ item.email }}</a></td>
+                        <td (click)="onTdClicked(item)" [class.selectedcolor]="selectedUser && item['userId'] === selectedUser['userId']">{{ item.roleIds }}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
-<!--删除提示对话框  -->
-<ng-template #content let-c="close" let-d="dismiss">
-    <div class="modal-header">
-        <h4 class="modal-title"><i class="ion-information"></i> 提示信息</h4>
-        <button type="button" class="close" aria-label="Close" (click)="c('no')">
-      <span aria-hidden="true">&times;</span>
-    </button>
-    </div>
-    <div class="modal-body">
-        <p>{{message}}</p>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-success btn-with-icon" (click)="c('yes')"><i class="ion-android-checkmark-circle"></i> 确定</button>
-        <button type="button" class="btn btn-secondary" (click)="c('no')">取消</button>
-    </div>
-</ng-template>

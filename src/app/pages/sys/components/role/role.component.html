@@ -16,7 +16,7 @@
         </div>
 
         <div class="list-group" id="myList" role="tablist">
-            <a *ngFor="let role of roles" [class.active]="selectedRole && role['role_name'] === selectedRole['role_name']" (click)="onSelectedRole(role)" class="list-group-item list-group-item-action" href="javascript:void(0);">{{role.role_name}}</a>
+            <a *ngFor="let role of roles" [class.active]="selectedRole && role['roleName'] === selectedRole['roleName']" (click)="onSelectedRole(role)" class="list-group-item list-group-item-action" href="javascript:void(0);">{{role.roleName}}</a>
         </div>
     </div>
 </div>

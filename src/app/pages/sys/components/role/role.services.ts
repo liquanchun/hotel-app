@@ -3,7 +3,7 @@ import { HttpService } from '../../../../providers/httpClient';
 
 @Injectable()
 export class RoleService {
-  private modelName = 'roles';  // URL to web api
+  private modelName = 'sysrole';  // URL to web api
   constructor(private _httpService: HttpService) {
   }
 
@@ -15,7 +15,7 @@ export class RoleService {
     return this._httpService.delete(this.modelName , id);
   }
   create(name: string) {
-    return this._httpService.create(this.modelName, { role_name: name });
+    return this._httpService.create(this.modelName, { roleName: name });
   }
 
 }
