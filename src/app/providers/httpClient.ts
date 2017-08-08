@@ -19,7 +19,7 @@ export class HttpService {
     }
 
     getModel(modelName: string, id: any): Promise<any> {
-        const url = `${this.baseUrl}/${modelName}/${id}`;
+        const url = `${this.baseUrl}${modelName}/${id}`;
         return this.http.get(url)
             .toPromise()
             .then(response => response.json())
@@ -27,7 +27,7 @@ export class HttpService {
     }
 
     delete(modelName: string, id: any): Promise<void> {
-        const url = `${this.baseUrl}/${modelName}/${id}`;
+        const url = `${this.baseUrl}${modelName}/${id}`;
         const that = this;
         return this.http.delete(url, { headers: this.headers })
             .toPromise()
@@ -47,7 +47,7 @@ export class HttpService {
     }
 
     update(modelName: string, modelId: any, model: any): Promise<any> {
-        const url = `${this.baseUrl}/${modelName}/${modelId}`;
+        const url = `${this.baseUrl}${modelName}/${modelId}`;
         return this.http
             .put(url, JSON.stringify(model), { headers: this.headers })
             .toPromise()

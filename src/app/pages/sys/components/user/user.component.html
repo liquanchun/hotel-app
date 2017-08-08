@@ -115,7 +115,7 @@
                         <td (click)="onTdClicked(item)" [class.selectedcolor]="selectedUser && item['userId'] === selectedUser['userId']">{{ item.mobile }}</td>
                         <td (click)="onTdClicked(item)" [class.selectedcolor]="selectedUser && item['userId'] === selectedUser['userId']">{{ item.weixin }}</td>
                         <td (click)="onTdClicked(item)" [class.selectedcolor]="selectedUser && item['userId'] === selectedUser['userId']"><a class="email-link" href="mailto:{{ item.email }}">{{ item.email }}</a></td>
-                        <td (click)="onTdClicked(item)" [class.selectedcolor]="selectedUser && item['userId'] === selectedUser['userId']">{{ item.roleIds }}</td>
+                        <td (click)="onTdClicked(item)" [class.selectedcolor]="selectedUser && item['userId'] === selectedUser['userId']">{{ item.roleNames }}</td>
                     </tr>
                 </tbody>
             </table>
