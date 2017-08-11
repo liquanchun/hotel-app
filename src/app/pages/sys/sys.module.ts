@@ -2,6 +2,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
 import { NgaModule } from '../../theme/nga.module';
 
 import { SysComponent } from './sys.component';
@@ -24,6 +26,9 @@ import { AppState } from '../../app.service';
 import { HttpService } from '../../providers/httpClient';
 import { MultiselectDropdownModule } from 'angular-2-dropdown-multiselect';
 import { TreeModule } from 'angular-tree-component';
+
+import { LoadingModule } from 'ngx-loading';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -34,6 +39,8 @@ import { TreeModule } from 'angular-tree-component';
     DynamicFormModule,
     MultiselectDropdownModule,
     TreeModule,
+    NgbModule,
+    LoadingModule,
   ],
   declarations: [
     SysComponent,

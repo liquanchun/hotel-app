@@ -12,7 +12,8 @@ export class HttpService {
     }
 
     getModelList(modelName: string): Promise<any[]> {
-        return this.http.get(this.baseUrl + modelName)
+        const url = this.baseUrl + modelName;
+        return this.http.get(this.newUrl(url))
             .toPromise()
             .then(response => response.json())
             .catch(this.handleError);
@@ -20,7 +21,7 @@ export class HttpService {
 
     getModel(modelName: string, id: any): Promise<any> {
         const url = `${this.baseUrl}${modelName}/${id}`;
-        return this.http.get(url)
+        return this.http.get(this.newUrl(url))
             .toPromise()
             .then(response => response.json())
             .catch(this.handleError);
@@ -29,18 +30,16 @@ export class HttpService {
     delete(modelName: string, id: any): Promise<void> {
         const url = `${this.baseUrl}${modelName}/${id}`;
         const that = this;
-        return this.http.delete(url, { headers: this.headers })
+        return this.http.delete(this.newUrl(url), { headers: this.headers })
             .toPromise()
             .then(() => null)
-            .catch(function (error) {
-                //that.create('/common/log', { user_id: sessionStorage.getItem('userId'), desc: JSON.stringify(error) });
-                return Promise.reject(error.message || error || 'Server error');
-            });
+            .catch(this.handleError);
     }
 
     create(modelName: string, model: any): Promise<any> {
+        const url = this.baseUrl + modelName;
         return this.http
-            .post(this.baseUrl + modelName, JSON.stringify(model), { headers: this.headers })
+            .post(this.newUrl(url), JSON.stringify(model), { headers: this.headers })
             .toPromise()
             .then(res => res.json())
             .catch(this.handleError);
@@ -49,7 +48,7 @@ export class HttpService {
     update(modelName: string, modelId: any, model: any): Promise<any> {
         const url = `${this.baseUrl}${modelName}/${modelId}`;
         return this.http
-            .put(url, JSON.stringify(model), { headers: this.headers })
+            .put(this.newUrl(url), JSON.stringify(model), { headers: this.headers })
             .toPromise()
             .then(() => model)
             .catch(this.handleError);
@@ -57,6 +56,17 @@ export class HttpService {
 
     handleError(error: any): Promise<any> {
         console.error('An error occurred', error); // for demo purposes only
-        return Promise.reject(error.message || error || 'Server error');
+        return Promise.reject(error.message || error._body || 'Server error');
+    }
+
+    newUrl(url) {
+        //  var getTimestamp=Math.random();
+        const getTimestamp = new Date().getTime();
+        if (url.indexOf('?') > -1) {
+            url = `${url} &timestamp=${getTimestamp}`;
+        } else {
+            url = `${url}?timestamp=${getTimestamp}`;
+        }
+        return url;
     }
 }
