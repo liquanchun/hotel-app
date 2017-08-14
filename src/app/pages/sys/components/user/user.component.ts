@@ -6,11 +6,12 @@ import { debounceTime } from 'rxjs/operator/debounceTime';
 
 import * as $ from 'jquery';
 import * as _ from 'lodash';
+import { Md5 } from 'ts-md5/dist/md5';
+
 import { UserService } from './user.services';
-
 import { UserModel } from '../../models/user.model';
-
 import { GlobalState } from '../../../../global.state';
+
 
 @Component({
   selector: 'app-sys-user',
@@ -34,7 +35,7 @@ export class UserComponent implements OnInit, AfterViewInit {
   private mobile: AbstractControl;
   private weixin: AbstractControl;
   private email: AbstractControl;
-  private password: AbstractControl;
+  private pwd: AbstractControl;
   private isvalid: AbstractControl;
 
   private submitted: boolean = false;
@@ -55,9 +56,9 @@ export class UserComponent implements OnInit, AfterViewInit {
 
     this.userForm = fb.group({
       'userid': ['', Validators.compose([Validators.required, Validators.minLength(3)])],
-      'username': ['', Validators.compose([Validators.required, Validators.minLength(3)])],
+      'username': ['', Validators.compose([Validators.required, Validators.minLength(2)])],
       'mobile': ['', Validators.compose([Validators.required, Validators.minLength(11)])],
-      'password': ['', Validators.compose([Validators.required, Validators.minLength(6)])],
+      'pwd': ['', Validators.compose([Validators.required, Validators.minLength(6)])],
       'weixin': [''],
       'email': [''],
       'isvalid': [''],
@@ -69,7 +70,7 @@ export class UserComponent implements OnInit, AfterViewInit {
     this.mobile = this.userForm.controls['mobile'];
     this.weixin = this.userForm.controls['weixin'];
     this.email = this.userForm.controls['email'];
-    this.password = this.userForm.controls['password'];
+    this.pwd = this.userForm.controls['pwd'];
     this.isvalid = this.userForm.controls['isvalid'];
 
     this._state.subscribe('role.dataChanged', (roles) => {
@@ -129,6 +130,7 @@ export class UserComponent implements OnInit, AfterViewInit {
       console.log(values);
       values['roleids'] = this.selectVal.toString();
       values['isvalid'] = values['isvalid'] ? values['isvalid'] : 0;
+      values['pwd'] = Md5.hashStr(values['pwd']).toString();
       this.userService.create(values).then(function (user) {
         that.alterType = 'success';
         that.changeSuccessMessage('保存成功。');
@@ -182,8 +184,8 @@ export class UserComponent implements OnInit, AfterViewInit {
 
   onKey(event: any) { // without type info
     this.users = _.filter(this.usersfilter, function (o) {
-      return o['username'] && o['username'].indexOf(event.target.value) > -1
-        || o['userid'] && o['userid'].indexOf(event.target.value) > -1
+      return o['userName'] && o['userName'].indexOf(event.target.value) > -1
+        || o['userId'] && o['userId'].indexOf(event.target.value) > -1
         || o['mobile'] && o['mobile'].indexOf(event.target.value) > -1
         || o['weixin'] && o['weixin'].indexOf(event.target.value) > -1;
     });

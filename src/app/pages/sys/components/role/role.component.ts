@@ -56,6 +56,8 @@ export class RoleComponent implements OnInit, AfterViewInit {
           .then(function (role) {
             that.roles.push(role);
             that.newRoleName = '';
+          }, (err) => {
+            alert(`保存失败。${err}`);
           });
       } else {
         alert('角色名称不能为空。');

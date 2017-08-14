@@ -3,6 +3,8 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 
 import { TreeNode, TreeModel, TREE_ACTIONS, KEYS, IActionMapping, ITreeOptions } from 'angular-tree-component';
+import { OrgService } from './org.services';
+import { GlobalState } from '../../../../global.state';
 
 import * as $ from 'jquery';
 import * as _ from 'lodash';
@@ -31,6 +33,7 @@ const actionMapping: IActionMapping = {
   selector: 'app-sys-org',
   templateUrl: './org.component.html',
   styleUrls: ['./org.component.scss'],
+  providers: [OrgService],
 })
 export class OrgComponent implements OnInit, AfterViewInit {
 
@@ -42,51 +45,20 @@ export class OrgComponent implements OnInit, AfterViewInit {
 
   nodes = [
     {
-      expanded: true,
-      name: 'root expanded',
-      subTitle: 'the root',
+      id: 1,
+      name: 'root1',
+      isExpanded: true,
       children: [
         {
-          name: 'child1',
-          subTitle: 'a good child',
-          hasChildren: false
+          id: 2,
+          name: 'child1'
         }, {
-          name: 'child2',
-          subTitle: 'a bad child',
-          hasChildren: false
+          id: 3,
+          name: 'child2'
         }
       ]
-    },
-    {
-      name: 'root2',
-      subTitle: 'the second root',
-      children: [
-        {
-          name: 'child2.1',
-          subTitle: 'new and improved',
-          uuid: '11',
-          hasChildren: false
-        }, {
-          name: 'child2.2',
-          subTitle: 'new and improved2',
-          children: [
-            {
-              uuid: 1001,
-              name: 'subsub',
-              subTitle: 'subsub',
-              hasChildren: false
-            }
-          ]
-        }
-      ]
-    },
-    {
-      name: 'asyncroot',
-      hasChildren: true
     }
   ];
-
-
 
   customTemplateStringOptions: ITreeOptions = {
     // displayField: 'subTitle',
@@ -109,53 +81,57 @@ export class OrgComponent implements OnInit, AfterViewInit {
     animateAcceleration: 1.2,
   };
 
-  constructor(private modalService: NgbModal, fb: FormBuilder) {
+  constructor(private modalService: NgbModal,
+    fb: FormBuilder,
+    private orgService: OrgService,
+    private _state: GlobalState) {
   }
   ngOnInit() {
     this.isNewOrg = true;
+    this.getNodes();
   }
   ngAfterViewInit() {
 
   }
-  addNode(tree) {
+
+  getNodes() {
+    const that = this;
+    this.orgService.getOrgs(function (orgs) {
+      console.log(orgs);
+      that.nodes = orgs;
+    });
   }
 
   onInitialized(tree) {
     tree.treeModel.expandAll();
-    console.log(_.flattenDeep(this.nodes));
   }
 
   onEvent(event) {
+    if (event.eventName === 'focus') {
+      this.selectedOrg = event.node;
+    }
     console.log(event);
   }
 
   onSaveOrg(tree) {
-    let fnode = this.getNode(this.nodes, 'child2');
-    fnode.children = [{name: 'child2.1',
-      subTitle: 'new and improved',
-      uuid: '112',
-      hasChildren: false}];
-
-    
-
+    const that = this;
     this.isNewOrg = !this.isNewOrg;
     if (this.isNewOrg) {
       if (this.newOrgName) {
         // TODO
         const focusNode = tree.treeModel.getFocusedNode();
-        if (focusNode.hasChildren) {
-          focusNode.children.push({
-            id: 20,
-            name: this.newOrgName,
-          });
+        if (focusNode) {
+          this.orgService
+            .create(focusNode.data.id, this.newOrgName)
+            .then(function (role) {
+              that.getNodes();
+              that.newOrgName = '';
+            }, (err) => {
+              alert(`保存失败。${err}`);
+            });
         } else {
-          focusNode.children = [{
-            id: 20,
-            name: this.newOrgName,
-          }];
+          alert('请选择父节点。');
         }
-        tree.treeModel.update();
-        this.newOrgName = '';
       } else {
         alert('子节点名称不能为空。');
       }
@@ -163,7 +139,26 @@ export class OrgComponent implements OnInit, AfterViewInit {
   }
   // 删除选择的角色
   onDeleteOrg(tree) {
-
+    const focusNode = tree.treeModel.getFocusedNode();
+    if (focusNode) {
+      if (focusNode.data.children.length > 0) {
+        alert('选择的节点有子节点，不能删除。');
+      } else {
+        const that = this;
+        const confirm = {
+          message: `${focusNode.data.name}节点`,
+          callback: () => {
+            that.orgService.delete(focusNode.data.id).then(() => {
+              that.getNodes();
+              that.selectedOrg = null;
+            });
+          },
+        };
+        that._state.notifyDataChanged('delete.confirm', confirm);
+      }
+    } else {
+      alert('请选择你要删除的子节点。');
+    }
   }
 
   getNode(nodeArr: any, name: string) {
