@@ -11,7 +11,10 @@ import { routing } from './sys.routing';
 import { DynamicFormModule } from '../../theme/components/dynamic-form/dynamic-form.module';
 
 import { UserRoleComponent } from './user-role/user-role.component';
-import { RoleFunctionComponent } from './role-function/role-function.component';
+import { RoleMenuComponent } from './role-menu/role-menu.component';
+import { OrgUserComponent } from './org-user/org-user.component';
+import { DicComponent } from './dic/dic.component';
+
 import { FunctionComponent } from './components/function/function.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { OrgComponent } from './components/org/org.component';
@@ -45,12 +48,14 @@ import { LoadingModule } from 'ngx-loading';
   declarations: [
     SysComponent,
     UserRoleComponent,
-    RoleFunctionComponent,
+    RoleMenuComponent,
     FunctionComponent,
     MenuComponent,
     OrgComponent,
     RoleComponent,
     UserComponent,
+    DicComponent,
+    OrgUserComponent,
   ],
   providers: [GlobalState, Config, HttpService, AppState]
 })

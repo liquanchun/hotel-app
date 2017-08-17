@@ -219,137 +219,6 @@ export const PAGES_MENU = [
         ]
       },
       {
-        path: 'maps',
-        data: {
-          menu: {
-            title: 'general.menu.maps',
-            icon: 'ion-ios-location-outline',
-            selected: false,
-            expanded: false,
-            order: 600,
-          }
-        },
-        children: [
-          {
-            path: 'googlemaps',
-            data: {
-              menu: {
-                title: 'general.menu.google_maps',
-              }
-            }
-          },
-          {
-            path: 'leafletmaps',
-            data: {
-              menu: {
-                title: 'general.menu.leaflet_maps',
-              }
-            }
-          },
-          {
-            path: 'bubblemaps',
-            data: {
-              menu: {
-                title: 'general.menu.bubble_maps',
-              }
-            }
-          },
-          {
-            path: 'linemaps',
-            data: {
-              menu: {
-                title: 'general.menu.line_maps',
-              }
-            }
-          }
-        ]
-      },
-      {
-        path: '',
-        data: {
-          menu: {
-            title: 'general.menu.pages',
-            icon: 'ion-document',
-            selected: false,
-            expanded: false,
-            order: 650,
-          }
-        },
-        children: [
-          {
-            path: ['/login'],
-            data: {
-              menu: {
-                title: 'general.menu.login'
-              }
-            }
-          },
-          {
-            path: ['/register'],
-            data: {
-              menu: {
-                title: 'general.menu.register'
-              }
-            }
-          }
-        ]
-      },
-      {
-        path: '',
-        data: {
-          menu: {
-            title: 'general.menu.menu_level_1',
-            icon: 'ion-ios-more',
-            selected: false,
-            expanded: false,
-            order: 700,
-          }
-        },
-        children: [
-          {
-            path: '',
-            data: {
-              menu: {
-                title: 'general.menu.menu_level_1_1',
-                url: '#'
-              }
-            }
-          },
-          {
-            path: '',
-            data: {
-              menu: {
-                title: 'general.menu.menu_level_1_2',
-                url: '#'
-              }
-            },
-            children: [
-              {
-                path: '',
-                data: {
-                  menu: {
-                    title: 'general.menu.menu_level_1_2_1',
-                    url: '#'
-                  }
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        path: '',
-        data: {
-          menu: {
-            title: 'general.menu.external_link',
-            url: 'http://akveo.com',
-            icon: 'ion-android-exit',
-            order: 800,
-            target: '_blank'
-          }
-        }
-      },
-      {
         path: 'sys',  // path for our page
         data: { // custom menu declaration
           menu: {
@@ -372,10 +241,28 @@ export const PAGES_MENU = [
             }
           },
           {
-            path: 'role-function',
+            path: 'role-menu',
             data: {
               menu: {
                 title: '角色权限',
+                icon: 'ion-navicon',
+              }
+            }
+          },
+          {
+            path: 'org-user',
+            data: {
+              menu: {
+                title: '组织架构',
+                icon: 'ion-navicon',
+              }
+            }
+          },
+          {
+            path: 'dic',
+            data: {
+              menu: {
+                title: '系统词典',
                 icon: 'ion-navicon',
               }
             }

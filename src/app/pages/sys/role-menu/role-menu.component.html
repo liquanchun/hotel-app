@@ -3,13 +3,10 @@
         <ba-card title="角色权限" baCardClass="with-scroll">
             <div class="row">
                 <div class="col-3">
-                    <app-sys-org></app-sys-org>
+                    <app-sys-role></app-sys-role>
                 </div>
                 <div class="col-9 card">
-
-                    <dynamic-form [config]="config" #form="dynamicForm" (back)="backTop($event)" (submit)="submit($event)">
-                    </dynamic-form>
-                    {{ form.valid }} {{ form.value | json }}
+                    <app-sys-menu></app-sys-menu>
                 </div>
             </div>
         </ba-card>

@@ -3,8 +3,8 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 
 import { TreeNode, TreeModel, TREE_ACTIONS, KEYS, IActionMapping, ITreeOptions } from 'angular-tree-component';
-import { MenuService } from './menu.services';
-import { GlobalState } from '../../../../global.state';
+import { DicService } from './dic.services';
+import { GlobalState } from '../../../global.state';
 
 import * as $ from 'jquery';
 import * as _ from 'lodash';
@@ -30,18 +30,18 @@ const actionMapping: IActionMapping = {
 };
 
 @Component({
-  selector: 'app-sys-menu',
-  templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.scss'],
-  providers: [MenuService],
+  selector: 'app-sys-dic',
+  templateUrl: './dic.component.html',
+  styleUrls: ['./dic.component.scss'],
+  providers: [DicService],
 })
-export class MenuComponent implements OnInit, AfterViewInit {
+export class DicComponent implements OnInit, AfterViewInit {
 
-  private isNewMenu: boolean;
+  private isNewDic: boolean;
 
-  private selectedMenu: any;
+  private selectedDic: any;
 
-  private newMenuName: string;
+  private newDicName: string;
 
   nodes = [
     {
@@ -83,11 +83,11 @@ export class MenuComponent implements OnInit, AfterViewInit {
 
   constructor(private modalService: NgbModal,
     fb: FormBuilder,
-    private menuService: MenuService,
+    private dicService: DicService,
     private _state: GlobalState) {
   }
   ngOnInit() {
-    this.isNewMenu = true;
+    this.isNewDic = true;
     this.getNodes();
   }
   ngAfterViewInit() {
@@ -96,9 +96,9 @@ export class MenuComponent implements OnInit, AfterViewInit {
 
   getNodes() {
     const that = this;
-    this.menuService.getMenus(function (menus) {
-      console.log(menus);
-      that.nodes = menus;
+    this.dicService.getDics(function (dics) {
+      console.log(dics);
+      that.nodes = dics;
     });
   }
 
@@ -108,24 +108,24 @@ export class MenuComponent implements OnInit, AfterViewInit {
 
   onEvent(event) {
     if (event.eventName === 'focus') {
-      this.selectedMenu = event.node;
+      this.selectedDic = event.node;
     }
     console.log(event);
   }
 
-  onSaveMenu(tree) {
+  onSaveDic(tree) {
     const that = this;
-    this.isNewMenu = !this.isNewMenu;
-    if (this.isNewMenu) {
-      if (this.newMenuName) {
+    this.isNewDic = !this.isNewDic;
+    if (this.isNewDic) {
+      if (this.newDicName) {
         // TODO
         const focusNode = tree.treeModel.getFocusedNode();
         if (focusNode) {
-          this.menuService
-            .create(focusNode.data.id, this.newMenuName)
+          this.dicService
+            .create(focusNode.data.id, this.newDicName)
             .then(function (role) {
               that.getNodes();
-              that.newMenuName = '';
+              that.newDicName = '';
             }, (err) => {
               alert(`保存失败。${err}`);
             });
@@ -138,7 +138,7 @@ export class MenuComponent implements OnInit, AfterViewInit {
     }
   }
   // 删除选择的角色
-  onDeleteMenu(tree) {
+  onDeleteDic(tree) {
     const focusNode = tree.treeModel.getFocusedNode();
     if (focusNode) {
       if (focusNode.data.children.length > 0) {
@@ -148,9 +148,9 @@ export class MenuComponent implements OnInit, AfterViewInit {
         const confirm = {
           message: `${focusNode.data.name}节点`,
           callback: () => {
-            that.menuService.delete(focusNode.data.id).then(() => {
+            that.dicService.delete(focusNode.data.id).then(() => {
               that.getNodes();
-              that.selectedMenu = null;
+              that.selectedDic = null;
             });
           },
         };
@@ -159,19 +159,5 @@ export class MenuComponent implements OnInit, AfterViewInit {
     } else {
       alert('请选择你要删除的子节点。');
     }
-  }
-
-  getNode(nodeArr: any, name: string) {
-    let findNode: any = {};
-    _.each(nodeArr, (f) => {
-      if (f.name === name) {
-        findNode = f;
-      }
-      if (f.children) {
-        return this.getNode(f.children, name);
-      }
-    });
-
-    return findNode;
   }
 }
