@@ -17,8 +17,8 @@
                 </div>
                 <div class="col-8">
                     <div class="btn-group margin8 pull-right" role="group" aria-label="Basic example">
-                        <button (click)="onNewUser()" type="button" class="btn btn-info"><i class="fa fa-plus" aria-hidden="true"></i> 新增用户 </button>
-                        <button (click)="onDeleteUser(content)" [disabled]="selectedUser==null" type="button" class="btn btn-info"><i class="fa fa-times" aria-hidden="true"></i> 删除</button>
+                        <button *ngIf="showEditButton"  (click)="onNewUser()" type="button" class="btn btn-info"><i class="fa fa-plus" aria-hidden="true"></i> 新增用户 </button>
+                        <button *ngIf="showEditButton"  (click)="onDeleteUser(content)" [disabled]="selectedUser==null" type="button" class="btn btn-info"><i class="fa fa-times" aria-hidden="true"></i> 删除</button>
                         <button (click)="getUserList()" type="button" class="btn btn-info"><i class="fa fa-refresh" aria-hidden="true"></i> 刷新 </button>
                     </div>
                 </div>

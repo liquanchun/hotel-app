@@ -3,7 +3,7 @@
         <ba-card title="组织架构" baCardClass="with-scroll">
             <div class="row">
                 <!--用户角色信息card  -->
-                <div class="col-12 card">
+                <div class="col-12">
                     <div class="btn-group margin8" role="group" aria-label="Basic example">
                         <button (click)="onSaveOrg(tree)" type="button" class="btn btn-info" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample"><i class="fa fa-plus" aria-hidden="true"></i> {{isNewOrg?'新增子节点':'保存'}}</button>
                         <button (click)="onDeleteOrg(tree)" [disabled]="selectedOrg==null" type="button" class="btn btn-info"><i class="fa fa-times" aria-hidden="true"></i> 删除</button>

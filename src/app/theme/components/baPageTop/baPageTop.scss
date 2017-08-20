@@ -199,4 +199,20 @@
   .profile-toggle-link {
     cursor: pointer;
   }
+
+  .menulink{
+    text-align: center;
+    display: inline-block;
+    margin-left: 5px;
+    font-size: 120%;
+  }
+  .menudiv{
+    float: left;
+    margin-left: 40px;
+    margin-right: 40px;
+    margin-top: 12px;
+  }
+  .fa-stack-1x, .fa-stack-2x{
+    text-align: right !important
+  }
 }

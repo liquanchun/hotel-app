@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { NgaModule } from '../../theme/nga.module';
+import { DashboardModule } from '../../pages/dashboard/dashboard.module';
 
 import { SysComponent } from './sys.component';
 import { routing } from './sys.routing';
@@ -20,6 +21,7 @@ import { MenuComponent } from './components/menu/menu.component';
 import { OrgComponent } from './components/org/org.component';
 import { RoleComponent } from './components/role/role.component';
 import { UserComponent } from './components/user/user.component';
+import { SelectUserComponent } from './components/selectuser/selectuser.component';
 
 import { Config } from '../../providers/config';
 
@@ -44,6 +46,7 @@ import { LoadingModule } from 'ngx-loading';
     TreeModule,
     NgbModule,
     LoadingModule,
+    DashboardModule,
   ],
   declarations: [
     SysComponent,
@@ -56,6 +59,7 @@ import { LoadingModule } from 'ngx-loading';
     UserComponent,
     DicComponent,
     OrgUserComponent,
+    SelectUserComponent,
   ],
   providers: [GlobalState, Config, HttpService, AppState]
 })

@@ -97,7 +97,6 @@ export class OrgComponent implements OnInit, AfterViewInit {
   getNodes() {
     const that = this;
     this.orgService.getOrgs(function (orgs) {
-      console.log(orgs);
       that.nodes = orgs;
     });
   }
@@ -109,8 +108,8 @@ export class OrgComponent implements OnInit, AfterViewInit {
   onEvent(event) {
     if (event.eventName === 'focus') {
       this.selectedOrg = event.node;
+      this._state.notifyDataChanged('org.selectedChanged', this.selectedOrg);
     }
-    console.log(event);
   }
 
   onSaveOrg(tree) {

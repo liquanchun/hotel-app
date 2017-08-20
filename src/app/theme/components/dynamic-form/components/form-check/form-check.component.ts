@@ -47,9 +47,9 @@ export class FormCheckComponent implements Field, OnInit, AfterViewInit {
 
   onCheck(id, event) {
     if (this.config.check === 'checkbox') {
-      if (_.indexOf(this.selectVal, id) > -1) {
+      if (_.indexOf(this.selectVal, id.toString()) > -1) {
         _.remove(this.selectVal, function (n) {
-          return n === id;
+          return n === id.toString();
         });
       } else {
         this.selectVal.push(id);

@@ -1,10 +1,16 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { NgbModal, ModalDismissReasons, NgbAlert } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
+import { Subject } from 'rxjs/Subject';
+import { debounceTime } from 'rxjs/operator/debounceTime';
 
 import { TreeNode, TreeModel, TREE_ACTIONS, KEYS, IActionMapping, ITreeOptions } from 'angular-tree-component';
 import { MenuService } from './menu.services';
+import { RoleService } from './../role/role.services';
 import { GlobalState } from '../../../../global.state';
+import { FieldConfig } from '../../../../theme/components/dynamic-form/models/field-config.interface';
+import { DynamicFormComponent }
+  from '../../../../theme/components/dynamic-form/containers/dynamic-form/dynamic-form.component';
 
 import * as $ from 'jquery';
 import * as _ from 'lodash';
@@ -33,9 +39,11 @@ const actionMapping: IActionMapping = {
   selector: 'app-sys-menu',
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss'],
-  providers: [MenuService],
+  providers: [MenuService, RoleService],
 })
 export class MenuComponent implements OnInit, AfterViewInit {
+
+  @ViewChild(DynamicFormComponent) form: DynamicFormComponent;
 
   private isNewMenu: boolean;
 
@@ -81,17 +89,131 @@ export class MenuComponent implements OnInit, AfterViewInit {
     animateAcceleration: 1.2,
   };
 
-  constructor(private modalService: NgbModal,
-    fb: FormBuilder,
+  config: FieldConfig[] = [
+    {
+      type: 'input',
+      label: '菜单名称',
+      name: 'MenuName',
+      placeholder: '输入菜单名称',
+      validation: [Validators.required, Validators.minLength(3)],
+    },
+    {
+      type: 'input',
+      label: '路径',
+      name: 'MenuAddr',
+      placeholder: '输入菜单路径',
+      validation: [Validators.required],
+    },
+    {
+      type: 'input',
+      label: '图标',
+      name: 'Icon',
+      placeholder: '输入菜单图标',
+      validation: [Validators.required],
+    },
+    {
+      type: 'input',
+      label: '顺序',
+      name: 'MenuOrder',
+      placeholder: '输入菜单显示顺序',
+      validation: [Validators.required],
+    },
+    {
+      type: 'check',
+      label: '角色',
+      name: 'Roles',
+      check: 'checkbox',
+    },
+    {
+      label: '保存',
+      name: 'submit',
+      type: 'button',
+      callback: function () {
+        console.log('back');
+      },
+    },
+  ];
+
+  private successMessage: string;
+  private _success = new Subject<string>();
+  private staticAlertClosed = false;
+  private alterType: string;
+
+  constructor(
     private menuService: MenuService,
+    private roleService: RoleService,
     private _state: GlobalState) {
+
+    const that = this;
+    this.roleService.getRoles().then(function (roles) {
+      const rl = [];
+      _.each(roles, function (item) {
+        rl.push({ id: item.id, name: item.roleName });
+      });
+      _.each(that.config, function (item, index) {
+        if (item.name === 'Roles') {
+          that.config[index].options = rl;
+        }
+      });
+    });
   }
   ngOnInit() {
     this.isNewMenu = true;
     this.getNodes();
+
+    setTimeout(() => this.staticAlertClosed = true, 20000);
+    this._success.subscribe((message) => this.successMessage = message);
+    debounceTime.call(this._success, 5000).subscribe(() => this.successMessage = null);
   }
   ngAfterViewInit() {
+    let previousValid = this.form.valid;
+    this.form.changes.subscribe(() => {
+      if (this.form.valid !== previousValid) {
+        previousValid = this.form.valid;
+        this.form.setDisabled('submit', !previousValid);
+      }
+    });
 
+    this.form.setDisabled('submit', true);
+  }
+
+  submit(value: { [name: string]: any }) {
+    const that = this;
+    const saveMenu = {
+      MenuName: value.MenuName,
+      MenuAddr: value.MenuAddr,
+      Icon: value.Icon,
+      MenuOrder: value.MenuOrder,
+      ParentId: 0,
+    };
+    if (this.isNewMenu) {
+      saveMenu.ParentId = this.selectedMenu && this.selectedMenu.data ? this.selectedMenu.data.id : 0;
+      this.menuService.create(saveMenu).then(function (menu) {
+        that.getNodes();
+        that.form.setDisabled('submit', false);
+        that.changeSuccessMessage(`保存成功。`);
+      }, (err) => {
+        that.alterType = 'danger';
+        that.changeSuccessMessage(`保存失败。${err}`);
+      });
+    } else {
+      saveMenu.ParentId = this.selectedMenu && this.selectedMenu.data ? this.selectedMenu.data.parentId : 0;
+      this.menuService.update(this.selectedMenu.data.id, saveMenu).then(function (menu) {
+        that.getNodes();
+        that.form.setDisabled('submit', false);
+      }, (err) => {
+        that.alterType = 'danger';
+        that.changeSuccessMessage(`保存失败。${err}`);
+      });
+    }
+  }
+
+  backTop() {
+    console.log('back');
+  }
+
+  changeSuccessMessage(msg) {
+    this._success.next(msg);
   }
 
   getNodes() {
@@ -109,33 +231,26 @@ export class MenuComponent implements OnInit, AfterViewInit {
   onEvent(event) {
     if (event.eventName === 'focus') {
       this.selectedMenu = event.node;
+
+      this.form.setValue('MenuName', this.selectedMenu.data.data.menuName);
+      this.form.setValue('MenuAddr', this.selectedMenu.data.data.menuAddr);
+      this.form.setValue('Icon', this.selectedMenu.data.data.icon);
+      if (this.selectedMenu.data.data.roleIds) {
+        this.form.setValue('Roles', this.selectedMenu.data.data.roleIds);
+      }
+      this.form.setValue('MenuOrder', this.selectedMenu.data.data.menuOrder);
+      this.isNewMenu = false;
     }
-    console.log(event);
+    console.log(event.node);
   }
 
-  onSaveMenu(tree) {
-    const that = this;
-    this.isNewMenu = !this.isNewMenu;
-    if (this.isNewMenu) {
-      if (this.newMenuName) {
-        // TODO
-        const focusNode = tree.treeModel.getFocusedNode();
-        if (focusNode) {
-          this.menuService
-            .create(focusNode.data.id, this.newMenuName)
-            .then(function (role) {
-              that.getNodes();
-              that.newMenuName = '';
-            }, (err) => {
-              alert(`保存失败。${err}`);
-            });
-        } else {
-          alert('请选择父节点。');
-        }
-      } else {
-        alert('子节点名称不能为空。');
-      }
-    }
+  onNewMenu(tree) {
+    this.form.setDisabled('submit', false);
+    this.form.setValue('MenuName', '');
+    this.form.setValue('MenuAddr', '');
+    this.form.setValue('Icon', '');
+    this.form.setValue('MenuOrder', '');
+    this.isNewMenu = true;
   }
   // 删除选择的角色
   onDeleteMenu(tree) {

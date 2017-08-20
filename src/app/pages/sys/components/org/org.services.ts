@@ -11,7 +11,6 @@ export class OrgService {
   getOrgs(fnCallBack) {
     const that = this;
     this._httpService.getModelList(this.modelName).then(function (orgs) {
-      console.log(orgs);
       fnCallBack(that.createTree(orgs, 0));
     });
   }
@@ -19,10 +18,18 @@ export class OrgService {
   delete(id: any) {
     return this._httpService.delete(this.modelName, id);
   }
+
+  deleteOrg(orgid: number, userid: number) {
+    return this._httpService.delete(this.modelName + '/' + orgid , userid);
+  }
+
   create(pId: number, name: string) {
     return this._httpService.create(this.modelName, { parentId: pId, DeptName: name });
   }
 
+  createOrg(orgid: number, userid: number) {
+    return this._httpService.create(this.modelName + '/' + orgid + '/' + userid, {});
+  }
   createTree(jsons, pid) {
     const tree = [];
     const that = this;

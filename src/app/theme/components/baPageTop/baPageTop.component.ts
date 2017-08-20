@@ -1,7 +1,7 @@
-import {Component} from '@angular/core';
-import {Router} from '@angular/router';
-import {GlobalState} from '../../../global.state';
-
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { GlobalState } from '../../../global.state';
+import * as _ from 'lodash';
 @Component({
   selector: 'ba-page-top',
   templateUrl: './baPageTop.html',
@@ -9,14 +9,14 @@ import {GlobalState} from '../../../global.state';
 })
 export class BaPageTop {
 
-  public isScrolled:boolean = false;
-  public isMenuCollapsed:boolean = false;
-  public userId:string='';
-  constructor(private _router: Router,private _state:GlobalState) {
+  public isScrolled: boolean = false;
+  public isMenuCollapsed: boolean = false;
+  public userId: string = '';
+  constructor(private _router: Router, private _state: GlobalState) {
     this._state.subscribe('menu.isCollapsed', (isCollapsed) => {
       this.isMenuCollapsed = isCollapsed;
     });
-    this.userId = sessionStorage.getItem("userId"); 
+    this.userId = sessionStorage.getItem("userId");
   }
 
   public toggleMenu() {
@@ -25,13 +25,19 @@ export class BaPageTop {
     return false;
   }
 
-  public signout(){
+  public signout() {
     //Clear userid and rediction to login page
     sessionStorage.removeItem("userId");
-    this._router.navigate( ['login'] );
+    this._router.navigate(['login']);
   }
 
   public scrolledChanged(isScrolled) {
     this.isScrolled = isScrolled;
+  }
+
+  public openMenu(event: any) {
+    const menu = _.trim(event.target.textContent);
+    this._state.notifyDataChanged('menu.isChanged', menu);
+    return false;
   }
 }

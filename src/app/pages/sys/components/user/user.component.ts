@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, OnInit, AfterViewInit, Input } from '@angular/core';
 import { NgbModal, ModalDismissReasons, NgbAlert } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { Subject } from 'rxjs/Subject';
@@ -20,6 +20,8 @@ import { GlobalState } from '../../../../global.state';
   providers: [UserService],
 })
 export class UserComponent implements OnInit, AfterViewInit {
+  @Input() showEditButton: boolean = true;
+
   public loading = false;
   private isNewUser: boolean;
 

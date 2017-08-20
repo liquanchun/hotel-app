@@ -10,7 +10,7 @@ import { PAGES_MENU } from './pages.menu';
 export class Pages implements OnInit {
 
   constructor(private _menuService: BaMenuService) {
-
+      
   }
 
   ngOnInit() {

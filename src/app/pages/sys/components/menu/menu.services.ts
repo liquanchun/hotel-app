@@ -19,8 +19,13 @@ export class MenuService {
   delete(id: any) {
     return this._httpService.delete(this.modelName, id);
   }
-  create(pId: number, name: string) {
-    return this._httpService.create(this.modelName, { ParentId: pId, MenuName: name });
+
+  create(munu: any) {
+    return this._httpService.create(this.modelName, munu);
+  }
+
+  update(modelId: any, model: any) {
+    return this._httpService.update(this.modelName, modelId, model);
   }
 
   createTree(jsons, pid) {
@@ -29,7 +34,7 @@ export class MenuService {
     if (jsons) {
       _.each(jsons, function (j) {
         if (j.parentId === pid) {
-          tree.push({ id: j.id, name: j.menuName, children: that.createTree(jsons, j.id) });
+          tree.push({ id: j.id, name: j.menuName, children: that.createTree(jsons, j.id), data: j });
         }
       });
     }
