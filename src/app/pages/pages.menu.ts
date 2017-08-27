@@ -218,57 +218,6 @@ export const PAGES_MENU = [
           }
         ]
       },
-      {
-        path: 'sys',  // path for our page
-        data: { // custom menu declaration
-          menu: {
-            title: '系统管理', // menu title
-            icon: 'ion-android-home', // menu icon
-            pathMatch: 'prefix', // use it if item children not displayed in menu
-            selected: false,
-            expanded: false,
-            order: 900
-          }
-        },
-        children: [
-          {
-            path: 'user-role',
-            data: {
-              menu: {
-                title: '用户角色',
-                icon: 'ion-navicon',
-              }
-            }
-          },
-          {
-            path: 'role-menu',
-            data: {
-              menu: {
-                title: '角色权限',
-                icon: 'ion-navicon',
-              }
-            }
-          },
-          {
-            path: 'org-user',
-            data: {
-              menu: {
-                title: '组织架构',
-                icon: 'ion-navicon',
-              }
-            }
-          },
-          {
-            path: 'dic',
-            data: {
-              menu: {
-                title: '系统词典',
-                icon: 'ion-navicon',
-              }
-            }
-          }
-        ]
-      }
     ]
   }
 ];

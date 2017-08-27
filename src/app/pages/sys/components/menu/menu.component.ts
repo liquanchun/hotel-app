@@ -245,7 +245,7 @@ export class MenuComponent implements OnInit, AfterViewInit {
   }
 
   onNewMenu(tree) {
-    this.form.setDisabled('submit', false);
+    this.form.setDisabled('submit', true);
     this.form.setValue('MenuName', '');
     this.form.setValue('MenuAddr', '');
     this.form.setValue('Icon', '');

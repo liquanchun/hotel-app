@@ -16,6 +16,10 @@ export class MenuService {
     });
   }
 
+  getMenuList() {
+    return this._httpService.getModelList(this.modelName);
+  }
+
   delete(id: any) {
     return this._httpService.delete(this.modelName, id);
   }

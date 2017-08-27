@@ -5,6 +5,7 @@ import { Config } from '../providers/config';
 import { GlobalState } from '../global.state';
 @Injectable()
 export class HttpService {
+    private token: string;
     private headers = new Headers({ 'Content-Type': 'application/json' });
     private baseUrl = 'api/';  // URL to web api
     constructor(private http: Http, public config: Config, private _state: GlobalState) {
@@ -59,6 +60,17 @@ export class HttpService {
         return Promise.reject(error.message || error._body || 'Server error');
     }
 
+    getHeaders() {
+        const headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        if (this.token) {
+            headers.append('Authorization', this.token);
+        }
+        return {
+            headers: headers
+        };
+    }
+
     newUrl(url) {
         //  var getTimestamp=Math.random();
         const getTimestamp = new Date().getTime();
@@ -68,5 +80,10 @@ export class HttpService {
             url = `${url}?timestamp=${getTimestamp}`;
         }
         return url;
+    }
+
+    setToken(token) {
+        localStorage.setItem('ssid', token);
+        this.token = token;
     }
 }
