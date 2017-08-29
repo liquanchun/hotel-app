@@ -68,7 +68,8 @@ import { AdvancedDemoComponent } from './components/hotTables/handsontable/advan
     BasicTablesService,
     SmartTablesService,
     DataTablesService
-  ]
+  ],
+  exports: [SmartTables]
 })
 export class TablesModule {
 }

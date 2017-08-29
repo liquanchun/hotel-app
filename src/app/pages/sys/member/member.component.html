@@ -1,0 +1,37 @@
+<div class="row">
+  <div class="col-md-12">
+    <ngb-tabset>
+      <ngb-tab title="级别与价格">
+        <ng-template ngbTabContent>
+          <ng2-smart-table [settings]="settingsCard" [source]="sourceCard" (deleteConfirm)="onDeleteConfirm('SetCard',$event)" (editConfirm)="onSaveConfirm('SetCard',$event)"
+            (createConfirm)="onCreateConfirm('SetCard',$event)"></ng2-smart-table>
+        </ng-template>
+      </ngb-tab>
+      <ngb-tab title="积分规则">
+        <ng-template ngbTabContent>
+          <ng2-smart-table [settings]="settingsIntegral" [source]="sourceIntegral" (deleteConfirm)="onDeleteConfirm('SetIntegral',$event)" (editConfirm)="onSaveConfirm('SetIntegral',$event)"
+            (createConfirm)="onCreateConfirm('SetIntegral',$event)"></ng2-smart-table>
+        </ng-template>
+      </ngb-tab>
+      <ngb-tab title="积分兑换规则">
+        <ng-template ngbTabContent>
+          <ng2-smart-table [settings]="settingsInteExchange" [source]="sourceInteExchange" (deleteConfirm)="onDeleteConfirm('SetInteExchange',$event)" (editConfirm)="onSaveConfirm('SetInteExchange',$event)"
+            (createConfirm)="onCreateConfirm('SetInteExchange',$event)"></ng2-smart-table>
+        </ng-template>
+      </ngb-tab>
+      <ngb-tab title="升级规则">
+        <ng-template ngbTabContent>
+          <ng2-smart-table [settings]="settingsCardUpgrade" [source]="sourceCardUpgrade" (deleteConfirm)="onDeleteConfirm('SetCardUpgrade',$event)" (editConfirm)="onSaveConfirm('SetCardUpgrade',$event)"
+            (createConfirm)="onCreateConfirm('SetCardUpgrade',$event)"></ng2-smart-table>
+        </ng-template>
+      </ngb-tab>
+      <ngb-tab title="积分换房活动">
+        <ng-template ngbTabContent>
+          <ng2-smart-table [settings]="settingsInteHouse" [source]="sourceInteHouse" (deleteConfirm)="onDeleteConfirm('SetInteHouse',$event)" (editConfirm)="onSaveConfirm('SetInteHouse',$event)"
+            (createConfirm)="onCreateConfirm('SetInteHouse',$event)"></ng2-smart-table>
+        </ng-template>
+      </ngb-tab>
+    </ngb-tabset>
+
+  </div>
+</div>

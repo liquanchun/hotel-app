@@ -1,0 +1,25 @@
+<div class="row">
+  <div class="col-md-12">
+    <ngb-tabset>
+      <ngb-tab title="全天房计费规则">
+        <ng-template ngbTabContent>
+          <ng2-smart-table [settings]="settingsAll" [source]="sourceAll" (deleteConfirm)="onDeleteConfirm('SetAllhousePrice',$event)" (editConfirm)="onSaveConfirm('SetAllhousePrice',$event)"
+            (createConfirm)="onCreateConfirm('SetAllhousePrice',$event)"></ng2-smart-table>
+        </ng-template>
+      </ngb-tab>
+      <ngb-tab title="钟点房房计费规则">
+        <ng-template ngbTabContent>
+          <ng2-smart-table [settings]="settingsHours" [source]="sourceHours" (deleteConfirm)="onDeleteConfirm('SetHourhousePrice',$event)" (editConfirm)="onSaveConfirm('SetHourhousePrice',$event)"
+            (createConfirm)="onCreateConfirm('SetHourhousePrice',$event)"></ng2-smart-table>
+        </ng-template>
+      </ngb-tab>
+      <ngb-tab title="特殊房计费规则">
+        <ng-template ngbTabContent>
+          <ng2-smart-table [settings]="settingsOther" [source]="sourceOther" (deleteConfirm)="onDeleteConfirm('SetOtherhousePrice',$event)" (editConfirm)="onSaveConfirm('SetOtherhousePrice',$event)"
+            (createConfirm)="onCreateConfirm('SetOtherhousePrice',$event)"></ng2-smart-table>
+        </ng-template>
+      </ngb-tab>
+    </ngb-tabset>
+
+  </div>
+</div>

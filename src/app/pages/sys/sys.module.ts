@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { Ng2SmartTableModule } from 'ng2-smart-table';
 
 import { NgaModule } from '../../theme/nga.module';
 import { DashboardModule } from '../../pages/dashboard/dashboard.module';
@@ -15,6 +16,9 @@ import { UserRoleComponent } from './user-role/user-role.component';
 import { RoleMenuComponent } from './role-menu/role-menu.component';
 import { OrgUserComponent } from './org-user/org-user.component';
 import { DicComponent } from './dic/dic.component';
+import { HouseTypeComponent } from './house-type/house-type.component';
+import { HouseFeeComponent } from './house-fee/house-fee.component';
+import { MemberComponent } from './member/member.component';
 
 import { FunctionComponent } from './components/function/function.component';
 import { MenuComponent } from './components/menu/menu.component';
@@ -47,6 +51,7 @@ import { LoadingModule } from 'ngx-loading';
     NgbModule,
     LoadingModule,
     DashboardModule,
+    Ng2SmartTableModule,
   ],
   declarations: [
     SysComponent,
@@ -60,6 +65,9 @@ import { LoadingModule } from 'ngx-loading';
     DicComponent,
     OrgUserComponent,
     SelectUserComponent,
+    HouseTypeComponent,
+    HouseFeeComponent,
+    MemberComponent,
   ],
   providers: [GlobalState, Config, HttpService, AppState]
 })
