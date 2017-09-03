@@ -1,1 +1,1 @@
-export * from './house-type.component';
+export * from './member.component';

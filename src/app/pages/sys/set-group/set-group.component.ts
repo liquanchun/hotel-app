@@ -3,19 +3,21 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 
-import { HouseTypeService } from './house-type.services';
+import { SetGroupService } from './set-group.services';
 import { GlobalState } from '../../../global.state';
+import { DateTimeComponent } from '../../components/dateTimeRender/dateTimeRender.component';
+import { DatepickerViewComponent } from '../../components/datepickerView/datepickerView.component';
 
 import * as $ from 'jquery';
 import * as _ from 'lodash';
 
 @Component({
-  selector: 'app-house-type',
-  templateUrl: './house-type.component.html',
-  styleUrls: ['./house-type.component.scss'],
-  providers: [HouseTypeService],
+  selector: 'app-set-group',
+  templateUrl: './set-group.component.html',
+  styleUrls: ['./set-group.component.scss'],
+  providers: [SetGroupService],
 })
-export class HouseTypeComponent implements OnInit, AfterViewInit {
+export class SetGroupComponent implements OnInit, AfterViewInit {
 
   query: string = '';
 
@@ -47,48 +49,78 @@ export class HouseTypeComponent implements OnInit, AfterViewInit {
         filter: false,
         width: '30px',
       },
-      typeName: {
-        title: '房型',
+      name: {
+        title: '名称',
+        type: 'string',
+        width: '100px',
+        filter: false,
+      },
+      linkMan: {
+        title: '联系人',
+        type: 'string',
+        filter: false,
+        width: '80px',
+      },
+      mobile: {
+        title: '电话',
+        type: 'number',
+        filter: false,
+        width: '80px',
+      },
+      address: {
+        title: '地址',
         type: 'string',
         filter: false
       },
-      allPrice: {
-        title: '全价',
+      contractNo: {
+        title: '合同号',
+        type: 'string',
+        filter: false,
+        width: '80px',
+      },
+      contractDate1: {
+        title: '合同开始日期',
+        type: 'custom',
+        filter: false,
+        renderComponent: DateTimeComponent,
+        editor: {
+          type: 'custom',
+          component: DatepickerViewComponent,
+        },
+      },
+      contractDate2: {
+        title: '合同截止日期',
+        type: 'custom',
+        filter: false,
+        renderComponent: DateTimeComponent,
+        editor: {
+          type: 'custom',
+          component: DatepickerViewComponent,
+        },
+      },
+      coupons: {
+        title: '早餐券',
         type: 'number',
         filter: false
       },
-      startPrice: {
-        title: '起步价',
+      accountFee: {
+        title: '挂账金额',
         type: 'number',
-        filter: false
-      },
-      addPrice: {
-        title: '单位时间内加价',
-        type: 'number',
-        filter: false
-      },
-      addMaxPrice: {
-        title: '加价封顶额',
-        type: 'number',
-        filter: false
-      },
-      preReceiveFee: {
-        title: '预收房费',
-        type: 'number',
-        filter: false
+        filter: false,
+        editable: false,
       },
       remark: {
         title: '备注',
         type: 'string',
         filter: false
-      }
+      },
     }
   };
 
   source: LocalDataSource = new LocalDataSource();
 
   constructor(
-    private houseTypeService: HouseTypeService,
+    private setGroupService: SetGroupService,
     private _state: GlobalState) {
     this.getDataList();
   }
@@ -98,16 +130,22 @@ export class HouseTypeComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
 
   }
-
+  onSearch(query: string = '') {
+    this.source.setFilter([
+      { field: 'name', search: query },
+      { field: 'linkMan', search: query },
+      { field: 'mobile', search: query },
+    ], false);
+  }
   getDataList(): void {
-    this.houseTypeService.getHouseTypes().then((data) => {
+    this.setGroupService.getSetGroups().then((data) => {
       this.source.load(data);
     });
   }
   // 新增
   onCreateConfirm(event): void {
     if (event.newData) {
-      this.houseTypeService.create(event.newData).then((data) => {
+      this.setGroupService.create(event.newData).then((data) => {
         event.confirm.resolve(event.newData);
         this.getDataList();
       });
@@ -118,7 +156,7 @@ export class HouseTypeComponent implements OnInit, AfterViewInit {
   // 修改
   onSaveConfirm(event): void {
     if (event.newData && event.newData.id) {
-      this.houseTypeService.update(event.newData.id, event.newData).then((data) => {
+      this.setGroupService.update(event.newData.id, event.newData).then((data) => {
         event.confirm.resolve(event.newData);
         this.getDataList();
       });
@@ -129,7 +167,7 @@ export class HouseTypeComponent implements OnInit, AfterViewInit {
   // 删除
   onDeleteConfirm(event): void {
     if (window.confirm('你确定要删除吗?')) {
-      this.houseTypeService.delete(event.data.id).then((data) => {
+      this.setGroupService.delete(event.data.id).then((data) => {
         event.confirm.resolve();
       });
     } else {

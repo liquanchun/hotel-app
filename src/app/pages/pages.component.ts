@@ -35,57 +35,63 @@ export class Pages implements OnInit {
 
   ngOnInit() {
     const that = this;
+    PAGES_MENU[0]['children'] = [];
+    PAGES_MENU[0]['children'].push(that.dashboard);
+
     this._menuItemService.getMenuList().then((menus) => {
       that.menuItems = menus;
+      const mi2 = _.filter(menus, ['parentId', 0]);
+      _.each(mi2, (m) => {
+        that.showMenu(m.menuName);
+      });
+      that._menuService.updateMenuByRoutes(<Routes>PAGES_MENU);
+
     });
-    this._state.subscribe('menu.isChanged', (menu) => {
-      if (that.menuItems) {
-        PAGES_MENU[0]['children'] = [];
-        PAGES_MENU[0]['children'].push(that.dashboard);
+  }
 
-        const mi = _.find(that.menuItems, ['menuName', menu]);
-        console.log(mi);
-        if (mi) {
-          const mi2 = _.filter(that.menuItems, ['parentId', mi['id']]);
-          const secondItem = [];
-          _.each(mi2, (m) => {
-            const childrenItem = that.getChildrenItem(m['id']);
+  showMenu(menu) {
+    const that = this;
+    if (that.menuItems) {
+      const mi = _.find(that.menuItems, ['menuName', menu]);
+      // console.log(mi);
+      if (mi) {
+        const mi2 = _.filter(that.menuItems, ['parentId', mi['id']]);
+        const secondItem = [];
+        _.each(mi2, (m) => {
+          const childrenItem = that.getChildrenItem(m['id']);
 
-            const newMenu = {
-              path: m['menuAddr'],
-              data: {
-                menu: {
-                  title: m['menuName'],
-                  icon: m['icon'],
-                  selected: false,
-                  expanded: false,
-                  order: m['menuOrder']
-                }
-              },
-              children: childrenItem,
-            };
-            secondItem.push(newMenu);
-          });
-          console.log(mi2);
           const newMenu = {
-            path: mi['menuAddr'],
+            path: m['menuAddr'],
             data: {
               menu: {
-                title: mi['menuName'],
-                icon: mi['icon'],
+                title: m['menuName'],
+                icon: m['icon'],
                 selected: false,
-                expanded: true,
-                order: mi['menuAddr'],
+                expanded: false,
+                order: m['menuOrder']
               }
             },
-            children: secondItem
+            children: childrenItem,
           };
-          PAGES_MENU[0]['children'].push(newMenu);
-          this._menuService.updateMenuByRoutes(<Routes>PAGES_MENU);
-        }
+          secondItem.push(newMenu);
+        });
+        // console.log(mi2);
+        const newMenu = {
+          path: mi['menuAddr'],
+          data: {
+            menu: {
+              title: mi['menuName'],
+              icon: mi['icon'],
+              selected: false,
+              expanded: false,
+              order: mi['menuAddr'],
+            }
+          },
+          children: secondItem
+        };
+        PAGES_MENU[0]['children'].push(newMenu);
       }
-    });
-    this._menuService.updateMenuByRoutes(<Routes>PAGES_MENU);
+    }
   }
 
   getChildrenItem(menuId) {

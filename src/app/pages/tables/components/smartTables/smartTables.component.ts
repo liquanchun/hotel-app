@@ -31,7 +31,8 @@ export class SmartTables {
       id: {
         title: 'ID',
         type: 'number',
-        editable:false
+        editable:false,
+        width: '30px',
       },
       firstName: {
         title: 'First Name',

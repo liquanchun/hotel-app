@@ -226,6 +226,7 @@ export class MenuComponent implements OnInit, AfterViewInit {
 
   onInitialized(tree) {
     tree.treeModel.expandAll();
+    tree.sizeChanged();
   }
 
   onEvent(event) {

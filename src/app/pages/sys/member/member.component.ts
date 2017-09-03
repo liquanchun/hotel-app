@@ -1,9 +1,21 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { NgbModal, ModalDismissReasons, NgbTabset } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, ModalDismissReasons, NgbTabset, NgbDatepicker } from '@ng-bootstrap/ng-bootstrap';
+
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
+import { CardRenderComponent } from '../../components/cardRender/cardRender.component';
+import { CardRenderService } from '../../components/cardRender/cardRender.services';
+import { MultiselectViewService } from '../../components/multiselectView/multiselectView.services';
+
+import { HouseTypeRenderComponent } from '../../components/houseTypeRender/houseType.component';
+import { HouseTypeRenderService } from '../../components/houseTypeRender/houseType.services';
+
+import { DateTimeComponent } from '../../components/dateTimeRender/dateTimeRender.component';
+import { DatepickerViewComponent } from '../../components/datepickerView/datepickerView.component';
+import { MultiselectViewComponent } from '../../components/multiselectView/multiselectView.component';
 
 import { MemberService } from './member.services';
+import { HouseTypeService } from '../house-type//house-type.services';
 import { GlobalState } from '../../../global.state';
 
 import * as $ from 'jquery';
@@ -13,7 +25,7 @@ import * as _ from 'lodash';
   selector: 'app-member',
   templateUrl: './member.component.html',
   styleUrls: ['./member.component.scss'],
-  providers: [MemberService],
+  providers: [MemberService, CardRenderService, HouseTypeService, HouseTypeRenderService, MultiselectViewService],
 })
 export class MemberComponent implements OnInit, AfterViewInit {
 
@@ -44,7 +56,8 @@ export class MemberComponent implements OnInit, AfterViewInit {
         title: 'ID',
         type: 'number',
         editable: false,
-        filter: false
+        filter: false,
+        width: '30px',
       },
       name: {
         title: '会员卡',
@@ -63,7 +76,6 @@ export class MemberComponent implements OnInit, AfterViewInit {
       },
       isRecharge: {
         title: '是否可充值',
-        type: 'number',
         filter: false,
         editor: {
           type: 'checkbox',
@@ -107,17 +119,32 @@ export class MemberComponent implements OnInit, AfterViewInit {
         title: 'ID',
         type: 'number',
         editable: false,
-        filter: false
+        filter: false,
+        width: '30px',
       },
       oldCard: {
         title: '旧卡',
-        type: 'string',
-        filter: false
+        filter: false,
+        type: 'custom',
+        renderComponent: CardRenderComponent,
+        editor: {
+          type: 'list',
+          config: {
+            list: [],
+          },
+        },
       },
       newCard: {
         title: '新卡',
-        type: 'string',
-        filter: false
+        filter: false,
+        type: 'custom',
+        renderComponent: CardRenderComponent,
+        editor: {
+          type: 'list',
+          config: {
+            list: [],
+          },
+        },
       },
       needInte: {
         title: '升级所需积分',
@@ -163,7 +190,8 @@ export class MemberComponent implements OnInit, AfterViewInit {
         title: 'ID',
         type: 'number',
         editable: false,
-        filter: false
+        filter: false,
+        width: '30px',
       },
       name: {
         title: '名称',
@@ -173,12 +201,25 @@ export class MemberComponent implements OnInit, AfterViewInit {
       inteType: {
         title: '方式类型',
         type: 'string',
-        filter: false
+        filter: false,
+        editor: {
+          type: 'list',
+          config: {
+            list: [{ value: '天数', title: '天数' }, { value: '金额', title: '金额' }],
+          },
+        },
       },
       cardType: {
         title: '会员卡类型',
-        type: 'string',
-        filter: false
+        type: 'custom',
+        filter: false,
+        renderComponent: CardRenderComponent,
+        editor: {
+          type: 'list',
+          config: {
+            list: [],
+          },
+        },
       },
       dayOrFee: {
         title: '天数/金额',
@@ -192,13 +233,23 @@ export class MemberComponent implements OnInit, AfterViewInit {
       },
       startDate: {
         title: '活动开始日期',
-        type: 'string',
-        filter: false
+        type: 'custom',
+        filter: false,
+        renderComponent: DateTimeComponent,
+        editor: {
+          type: 'custom',
+          component: DatepickerViewComponent,
+        },
       },
       endDate: {
         title: '活动结束日期',
-        type: 'string',
-        filter: false
+        type: 'custom',
+        filter: false,
+        renderComponent: DateTimeComponent,
+        editor: {
+          type: 'custom',
+          component: DatepickerViewComponent,
+        },
       },
       remark: {
         title: '备注',
@@ -234,7 +285,8 @@ export class MemberComponent implements OnInit, AfterViewInit {
         title: 'ID',
         type: 'number',
         editable: false,
-        filter: false
+        filter: false,
+        width: '30px',
       },
       name: {
         title: '名称',
@@ -248,8 +300,15 @@ export class MemberComponent implements OnInit, AfterViewInit {
       },
       cardType: {
         title: '会员卡类型',
-        type: 'string',
-        filter: false
+        filter: false,
+        type: 'custom',
+        renderComponent: CardRenderComponent,
+        editor: {
+          type: 'list',
+          config: {
+            list: [],
+          },
+        },
       },
       giftName: {
         title: '礼品名称',
@@ -263,13 +322,23 @@ export class MemberComponent implements OnInit, AfterViewInit {
       },
       startDate: {
         title: '活动开始日期',
-        type: 'string',
-        filter: false
+        type: 'custom',
+        filter: false,
+        renderComponent: DateTimeComponent,
+        editor: {
+          type: 'custom',
+          component: DatepickerViewComponent,
+        },
       },
       endDate: {
         title: '活动结束日期',
-        type: 'string',
-        filter: false
+        type: 'custom',
+        filter: false,
+        renderComponent: DateTimeComponent,
+        editor: {
+          type: 'custom',
+          component: DatepickerViewComponent,
+        },
       },
       remark: {
         title: '备注',
@@ -305,7 +374,8 @@ export class MemberComponent implements OnInit, AfterViewInit {
         title: 'ID',
         type: 'number',
         editable: false,
-        filter: false
+        filter: false,
+        width: '30px',
       },
       name: {
         title: '名称',
@@ -319,28 +389,56 @@ export class MemberComponent implements OnInit, AfterViewInit {
       },
       cardType: {
         title: '会员卡类型',
-        type: 'string',
-        filter: false
+        filter: false,
+        type: 'custom',
+        renderComponent: CardRenderComponent,
+        editor: {
+          type: 'list',
+          config: {
+            list: [],
+          },
+        },
       },
       houseType: {
         title: '兑换房型',
-        type: 'string',
-        filter: false
+        type: 'custom',
+        filter: false,
+        renderComponent: HouseTypeRenderComponent,
+        editor: {
+          type: 'list',
+          config: {
+            list: [],
+          },
+        },
       },
       useWeeks: {
         title: '有效星期',
         type: 'string',
-        filter: false
+        filter: false,
+        editor: {
+          type: 'custom',
+          component: MultiselectViewComponent,
+        },
       },
       startDate: {
         title: '活动开始日期',
-        type: 'string',
-        filter: false
+        type: 'custom',
+        filter: false,
+        renderComponent: DateTimeComponent,
+        editor: {
+          type: 'custom',
+          component: DatepickerViewComponent,
+        },
       },
       endDate: {
         title: '活动结束日期',
-        type: 'string',
-        filter: false
+        type: 'custom',
+        filter: false,
+        renderComponent: DateTimeComponent,
+        editor: {
+          type: 'custom',
+          component: DatepickerViewComponent,
+        },
       },
       remark: {
         title: '备注',
@@ -357,6 +455,10 @@ export class MemberComponent implements OnInit, AfterViewInit {
 
   constructor(
     private memberService: MemberService,
+    private cardRenderService: CardRenderService,
+    private houseTypeService: HouseTypeService,
+    private houseTypeRenderService: HouseTypeRenderService,
+    private multiselectViewService: MultiselectViewService,
     private _state: GlobalState) {
     this.getDataList();
   }
@@ -368,8 +470,19 @@ export class MemberComponent implements OnInit, AfterViewInit {
   }
 
   getDataList(): void {
+    const that = this;
     this.memberService.getMembers('SetCard').then((data) => {
       this.sourceCard.load(data);
+      const card = [];
+      _.each(data, (d) => {
+        card.push({ value: d.id, title: d.name });
+        that.cardRenderService.append(d.id, d.name);
+      });
+      this.settingsCardUpgrade.columns.oldCard.editor.config.list = card;
+      this.settingsCardUpgrade.columns.newCard.editor.config.list = card;
+      this.settingsIntegral.columns.cardType.editor.config.list = card;
+      this.settingsInteExchange.columns.cardType.editor.config.list = card;
+      this.settingsInteHouse.columns.cardType.editor.config.list = card;
     });
     this.memberService.getMembers('SetCardUpgrade').then((data) => {
       this.sourceCardUpgrade.load(data);
@@ -381,7 +494,26 @@ export class MemberComponent implements OnInit, AfterViewInit {
       this.sourceInteExchange.load(data);
     });
     this.memberService.getMembers('SetInteHouse').then((data) => {
+      const myOptions = [
+        { id: '星期一', name: '星期一' },
+        { id: '星期二', name: '星期二' },
+        { id: '星期三', name: '星期三' },
+        { id: '星期四', name: '星期四' },
+        { id: '星期五', name: '星期五' },
+        { id: '星期六', name: '星期六' },
+        { id: '星期日', name: '星期日' },
+      ];
+      _.each(myOptions, (o) => { this.multiselectViewService.append(o.id, o.name); });
       this.sourceInteHouse.load(data);
+    });
+
+    this.houseTypeService.getHouseTypes().then((data) => {
+      const house = [];
+      _.each(data, (d) => {
+        house.push({ value: d.id, title: d.typeName });
+        that.houseTypeRenderService.append(d.id, d.typeName);
+      });
+      this.settingsInteHouse.columns.houseType.editor.config.list = house;
     });
   }
   // 新增

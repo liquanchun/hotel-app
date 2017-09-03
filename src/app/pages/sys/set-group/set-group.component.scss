@@ -79,29 +79,19 @@
       display: flex;
       justify-content: center;
     }
-    select.form-control:not([size]):not([multiple]){
-      height: 31px;
+
+    .filterInputClass{
+      width: 100px;
     }
-    select.form-control{
+
+    .searchCol3{
+      padding-left: 0 !important;
+    }
+    .searchInputgroup{
+      margin-bottom: 0 !important;
+    }
+    ng2-st-thead-form-row td{
       padding: 0;
-    }
-    datepickerview button{
-      padding: 0;
-    }
-    datepickerview .input-group{
-      margin-bottom: 0;
-    }
-    datepickerview .form-group{
-      margin-bottom: 0;
-    }
-    datepickerview input .form-group{
-      padding:  0.2rem 0.75rem
-    }
-    ss-multiselect-dropdown ul :first-of-type {
-      padding: 3px 1.5rem;
-    }
-    ss-multiselect-dropdown .dropdown-item {
-      padding: 3px 0.1rem !important;
     }
   }
 }

@@ -1,0 +1,16 @@
+<div class="row">
+  <div class="col-md-12">
+    <ba-card title="协议组织" baCardClass="with-scroll">
+      <div class="col-3 searchCol3" style="padding-left: 0">
+        <div class="input-group searchInputgroup" style="margin-bottom: 2px">
+          <input #search type="text" class="form-control" placeholder="Search..." (keydown.enter)="onSearch(search.value)">
+          <span class="input-group-btn">
+              <button class="btn btn-secondary" (click)="onSearch(search.value)" type="button"><i class="fa fa-search" aria-hidden="true"></i> 查询</button>
+        </span>
+        </div>
+      </div>
+      <ng2-smart-table [settings]="settings" [source]="source" (deleteConfirm)="onDeleteConfirm($event)" (editConfirm)="onSaveConfirm($event)"
+        (createConfirm)="onCreateConfirm($event)"></ng2-smart-table>
+    </ba-card>
+  </div>
+</div>

@@ -19,6 +19,7 @@ import { DicComponent } from './dic/dic.component';
 import { HouseTypeComponent } from './house-type/house-type.component';
 import { HouseFeeComponent } from './house-fee/house-fee.component';
 import { MemberComponent } from './member/member.component';
+import { SetGroupComponent } from './set-group/set-group.component';
 
 import { FunctionComponent } from './components/function/function.component';
 import { MenuComponent } from './components/menu/menu.component';
@@ -38,6 +39,8 @@ import { TreeModule } from 'angular-tree-component';
 
 import { LoadingModule } from 'ngx-loading';
 
+import { ComponentsModule } from '../components/components.module';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -48,6 +51,7 @@ import { LoadingModule } from 'ngx-loading';
     DynamicFormModule,
     MultiselectDropdownModule,
     TreeModule,
+    ComponentsModule,
     NgbModule,
     LoadingModule,
     DashboardModule,
@@ -68,6 +72,7 @@ import { LoadingModule } from 'ngx-loading';
     HouseTypeComponent,
     HouseFeeComponent,
     MemberComponent,
+    SetGroupComponent,
   ],
   providers: [GlobalState, Config, HttpService, AppState]
 })

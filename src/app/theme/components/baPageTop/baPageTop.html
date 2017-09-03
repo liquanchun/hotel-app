@@ -1,7 +1,7 @@
 <div class="page-top clearfix" baScrollPosition maxHeight="50" (scrollChange)="scrolledChanged($event)" [ngClass]="{scrolled: isScrolled}">
   <a routerLink="/pages/dashboard" class="al-logo clearfix"><span>酒店管理</span>  </a>
   <a href (click)="toggleMenu()" class="collapse-menu-link ion-navicon"></a>
-  <div class="menudiv">
+  <!-- <div class="menudiv">
     <a href (click)="openMenu($event)" class="menulink"><span class="fa-stack fa-lg">
       <i class="fa fa-desktop fa-stack-1x"></i>
     </span>
@@ -36,13 +36,13 @@
       <i class="fa fa-server fa-stack-1x"></i>
     </span>
     系统管理</a>
-  </div>
-  <!--
+  </div> -->
+  
   <div class="search">
     <i class="ion-ios-search-strong" ng-click="startSearch()"></i>
     <input id="searchInput" type="text" placeholder="Search for...">
   </div>
-  -->
+ 
   <div class="user-profile clearfix">
     <div class="dropdown al-user-profile">
       <a class="profile-toggle-link dropdown-toggle" id="user-profile-dd" data-toggle="dropdown" aria-expanded="false">

@@ -8,7 +8,7 @@ import { HouseTypeComponent } from './house-type/house-type.component';
 import { HouseFeeComponent } from './house-fee/house-fee.component';
 import { MemberComponent } from './member/member.component';
 import { SysComponent } from './sys.component';
-
+import { SetGroupComponent } from './set-group/set-group.component';
 // noinspection TypeScriptValidateTypes
 const routes: Routes = [
   {
@@ -22,6 +22,7 @@ const routes: Routes = [
       { path: 'house-type', component: HouseTypeComponent },
       { path: 'house-fee', component: HouseFeeComponent },
       { path: 'member', component: MemberComponent },
+      { path: 'set-group', component: SetGroupComponent },
     ]
   },
 ];

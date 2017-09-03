@@ -44,7 +44,8 @@ export class HouseFeeComponent implements OnInit, AfterViewInit {
         title: 'ID',
         type: 'number',
         editable: false,
-        filter: false
+        filter: false,
+        width: '30px',
       },
       name: {
         title: '房型',
@@ -120,7 +121,8 @@ export class HouseFeeComponent implements OnInit, AfterViewInit {
         title: 'ID',
         type: 'number',
         editable: false,
-        filter: false
+        filter: false,
+        width: '30px',
       },
       name: {
         title: '名称',
@@ -191,7 +193,8 @@ export class HouseFeeComponent implements OnInit, AfterViewInit {
         title: 'ID',
         type: 'number',
         editable: false,
-        filter: false
+        filter: false,
+        width: '30px',
       },
       name: {
         title: '名称',
