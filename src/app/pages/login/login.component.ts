@@ -10,18 +10,18 @@ import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/fo
 export class Login {
 
   public form: FormGroup;
-  public userId: AbstractControl;
-  public password: AbstractControl;
+  public loginUserId: AbstractControl;
+  public loginPassword: AbstractControl;
   public submitted: boolean = false;
 
   constructor(private _router: Router, fb: FormBuilder) {
     this.form = fb.group({
-      'userId': ['', Validators.compose([Validators.required, Validators.minLength(4)])],
-      'password': ['', Validators.compose([Validators.required, Validators.minLength(4)])],
+      'loginUserId': ['', Validators.compose([Validators.required, Validators.minLength(4)])],
+      'loginPassword': ['', Validators.compose([Validators.required, Validators.minLength(4)])],
     });
 
-    this.userId = this.form.controls['userId'];
-    this.password = this.form.controls['password'];
+    this.loginUserId = this.form.controls['loginUserId'];
+    this.loginPassword = this.form.controls['loginPassword'];
   }
 
   public onSubmit(values: Object): void {
@@ -29,7 +29,7 @@ export class Login {
     if (this.form.valid) {
       // your code goes here
       // console.log(values);
-      sessionStorage.setItem('userId', this.userId.value);
+      sessionStorage.setItem('userId', this.loginUserId.value);
       this._router.navigate(['/pages/dashboard']);
     }
   }

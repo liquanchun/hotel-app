@@ -9,7 +9,7 @@
 :host /deep/ {
   ng2-smart-table {
     th, td {
-      border: 1px solid $border-light !important;
+      // border: 1px solid $border-light !important;
       line-height: 25px;
       vertical-align: middle;
     }
@@ -78,6 +78,59 @@
     nav.ng2-smart-pagination-nav {
       display: flex;
       justify-content: center;
+    }
+
+    .filterInputClass{
+      width: 100px;
+    }
+
+    .searchCol3{
+      padding-left: 0 !important;
+    }
+    .searchInputgroup{
+      margin-bottom: 0 !important;
+    }
+    ng2-st-thead-form-row td{
+      padding: 0;
+    }
+
+    table tr:hover{
+      background-color: #fbf8e9;
+      transition: all 0.1s ease-in-out;
+      }
+      table th,table td{
+          border-left: 1px solid #ccc;
+          border-top: 1px solid #ccc;
+          padding: 10px;
+          text-align: left;
+      }
+      table thead tr:first-child th{
+          background-color: #dce9f9;
+          border-top:none;
+      }
+      table thead tr:nth-child(2) th{
+        border:none;
+      }
+      table td:first-child,table th:first-child{
+          border-left: none;
+      }
+      table th:first-child{
+          border-radius: 6px 0 0 0;
+      }
+      table th:last-child{
+          border-radius: 0 6px 0 0;
+      }
+      table tr:last-child td:first-child{
+          border-radius: 0 0 0 6px;
+      }
+      table tr:last-child td:last-child{
+          border-radius: 0 0 6px 0;
+      }
+
+      table{
+        border:1px solid #ccc;
+        border-radius: 6px;
+        box-shadow: 0 1px 1px #ccc;
     }
   }
 }

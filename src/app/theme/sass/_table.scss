@@ -168,10 +168,10 @@ input.search-input {
     max-height: 214px;
 }
 
-.pagination>li>a,
-.pagination>li>span {
-    background: transparent;
-}
+// .pagination>li>a,
+// .pagination>li>span {
+//     background: transparent;
+// }
 
 .pagination>li:first-child>a,
 .pagination>li:first-child>span {
@@ -308,7 +308,7 @@ th {
 
 .pagination>li>a,
 .pagination>li>span {
-    color: $default-text;
+    color: #0275d8;
     border-color: $border;
 }
 
@@ -324,15 +324,15 @@ th {
     border-bottom-right-radius: 5px;
 }
 
-.pagination>.active>a,
-.pagination>.active>span,
-.pagination>.active>a:hover,
-.pagination>.active>span:hover,
-.pagination>.active>a:focus,
-.pagination>.active>span:focus {
-    background-color: rgba(0, 0, 0, .3)!important;
-    border-color: $border!important;
-}
+// .pagination>.active>a,
+// .pagination>.active>span,
+// .pagination>.active>a:hover,
+// .pagination>.active>span:hover,
+// .pagination>.active>a:focus,
+// .pagination>.active>span:focus {
+//     background-color: rgba(0, 0, 0, .3)!important;
+//     border-color: $border!important;
+// }
 
 .pagination>li>a:hover,
 .pagination>li>span:hover,
