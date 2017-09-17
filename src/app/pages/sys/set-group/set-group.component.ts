@@ -1,12 +1,17 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
+import { Subject } from 'rxjs/Subject';
+import { debounceTime } from 'rxjs/operator/debounceTime';
 
 import { SetGroupService } from './set-group.services';
 import { GlobalState } from '../../../global.state';
 import { DateTimeComponent } from '../../components/dateTimeRender/dateTimeRender.component';
 import { DatepickerViewComponent } from '../../components/datepickerView/datepickerView.component';
+import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
+import { DynamicFormComponent }
+  from '../../../theme/components/dynamic-form/containers/dynamic-form/dynamic-form.component';
 
 import * as $ from 'jquery';
 import * as _ from 'lodash';
@@ -19,11 +24,14 @@ import * as _ from 'lodash';
 })
 export class SetGroupComponent implements OnInit, AfterViewInit {
 
+  @ViewChild(DynamicFormComponent) form: DynamicFormComponent;
+  title = '协议单位';
   totalRecord = 89;
   page = 1;
   query: string = '';
 
   settings = {
+    mode: 'external',
     actions: {
       columnTitle: '操作'
     },
@@ -120,7 +128,88 @@ export class SetGroupComponent implements OnInit, AfterViewInit {
     }
   };
 
+  config: FieldConfig[] = [
+    {
+      type: 'input',
+      label: '名称',
+      name: 'name',
+      placeholder: '输入名称',
+      validation: [Validators.required, Validators.minLength(3)],
+    },
+    {
+      type: 'input',
+      label: '联系人',
+      name: 'linkMan',
+      placeholder: '输入联系人',
+      validation: [Validators.required],
+    },
+    {
+      type: 'input',
+      label: '电话',
+      name: 'mobile',
+      placeholder: '输入电话',
+    },
+    {
+      type: 'input',
+      label: '地址',
+      name: 'address',
+      placeholder: '输入地址',
+    },
+    {
+      type: 'input',
+      label: '合同号',
+      name: 'contractNo',
+      placeholder: '输入合同号',
+    },
+    {
+      type: 'input',
+      label: '合同号',
+      name: 'contractNo',
+      placeholder: '输入合同号',
+    },
+    {
+      type: 'datepicker',
+      label: '合同开始日期',
+      name: 'contractDate1',
+      placeholder: '输入合同开始日期',
+    },
+    {
+      type: 'datepicker',
+      label: '合同终止日期',
+      name: 'contractDate2',
+      placeholder: '输入合同终止日期',
+    },
+    {
+      type: 'input',
+      label: '早餐券',
+      name: 'coupons',
+      placeholder: '输入早餐券',
+    },
+    {
+      type: 'input',
+      label: '备注',
+      name: 'remark',
+      placeholder: '输入备注',
+    },
+    {
+      label: '保存',
+      name: 'submit',
+      type: 'button',
+      callback: this.backTop,
+    },
+  ];
   source: LocalDataSource = new LocalDataSource();
+
+  private tableDisplay: string = 'block';
+  private formDisplay: string = 'none';
+
+  private isNewGroup: boolean = false;
+  private editGroup: any;
+
+  private successMessage: string;
+  private _success = new Subject<string>();
+  private staticAlertClosed = false;
+  private alterType: string;
 
   constructor(
     private setGroupService: SetGroupService,
@@ -129,12 +218,36 @@ export class SetGroupComponent implements OnInit, AfterViewInit {
   }
   ngOnInit() {
 
+    setTimeout(() => this.staticAlertClosed = true, 20000);
+    this._success.subscribe((message) => this.successMessage = message);
+    debounceTime.call(this._success, 5000).subscribe(() => this.successMessage = null);
+
+    this._state.subscribe('backup-click', (x) => {
+      this.isNewGroup = false;
+      this.tableDisplay = 'block';
+      this.formDisplay = 'none';
+    });
   }
   ngAfterViewInit() {
+    let previousValid = this.form.valid;
+    this.form.changes.subscribe(() => {
+      if (this.form.valid !== previousValid) {
+        previousValid = this.form.valid;
+        this.form.setDisabled('submit', !previousValid);
+      }
+    });
 
+    this.form.setDisabled('submit', true);
   }
   onPageChange(p) {
     console.log("page:" + p);
+  }
+
+  onCreate() {
+    this.tableDisplay = 'none';
+    this.formDisplay = 'block';
+    this.isNewGroup = true;
+    this.title = '新增协议单位';
   }
 
   onSearch(query: string = '') {
@@ -145,10 +258,20 @@ export class SetGroupComponent implements OnInit, AfterViewInit {
     ], false);
     this.totalRecord = 67;
   }
+
   getDataList(): void {
     this.setGroupService.getSetGroups().then((data) => {
       this.source.load(data);
     });
+  }
+
+  onEdit(event): void {
+    this.editGroup = event;
+    this.isNewGroup = true;
+    this.tableDisplay = 'none';
+    this.formDisplay = 'block';
+    this.title = '修改协议单位';
+    console.log(event);
   }
   // 新增
   onCreateConfirm(event): void {
@@ -183,4 +306,45 @@ export class SetGroupComponent implements OnInit, AfterViewInit {
     }
   }
 
+  changeSuccessMessage(msg) {
+    this._success.next(msg);
+  }
+
+  submit(value: { [name: string]: any }) {
+    const that = this;
+    // const saveMenu = {
+    //   MenuName: value.MenuName,
+    //   MenuAddr: value.MenuAddr,
+    //   Icon: value.Icon,
+    //   MenuOrder: value.MenuOrder,
+    //   ParentId: 0,
+    // };
+    // if (this.isNewMenu) {
+    //   saveMenu.ParentId = this.selectedMenu && this.selectedMenu.data ? this.selectedMenu.data.id : 0;
+    //   this.menuService.create(saveMenu).then(function (menu) {
+    //     that.getNodes();
+    //     that.form.setDisabled('submit', false);
+    //     that.changeSuccessMessage(`保存成功。`);
+    //   }, (err) => {
+    //     that.alterType = 'danger';
+    //     that.changeSuccessMessage(`保存失败。${err}`);
+    //   });
+    // } else {
+    //   saveMenu.ParentId = this.selectedMenu && this.selectedMenu.data ? this.selectedMenu.data.parentId : 0;
+    //   this.menuService.update(this.selectedMenu.data.id, saveMenu).then(function (menu) {
+    //     that.getNodes();
+    //     that.form.setDisabled('submit', false);
+    //   }, (err) => {
+    //     that.alterType = 'danger';
+    //     that.changeSuccessMessage(`保存失败。${err}`);
+    //   });
+    // }
+  }
+
+  backTop(event): void {
+    console.log(event);
+    this.isNewGroup = false;
+    this.tableDisplay = 'block';
+    this.formDisplay = 'none';
+  }
 }

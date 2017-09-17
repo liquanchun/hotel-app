@@ -10,6 +10,7 @@ import { MemberComponent } from './member/member.component';
 import { SysComponent } from './sys.component';
 import { SetGroupComponent } from './set-group/set-group.component';
 import { SetAgentComponent } from './set-agent/set-agent.component';
+import { SetPaytypeComponent } from './set-paytype/set-paytype.component';
 
 // noinspection TypeScriptValidateTypes
 const routes: Routes = [
@@ -26,6 +27,7 @@ const routes: Routes = [
       { path: 'member', component: MemberComponent },
       { path: 'set-group', component: SetGroupComponent },
       { path: 'set-agent', component: SetAgentComponent },
+      { path: 'set-paytype', component: SetPaytypeComponent },
     ]
   },
 ];

@@ -27,15 +27,15 @@ export class DynamicFormComponent implements OnChanges, OnInit {
 
   @Output()
   submit: EventEmitter<any> = new EventEmitter<any>();
-
+ 
   form: FormGroup;
 
-  get controls() { return this.config.filter(({type}) => type !== 'button'); }
+  get controls() { return this.config.filter(({ type }) => type !== 'button'); }
   get changes() { return this.form.valueChanges; }
   get valid() { return this.form.valid; }
   get value() { return this.form.value; }
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder) { }
 
   ngOnInit() {
     this.form = this.createGroup();
@@ -79,7 +79,7 @@ export class DynamicFormComponent implements OnChanges, OnInit {
 
   setDisabled(name: string, disable: boolean) {
     if (this.form.controls[name]) {
-      const method = disable ? 'disable': 'enable';
+      const method = disable ? 'disable' : 'enable';
       this.form.controls[name][method]();
       return;
     }
@@ -93,6 +93,6 @@ export class DynamicFormComponent implements OnChanges, OnInit {
   }
 
   setValue(name: string, value: any) {
-    this.form.controls[name].setValue(value, {emitEvent: true});
+    this.form.controls[name].setValue(value, { emitEvent: true });
   }
 }

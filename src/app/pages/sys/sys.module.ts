@@ -21,6 +21,7 @@ import { HouseFeeComponent } from './house-fee/house-fee.component';
 import { MemberComponent } from './member/member.component';
 import { SetGroupComponent } from './set-group/set-group.component';
 import { SetAgentComponent } from './set-agent/set-agent.component';
+import { SetPaytypeComponent } from './set-paytype/set-paytype.component';
 
 import { FunctionComponent } from './components/function/function.component';
 import { MenuComponent } from './components/menu/menu.component';
@@ -75,6 +76,7 @@ import { ComponentsModule } from '../components/components.module';
     MemberComponent,
     SetGroupComponent,
     SetAgentComponent,
+    SetPaytypeComponent,
   ],
   providers: [GlobalState, Config, HttpService, AppState]
 })

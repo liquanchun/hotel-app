@@ -13,6 +13,8 @@ import { FormMultiSelectComponent } from './components/form-multiselect/form-mul
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MultiselectDropdownModule } from 'angular-2-dropdown-multiselect';
+import { GlobalState } from '../../../global.state';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -40,6 +42,7 @@ import { MultiselectDropdownModule } from 'angular-2-dropdown-multiselect';
     FormCheckComponent,
     FormDatepickerComponent,
     FormMultiSelectComponent
-  ]
+  ],
+  providers: [GlobalState]
 })
 export class DynamicFormModule { }

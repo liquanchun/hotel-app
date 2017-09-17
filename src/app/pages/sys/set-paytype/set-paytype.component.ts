@@ -3,21 +3,19 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 
-import { SetAgentService } from './set-agent.services';
+import { SetPaytypeService } from './set-paytype.services';
 import { GlobalState } from '../../../global.state';
-import { DateTimeComponent } from '../../components/dateTimeRender/dateTimeRender.component';
-import { DatepickerViewComponent } from '../../components/datepickerView/datepickerView.component';
 
 import * as $ from 'jquery';
 import * as _ from 'lodash';
 
 @Component({
-  selector: 'app-set-agent',
-  templateUrl: './set-agent.component.html',
-  styleUrls: ['./set-agent.component.scss'],
-  providers: [SetAgentService],
+  selector: 'app-set-paytype',
+  templateUrl: './set-paytype.component.html',
+  styleUrls: ['./set-paytype.component.scss'],
+  providers: [SetPaytypeService],
 })
-export class SetAgentComponent implements OnInit, AfterViewInit {
+export class SetPaytypeComponent implements OnInit, AfterViewInit {
 
   query: string = '';
 
@@ -25,12 +23,11 @@ export class SetAgentComponent implements OnInit, AfterViewInit {
     actions: {
       columnTitle: '操作'
     },
-    hideSubHeader: true,
     add: {
       addButtonContent: '<i class="ion-ios-plus-outline"></i>',
       createButtonContent: '<i class="ion-checkmark"></i>',
       cancelButtonContent: '<i class="ion-close"></i>',
-      confirmCreate: false,
+      confirmCreate: true,
     },
     edit: {
       editButtonContent: '<i class="ion-edit"></i>',
@@ -50,86 +47,66 @@ export class SetAgentComponent implements OnInit, AfterViewInit {
         filter: false,
         width: '30px',
       },
+      code: {
+        title: '代码',
+        type: 'string',
+        filter: false
+      },
       name: {
         title: '名称',
         type: 'string',
-        width: '100px',
-        filter: false,
+        filter: false
       },
-      linkMan: {
-        title: '联系人',
+      payType: {
+        title: '支付类型',
         type: 'string',
-        filter: false,
-        width: '80px',
+        filter: false
       },
-      mobile: {
-        title: '电话',
-        type: 'number',
+      isReturnT: {
+        title: '是否可退',
         filter: false,
-        width: '80px',
-      },
-      contractNo: {
-        title: '合同号',
-        type: 'string',
-        filter: false,
-        width: '80px',
-      },
-      contractDate1: {
-        title: '合同开始日期',
-        type: 'custom',
-        filter: false,
-        renderComponent: DateTimeComponent,
         editor: {
-          type: 'custom',
-          component: DatepickerViewComponent,
-        },
-      },
-      contractDate2: {
-        title: '合同截止日期',
-        type: 'custom',
-        filter: false,
-        renderComponent: DateTimeComponent,
-        editor: {
-          type: 'custom',
-          component: DatepickerViewComponent,
-        },
-      },
-      accountFee: {
-        title: '挂账金额',
-        type: 'number',
-        filter: false,
-        editable: false,
-      },
-      commissionType: {
-        title: '返佣模式',
-        type: 'string',
-        filter: false,
-        width: '80px',
-        editor: {
-          type: 'list',
+          type: 'checkbox',
           config: {
-            list: [{ value: '按单', title: '按单' }, { value: '按金额', title: '按金额' }],
+            true: '是',
+            false: '否',
           },
         },
       },
-      commissionRate: {
-        title: '返佣点数',
-        type: 'number',
+      isIntegralT: {
+        title: '是否积分',
         filter: false,
-        width: '80px',
+        editor: {
+          type: 'checkbox',
+          config: {
+            true: '是',
+            false: '否',
+          },
+        },
+      },
+      isDefaultT: {
+        title: '是否默认',
+        filter: false,
+        editor: {
+          type: 'checkbox',
+          config: {
+            true: '是',
+            false: '否',
+          },
+        },
       },
       remark: {
         title: '备注',
         type: 'string',
         filter: false
-      },
+      }
     }
   };
 
   source: LocalDataSource = new LocalDataSource();
 
   constructor(
-    private setAgentService: SetAgentService,
+    private setPaytypeService: SetPaytypeService,
     private _state: GlobalState) {
     this.getDataList();
   }
@@ -139,26 +116,16 @@ export class SetAgentComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
 
   }
-  onSearch(query: string = '') {
-    this.source.setFilter([
-      { field: 'name', search: query },
-      { field: 'linkMan', search: query },
-      { field: 'mobile', search: query },
-    ], false);
-  }
+
   getDataList(): void {
-    this.setAgentService.getSetAgents().then((data) => {
+    this.setPaytypeService.getSetPaytypes().then((data) => {
       this.source.load(data);
     });
-  }
-
-  onNewAgent(event):void{
-    
   }
   // 新增
   onCreateConfirm(event): void {
     if (event.newData) {
-      this.setAgentService.create(event.newData).then((data) => {
+      this.setPaytypeService.create(event.newData).then((data) => {
         event.confirm.resolve(event.newData);
         this.getDataList();
       });
@@ -169,7 +136,7 @@ export class SetAgentComponent implements OnInit, AfterViewInit {
   // 修改
   onSaveConfirm(event): void {
     if (event.newData && event.newData.id) {
-      this.setAgentService.update(event.newData.id, event.newData).then((data) => {
+      this.setPaytypeService.update(event.newData.id, event.newData).then((data) => {
         event.confirm.resolve(event.newData);
         this.getDataList();
       });
@@ -180,7 +147,7 @@ export class SetAgentComponent implements OnInit, AfterViewInit {
   // 删除
   onDeleteConfirm(event): void {
     if (window.confirm('你确定要删除吗?')) {
-      this.setAgentService.delete(event.data.id).then((data) => {
+      this.setPaytypeService.delete(event.data.id).then((data) => {
         event.confirm.resolve();
       });
     } else {
