@@ -7,6 +7,7 @@ import { debounceTime } from 'rxjs/operator/debounceTime';
 
 import { SetGroupService } from './set-group.services';
 import { GlobalState } from '../../../global.state';
+import { Common } from '../../../providers/common';
 import { DateTimeComponent } from '../../components/dateTimeRender/dateTimeRender.component';
 import { DatepickerViewComponent } from '../../components/datepickerView/datepickerView.component';
 import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
@@ -162,12 +163,6 @@ export class SetGroupComponent implements OnInit, AfterViewInit {
       placeholder: '输入合同号',
     },
     {
-      type: 'input',
-      label: '合同号',
-      name: 'contractNo',
-      placeholder: '输入合同号',
-    },
-    {
       type: 'datepicker',
       label: '合同开始日期',
       name: 'contractDate1',
@@ -213,6 +208,7 @@ export class SetGroupComponent implements OnInit, AfterViewInit {
 
   constructor(
     private setGroupService: SetGroupService,
+    private _common: Common,
     private _state: GlobalState) {
     this.getDataList();
   }
@@ -256,22 +252,40 @@ export class SetGroupComponent implements OnInit, AfterViewInit {
       { field: 'linkMan', search: query },
       { field: 'mobile', search: query },
     ], false);
-    this.totalRecord = 67;
   }
 
   getDataList(): void {
     this.setGroupService.getSetGroups().then((data) => {
       this.source.load(data);
+      this.totalRecord = data.length;
     });
   }
 
   onEdit(event): void {
     this.editGroup = event;
-    this.isNewGroup = true;
+    this.isNewGroup = false;
     this.tableDisplay = 'none';
     this.formDisplay = 'block';
     this.title = '修改协议单位';
-    console.log(event);
+
+    this.form.setValue('name', event.data.name);
+    this.form.setValue('linkMan', event.data.linkMan);
+    this.form.setValue('mobile', event.data.mobile);
+    this.form.setValue('address', event.data.address);
+    this.form.setValue('contractNo', event.data.contractNo);
+    this.form.setValue('contractDate1', {
+      "year": this._common.getDateYear(event.data.contractDate1),
+      "month": this._common.getDateMonth(event.data.contractDate1),
+      "day": this._common.getDateDay(event.data.contractDate1)
+    });
+    this.form.setValue('contractDate2', {
+      "year": this._common.getDateYear(event.data.contractDate2),
+      "month": this._common.getDateMonth(event.data.contractDate2),
+      "day": this._common.getDateDay(event.data.contractDate2)
+    });
+    this.form.setValue('coupons', event.data.coupons);
+    this.form.setValue('remark', event.data.remark);
+    this.form.setDisabled('submit', false);
   }
   // 新增
   onCreateConfirm(event): void {
@@ -312,37 +326,33 @@ export class SetGroupComponent implements OnInit, AfterViewInit {
 
   submit(value: { [name: string]: any }) {
     const that = this;
-    // const saveMenu = {
-    //   MenuName: value.MenuName,
-    //   MenuAddr: value.MenuAddr,
-    //   Icon: value.Icon,
-    //   MenuOrder: value.MenuOrder,
-    //   ParentId: 0,
-    // };
-    // if (this.isNewMenu) {
-    //   saveMenu.ParentId = this.selectedMenu && this.selectedMenu.data ? this.selectedMenu.data.id : 0;
-    //   this.menuService.create(saveMenu).then(function (menu) {
-    //     that.getNodes();
-    //     that.form.setDisabled('submit', false);
-    //     that.changeSuccessMessage(`保存成功。`);
-    //   }, (err) => {
-    //     that.alterType = 'danger';
-    //     that.changeSuccessMessage(`保存失败。${err}`);
-    //   });
-    // } else {
-    //   saveMenu.ParentId = this.selectedMenu && this.selectedMenu.data ? this.selectedMenu.data.parentId : 0;
-    //   this.menuService.update(this.selectedMenu.data.id, saveMenu).then(function (menu) {
-    //     that.getNodes();
-    //     that.form.setDisabled('submit', false);
-    //   }, (err) => {
-    //     that.alterType = 'danger';
-    //     that.changeSuccessMessage(`保存失败。${err}`);
-    //   });
-    // }
+    value.contractDate1 = this._common.getDateString(value.contractDate1);
+    value.contractDate2 = this._common.getDateString(value.contractDate2);
+    if(this.isNewGroup){
+      this.setGroupService.create(value).then(function (menu) {
+        that.getDataList();
+        that.form.setDisabled('submit', false);
+        that.changeSuccessMessage(`保存成功。`);
+        that.backTop();
+      }, (err) => {
+        that.alterType = 'danger';
+        that.changeSuccessMessage(`保存失败。${err}`);
+      });
+    } else {
+      value.id = this.editGroup.data.id;
+      this.setGroupService.update(value.id, value).then(function (menu) {
+        that.getDataList();
+        that.form.setDisabled('submit', false);
+        that.changeSuccessMessage(`保存成功。`);
+        that.backTop();
+      }, (err) => {
+        that.alterType = 'danger';
+        that.changeSuccessMessage(`保存失败。${err}`);
+      });
+    }
   }
 
-  backTop(event): void {
-    console.log(event);
+  backTop(): void {
     this.isNewGroup = false;
     this.tableDisplay = 'block';
     this.formDisplay = 'none';

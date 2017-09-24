@@ -36,6 +36,7 @@ import { GlobalState } from '../../global.state';
 import { AppState } from '../../app.service';
 
 import { HttpService } from '../../providers/httpClient';
+import { Common } from '../../providers/common';
 import { MultiselectDropdownModule } from 'angular-2-dropdown-multiselect';
 import { TreeModule } from 'angular-tree-component';
 
@@ -78,7 +79,7 @@ import { ComponentsModule } from '../components/components.module';
     SetAgentComponent,
     SetPaytypeComponent,
   ],
-  providers: [GlobalState, Config, HttpService, AppState]
+  providers: [GlobalState, Config, HttpService, AppState,Common]
 })
 export class SysModule { }
 

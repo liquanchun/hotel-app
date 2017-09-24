@@ -11,8 +11,8 @@ import * as _ from 'lodash';
   styleUrls: ['form-check.component.scss'],
   template: ` 
     <div class="dynamic-field form-group row" [formGroup]="group" >
-      <div class="col-md-2"><label>{{config.label}}</label></div>
-      <div class="col-md-10">
+      <div class="col-md-3"><label>{{config.label}}</label></div>
+      <div class="col-md-9">
         <div *ngFor="let option of config.options" class="form-check form-check-inline">
           <label class="form-check-label">
             <input [name]="config.name"  [formControlName]="config.name" class="form-check-input" (click)="onCheck(option.id,$event)" [type]="config.check" [id]="option.id" [value]="option.id"> {{ option.name }}

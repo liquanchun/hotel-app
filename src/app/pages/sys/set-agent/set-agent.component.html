@@ -1,6 +1,7 @@
 <div class="row">
   <div class="col-md-12">
-    <ba-card title="中介平台" baCardClass="with-scroll">
+    <ba-card [title]="title" baCardClass="with-scroll">
+      <div [style.display]="tableDisplay">
       <div class="row">
         <div class="col-3">
           <div class="input-group">
@@ -18,8 +19,17 @@
           </div>
         </div>
       </div>
-      <ng2-smart-table [settings]="settings" [source]="source" (deleteConfirm)="onDeleteConfirm($event)" (editConfirm)="onSaveConfirm($event)"
+      <ng2-smart-table [settings]="settings" [source]="source"  (edit)="onEdit($event)" (deleteConfirm)="onDeleteConfirm($event)" (editConfirm)="onSaveConfirm($event)"
         (createConfirm)="onCreateConfirm($event)"></ng2-smart-table>
+      </div>
+      <div [style.display]="formDisplay">
+          <div class="col-5 col-offset-3">
+            <ngb-alert *ngIf="successMessage" type="success" (close)="successMessage = null">{{ successMessage }}</ngb-alert>
+            <dynamic-form [config]="config" #form="dynamicForm"  (submit)="submit($event)">
+            </dynamic-form>
+            {{ form.valid }} {{ form.value | json }}
+          </div>
+        </div>
     </ba-card>
   </div>
 </div>

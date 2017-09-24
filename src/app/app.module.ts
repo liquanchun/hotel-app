@@ -19,12 +19,14 @@ import { NgaModule } from './theme/nga.module';
 import { PagesModule } from './pages/pages.module';
 
 import { HttpService } from './providers/httpClient';
+import { Common } from './providers/common';
 import { Config } from './providers/config';
 // Application wide providers
 const APP_PROVIDERS = [
   AppState,
   GlobalState,
   HttpService,
+  Common,
   Config
 ];
 

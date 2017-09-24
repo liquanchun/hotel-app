@@ -12,7 +12,7 @@ import { FieldConfig } from '../../models/field-config.interface';
     <div 
       class="dynamic-field form-button row"
       [formGroup]="group">
-      <div class="offset-md-2 col-md-10">
+      <div class="offset-md-3 col-md-9">
       <button class="btn btn-info"
         [disabled]="config.disabled"
         type="submit">

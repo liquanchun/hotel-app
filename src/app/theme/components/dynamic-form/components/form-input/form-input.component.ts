@@ -11,8 +11,8 @@ import { FieldConfig } from '../../models/field-config.interface';
     <div 
       class="dynamic-field form-input row" 
       [formGroup]="group">
-      <label for="config.name" class="col-md-2 col-form-label">{{ config.label }}</label>
-      <div class="col-md-10">
+      <label for="config.name" class="col-md-3 col-form-label">{{ config.label }}</label>
+      <div class="col-md-9">
       <input class="form-control" 
         type="text"
         [attr.placeholder]="config.placeholder"

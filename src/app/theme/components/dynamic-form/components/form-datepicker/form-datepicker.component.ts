@@ -11,8 +11,8 @@ import { FieldConfig } from '../../models/field-config.interface';
     <div 
       class="dynamic-field form-input row" 
       [formGroup]="group">
-      <label for="config.name" class="col-md-2 col-form-label">{{ config.label }}</label>
-      <div class="form-group col-md-10">
+      <label for="config.name" class="col-md-3 col-form-label">{{ config.label }}</label>
+      <div class="form-group col-md-9">
         <div class="input-group">
           <input class="form-control" placeholder="yyyy-mm-dd"
                 [formControlName]="config.name" ngbDatepicker #d="ngbDatepicker">
