@@ -12,7 +12,7 @@ import { SupplierComponent } from './supplier/Supplier.component';
 const routes: Routes = [
   {
     path: '',
-    component: HouseComponent,
+    component: StoreComponent,
     children: [
       { path: 'adddel', component: AdddelComponent },
       { path: 'goods', component: GoodsComponent },
