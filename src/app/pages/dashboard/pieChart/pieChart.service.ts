@@ -12,23 +12,23 @@ export class PieChartService {
     return [
       {
         color: pieColor,
-        description: 'dashboard.new_visits',
-        stats: '57,820',
+        description: '今日入住人数',
+        stats: '120',
         icon: 'person',
       }, {
         color: pieColor,
-        description: 'dashboard.purchases',
-        stats: '$ 89,745',
+        description: '今日营业额',
+        stats: '7,745',
         icon: 'money',
       }, {
         color: pieColor,
-        description: 'dashboard.active_users',
-        stats: '178,391',
+        description: '今日预约房间',
+        stats: '21',
         icon: 'face',
       }, {
         color: pieColor,
-        description: 'dashboard.returned',
-        stats: '32,592',
+        description: '今日新增会员',
+        stats: '8',
         icon: 'refresh',
       }
     ];

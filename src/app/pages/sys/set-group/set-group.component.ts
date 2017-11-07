@@ -309,14 +309,12 @@ export class SetGroupComponent implements OnInit, AfterViewInit {
       event.confirm.reject();
     }
   }
-  // 删除
-  onDeleteConfirm(event): void {
+  //删除
+  onDelete(event){
     if (window.confirm('你确定要删除吗?')) {
       this.setGroupService.delete(event.data.id).then((data) => {
-        event.confirm.resolve();
+        this.getDataList();
       });
-    } else {
-      event.confirm.reject();
     }
   }
 

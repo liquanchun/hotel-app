@@ -29,8 +29,14 @@ export const routes: Routes = [
       { path: 'tables', loadChildren: './tables/tables.module#TablesModule' },
       { path: 'maps', loadChildren: './maps/maps.module#MapsModule' },
       { path: 'sys', loadChildren: './sys/sys.module#SysModule' },
-      { path: 'fw', loadChildren: './fw/house.module#HouseModule' },
-      { path: 'kc', loadChildren: './kc/store.module#StoreModule' },
+      { path: 'house', loadChildren: './house/house.module#HouseModule' },
+      { path: 'store', loadChildren: './store/store.module#StoreModule' },
+      { path: 'frontdesk', loadChildren: './frontdesk/frontdesk.module#FrontdeskModule' },
+      { path: 'order', loadChildren: './order/order.module#OrderModule' },
+      { path: 'market', loadChildren: './market/market.module#MarketModule' },
+      { path: 'report', loadChildren: './report/report.module#ReportModule' },
+      { path: 'sms', loadChildren: './sms/sms.module#SmsModule' },
+      { path: 'account', loadChildren: './account/account.module#AccountModule' },
     ]
   }
 ];

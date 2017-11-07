@@ -174,8 +174,7 @@
         }
       }
       .msg-area {
-        float: right;
-        width: 230px;
+        width: 273px;
         div {
           max-height: 34px;
           overflow: hidden;
@@ -215,9 +214,6 @@
       text-decoration: none;
       color: $dropdown-text;
       padding: 4px 16px 4px 20px;
-      &.signout {
-        border-top: 1px solid $default;
-      }
       i {
         margin-right: 10px;
       }

@@ -15,7 +15,6 @@ export class BaMsgCenter {
 
   constructor(private _baMsgCenterService:BaMsgCenterService) {
     this.notifications = this._baMsgCenterService.getNotifications();
-    this.messages = this._baMsgCenterService.getMessages();
   }
 
 }

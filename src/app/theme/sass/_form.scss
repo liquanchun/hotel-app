@@ -57,6 +57,11 @@
         border-color: $primary-bg;
         background: $input-background;
     }
+    padding: 0.4rem 0.75rem !important;
+}
+
+select{
+    padding: 7px 9px !important;
 }
 
 select.form-control {

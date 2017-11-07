@@ -4,16 +4,11 @@ import {Injectable} from '@angular/core';
 export class TodoService {
 
   private _todoList = [
-    { text: 'Check me out' },
-    { text: 'Lorem ipsum dolor sit amet, possit denique oportere at his, etiam corpora deseruisse te pro' },
-    { text: 'Ex has semper alterum, expetenda dignissim' },
-    { text: 'Vim an eius ocurreret abhorreant, id nam aeque persius ornatus.' },
-    { text: 'Simul erroribus ad usu' },
-    { text: 'Ei cum solet appareat, ex est graeci mediocritatem' },
-    { text: 'Get in touch with akveo team' },
-    { text: 'Write email to business cat' },
-    { text: 'Have fun with blur admin' },
-    { text: 'What do you think?' },
+    { text: '王珊珊今天请假' },
+    { text: '昨天302房间客户丢失衣物' },
+    { text: '今日英语网公司来访' },
+    { text: '409房间淋浴房坏了' },
+    { text: '老坛酸菜牛肉面库存不足' },
   ];
 
   getTodoList() {

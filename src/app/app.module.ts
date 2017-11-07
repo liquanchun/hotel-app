@@ -17,10 +17,13 @@ import { AppState, InternalStateType } from './app.service';
 import { GlobalState } from './global.state';
 import { NgaModule } from './theme/nga.module';
 import { PagesModule } from './pages/pages.module';
+import { NgbdModalContent } from './modal-content.component';
 
 import { HttpService } from './providers/httpClient';
 import { Common } from './providers/common';
 import { Config } from './providers/config';
+
+import { DynamicFormModule } from './theme/components/dynamic-form/dynamic-form.module';
 // Application wide providers
 const APP_PROVIDERS = [
   AppState,
@@ -42,7 +45,8 @@ export type StoreType = {
 @NgModule({
   bootstrap: [App],
   declarations: [
-    App
+    App,
+    NgbdModalContent
   ],
   imports: [ // import Angular's modules
     BrowserModule,
@@ -54,7 +58,9 @@ export type StoreType = {
     NgbModule.forRoot(),
     PagesModule,
     routing,
+    DynamicFormModule,
   ],
+  entryComponents: [NgbdModalContent],
   providers: [ // expose our Services and Providers into Angular's dependency injection
     APP_PROVIDERS
   ]

@@ -2,7 +2,9 @@
 @import '../../components/baMsgCenter/baMsgCenter';
 
 :host /deep/ {
-
+  .dropdown-item{
+    padding: 3px 0.5rem;
+  }
   .page-top {
     background-color: $sidebar;
     position: fixed;

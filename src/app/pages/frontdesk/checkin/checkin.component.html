@@ -1,0 +1,109 @@
+<div class="row">
+  <div class="col-md-12">
+    <ba-card [title]="title" class="card-primary" baCardClass="with-scroll">
+      <div class="row">
+        <div class="col-md-5">
+          <div class="form-group row">
+            <label for="inputName" class="col-sm-2 col-form-label">客人姓名</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="inputName" placeholder="输入客人姓名">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputMobile" class="col-sm-2 col-form-label">电话号码</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="inputMobile" placeholder="输入电话号码">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputId" class="col-sm-2 col-form-label">身份证号</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="inputId" placeholder="输入身份证号">
+            </div>
+            <div class="btn-group margin8 col-sm-1" role="group" aria-label="Basic example">
+              <button (click)="newHouse()" type="button" class="btn btn-success btn-sm">
+                <i class="fa fa-refresh" aria-hidden="true"></i> 读取身份证信息</button>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputId" class="col-sm-2 col-form-label">入住方式</label>
+            <div class="col-sm-10">
+              <div class="form-check form-check-inline">
+                <label class="form-check-label">
+                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1"> 全天房
+                </label>
+              </div>
+              <div class="form-check form-check-inline">
+                <label class="form-check-label">
+                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2"> 钟点房
+                </label>
+              </div>
+              <div class="form-check form-check-inline">
+                <label class="form-check-label">
+                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> 特殊房
+                </label>
+              </div>
+              <div class="form-check form-check-inline">
+                <label class="form-check-label">
+                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> 免费房
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-10">
+          <fieldset class="form-group">
+            <div class="row">
+              <legend class="col-form-legend col-sm-1">房间信息</legend>
+
+              <div class="col-sm-11">
+                <div class="btn-group" role="group" aria-label="Basic example">
+                  <button placement="right" 
+                  (shown)="showPop()" [ngbPopover]="popContent" popoverTitle="房间信息列表" type="button" class="btn btn-success btn-sm" container="body">
+                    <i class="fa fa-refresh" aria-hidden="true"></i> 选择房间</button>
+
+                  <button type="button" style="visibility:hidden" class="btn btn-outline-secondary" [ngbPopover]="popContent">
+                    Default popover
+                  </button>
+
+                  <button type="button" style="visibility:hidden" placement="right" class="btn btn-outline-secondary" [ngbPopover]="popContent"
+                    container="body">
+                    Popover appended to body
+                  </button>
+                  <button type="button" style="visibility:hidden" placement="right" class="btn btn-outline-secondary" [ngbPopover]="popContent"
+                  container="body">
+                  Popover appended to body
+                </button>
+                </div>
+
+                <ng2-smart-table [settings]="settingsHouse" [source]="sourceHouse" (deleteConfirm)="onDeleteConfirm($event)" (editConfirm)="onSaveConfirm($event)"
+                  (createConfirm)="onCreateConfirm($event)">
+                </ng2-smart-table>
+              </div>
+            </div>
+          </fieldset>
+
+          <div class="form-group row">
+            <div class="col-sm-10 offset-sm-1 btn-group">
+              <button type="submit" class="btn btn-info">确认入住</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <ng-template #popContent>
+        <div class="input-group">
+          <input #search type="text" class="form-control" (keydown.enter)="onSearch(search.value)" placeholder="Search for..." aria-label="Search for...">
+          <span class="input-group-btn btn-group">
+            <button class="btn btn-secondary" (click)="onSearch(search.value)" type="button">
+              <i class="fa fa-search" aria-hidden="true"></i> 查询</button>
+          </span>
+        </div>
+        <ng2-smart-table [settings]="settings" [source]="source">
+        </ng2-smart-table>
+      </ng-template>
+
+    </ba-card>
+  </div>
+</div>

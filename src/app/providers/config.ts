@@ -23,7 +23,7 @@ export class Config {
 	constructor() {
 		if (this.isProduct) {
 
-			this.server = 'https://moa.gffunds.com.cn:8843/';
+			this.server = 'http://localhost:5000/';
 			// this.server = 'http://58.248.27.170:8082/';
 
 			this.pageSize = 20;
