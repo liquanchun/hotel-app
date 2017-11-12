@@ -8,6 +8,7 @@ import { FormButtonComponent } from './components/form-button/form-button.compon
 import { FormInputComponent } from './components/form-input/form-input.component';
 import { FormSelectComponent } from './components/form-select/form-select.component';
 import { FormCheckComponent } from './components/form-check/form-check.component';
+import { FormTrueFalseComponent } from './components/form-truefalse/form-truefalse.component';
 import { FormDatepickerComponent } from './components/form-datepicker/form-datepicker.component';
 import { FormMultiSelectComponent } from './components/form-multiselect/form-multiselect.component';
 
@@ -29,6 +30,7 @@ import { GlobalState } from '../../../global.state';
     FormInputComponent,
     FormSelectComponent,
     FormCheckComponent,
+    FormTrueFalseComponent,
     FormDatepickerComponent,
     FormMultiSelectComponent
   ],
@@ -40,6 +42,7 @@ import { GlobalState } from '../../../global.state';
     FormInputComponent,
     FormSelectComponent,
     FormCheckComponent,
+    FormTrueFalseComponent,
     FormDatepickerComponent,
     FormMultiSelectComponent
   ],

@@ -11,45 +11,29 @@ import { Md5 } from 'ts-md5/dist/md5';
 
 import { HouseinfoService } from '../../house/houseinfo/houseinfo.services';
 import { CheckinService } from './checkin.services';
+import { ReadIdCardService } from './idcardread.services';
+import { HouseTypeService } from '../../sys/house-type/house-type.services';
+
 import { GlobalState } from '../../../global.state';
+import { ButtonViewComponent } from './buttonview.component';
 
 @Component({
   selector: 'app-qt-checkin',
   templateUrl: './checkin.component.html',
   styleUrls: ['./checkin.component.scss'],
-  providers: [CheckinService, HouseinfoService],
+  providers: [CheckinService, HouseinfoService, ReadIdCardService,HouseTypeService],
 })
 export class CheckinComponent implements OnInit, AfterViewInit {
   @Input() showEditButton: boolean = true;
   title = '客人入住';
-  public loading = false;
-  private isNewCheckin: boolean;
 
   private message: string;
-  private selectedCheckin: any;
-
-  private checkins: any;
-  private checkinsfilter: any;
-
-  private checkinForm: FormGroup;
-  private checkinid: AbstractControl;
-  private checkinname: AbstractControl;
-  private mobile: AbstractControl;
-  private weixin: AbstractControl;
-  private email: AbstractControl;
-  private pwd: AbstractControl;
-  private isvalid: AbstractControl;
-
-  private submitted: boolean = false;
-  private editCheckin: any;
-  private roles: any;
-
-  private selectVal: any = [];
-
   private successMessage: string;
   private _success = new Subject<string>();
   private staticAlertClosed = false;
   private alterType: string;
+  private checkIn: any = { cusname: '', cusphone: '', IDCard: '', InType: '', remark: '' };
+  private selectedRow: any;
 
   settingsHouse = {
     actions: {
@@ -74,20 +58,23 @@ export class CheckinComponent implements OnInit, AfterViewInit {
       confirmDelete: true
     },
     columns: {
-      name: {
+      houseType: {
         title: '房型',
         type: 'string',
-        filter: false
+        filter: false,
+        editable: false
       },
-      level: {
+      code: {
         title: '房号',
         type: 'number',
-        filter: false
+        filter: false,
+        editable: false
       },
       cardFee: {
         title: '房价',
         type: 'number',
-        filter: false
+        filter: false,
+        editable: false
       },
       days: {
         title: '入住天数',
@@ -113,15 +100,26 @@ export class CheckinComponent implements OnInit, AfterViewInit {
         title: '备注',
         type: 'string',
         filter: false
+      },
+      button: {
+        title: '...',
+        type: 'custom',
+        renderComponent: ButtonViewComponent,
+        onComponentInitFunction(instance) {
+          instance.save.subscribe(row => {
+            alert(`${row.name} saved!`)
+          });
+        },
+        editable: false
       }
     }
   };
 
   settings = {
-    actions:{
-      add:false,
-      edit:false,
-      delete:false
+    actions: {
+      add: false,
+      edit: false,
+      delete: false
     },
     mode: 'external',
     selectMode: 'multi',
@@ -133,7 +131,7 @@ export class CheckinComponent implements OnInit, AfterViewInit {
         filter: false,
         width: '60px',
       },
-      houseType: {
+      houseTypeTxt: {
         title: '房型',
         type: 'string',
         filter: false,
@@ -147,77 +145,52 @@ export class CheckinComponent implements OnInit, AfterViewInit {
       }
     }
   };
-
-  sourceHouse: LocalDataSource = new LocalDataSource();
-  source: LocalDataSource = new LocalDataSource();
+  houseType = [
+  ];
+  //选择房间表格
+  selectedGrid: LocalDataSource = new LocalDataSource();
+  //弹出框选择
+  popGrid: LocalDataSource = new LocalDataSource();
+  //选择的房间
+  selectedHouse: any = [];
 
   constructor(
     private _state: GlobalState,
-    private checkinService: CheckinService,
-    private houseinfoService: HouseinfoService,
+    private _checkinService: CheckinService,
+    private _houseinfoService: HouseinfoService,
+    private _houseTypeService: HouseTypeService,
+    private _readIdCardService: ReadIdCardService,
     fb: FormBuilder) {
 
-    this.checkinForm = fb.group({
-      'checkinid': ['', Validators.compose([Validators.required, Validators.minLength(3)])],
-      'checkinname': ['', Validators.compose([Validators.required, Validators.minLength(2)])],
-      'mobile': ['', Validators.compose([Validators.required, Validators.minLength(11)])],
-      'pwd': ['', Validators.compose([Validators.required, Validators.minLength(6)])],
-      'weixin': [''],
-      'email': [''],
-      'isvalid': [''],
-      'roleids': [''],
+    this._state.subscribe('read.idcard', (data) => {
+      let newrowdata = _.find(this.selectedHouse, function (o) { return o['code'] == data.code; });
+      if (newrowdata) {
+        newrowdata['cusname'] = data.name;
+        newrowdata['cusid'] = data.idcard;
+      }
+      this.selectedGrid.refresh();
     });
-
-    this.checkinid = this.checkinForm.controls['checkinid'];
-    this.checkinname = this.checkinForm.controls['checkinname'];
-    this.mobile = this.checkinForm.controls['mobile'];
-    this.weixin = this.checkinForm.controls['weixin'];
-    this.email = this.checkinForm.controls['email'];
-    this.pwd = this.checkinForm.controls['pwd'];
-    this.isvalid = this.checkinForm.controls['isvalid'];
 
     this.getDataList();
   }
 
   ngOnInit() {
-    this.getCheckinList();
     setTimeout(() => this.staticAlertClosed = true, 20000);
 
     this._success.subscribe((message) => this.successMessage = message);
     debounceTime.call(this._success, 5000).subscribe(() => this.successMessage = null);
   }
 
-  getCheckinList() {
-    const that = this;
-    this.checkinService.getCheckins().then(function (checkins) {
-      that.checkins = checkins;
-    }, (err) => {
-      that.alterType = 'danger';
-      that.changeSuccessMessage(err);
-    });
-  }
-
   ngAfterViewInit() {
   }
 
   onSubmit(values: Object): void {
-    this.submitted = true;
-    const that = this;
-    if (this.checkinForm.valid) {
-      // your code goes here
-      console.log(values);
-      values['roleids'] = this.selectVal.toString();
-      values['isvalid'] = values['isvalid'] ? values['isvalid'] : 0;
-      values['pwd'] = Md5.hashStr(values['pwd']).toString();
-      this.checkinService.create(values).then(function (checkin) {
-        that.alterType = 'success';
-        that.changeSuccessMessage('保存成功。');
-        that.checkins.push(checkin);
-      }, (err) => {
-        that.alterType = 'danger';
-        that.changeSuccessMessage(`保存失败。${err}`);
-      });
-    }
+  }
+
+  readCard() {
+    const cust = this._readIdCardService.getIDcard();
+    this.checkIn.cusname = cust.name;
+    this.checkIn.IDCard = cust.idcard;
   }
 
   changeSuccessMessage(msg) {
@@ -225,14 +198,58 @@ export class CheckinComponent implements OnInit, AfterViewInit {
   }
 
   getDataList(): void {
-    this.houseinfoService.getHouseinfos().then((data) => {
-      this.source.load(data);
+    this._houseinfoService.getHouseinfos().then((data) => {
+      this.popGrid.load(data);
+    });
+
+    this._houseTypeService.getHouseTypes().then((data) => {
+      const that = this;
+      _.each(data,function(d){
+        that.houseType.push({ type: d.typeName, id:d.id, color: 'btn-info', icon: 'fa-refresh', count: 0 });
+      });
     });
   }
-
-  showPop(event):void{
-    console.log('show pop');
-    console.log($(".popover"));
-    $("#ngb-popover-0").css("max-width","320px");
+  //选择房间
+  rowClicked(event): void {
+    if (event.isSelected) {
+      if (!_.some(this.selectedHouse, ['code', event.data.code])) {
+        this.selectedHouse.push(
+          {
+            houseType: event.data.houseTypeTxt,
+            code: event.data.code,
+            days: 1,
+            coupons: 1,
+            cusname: this.checkIn.cusname,
+            cusid: this.checkIn.IDCard,
+            button: '读取身份证_' + event.data.code
+          });
+      }
+    } else {
+      _.remove(this.selectedHouse, function (n) {
+        return n['code'] == event.data.code;
+      });
+    }
+    this.selectedGrid.load(this.selectedHouse);
+  }
+  // 删除
+  onDeleteConfirm(event): void {
+    if (window.confirm('你确定要删除吗?')) {
+      event.confirm.resolve();
+    } else {
+      event.confirm.reject();
+    }
+  }
+  onUserRowSelect(event) {
+    this.selectedRow = event.data;
+  }
+  showPop(event): void {
+    _.delay(function (text) {
+      $(".popover").css("max-width", "520px");
+    }, 100, 'later');
+  }
+  onSearch(query: string = '') {
+    this.popGrid.setFilter([
+      { field: 'houseType', search: query },
+    ], false);
   }
 }

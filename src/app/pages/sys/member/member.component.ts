@@ -3,16 +3,8 @@ import { NgbModal, ModalDismissReasons, NgbTabset, NgbDatepicker } from '@ng-boo
 
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { CardRenderComponent } from '../../components/cardRender/cardRender.component';
-import { CardRenderService } from '../../components/cardRender/cardRender.services';
-import { MultiselectViewService } from '../../components/multiselectView/multiselectView.services';
-
-import { HouseTypeRenderComponent } from '../../components/houseTypeRender/houseType.component';
-import { HouseTypeRenderService } from '../../components/houseTypeRender/houseType.services';
-
-import { DateTimeComponent } from '../../components/dateTimeRender/dateTimeRender.component';
-import { DatepickerViewComponent } from '../../components/datepickerView/datepickerView.component';
-import { MultiselectViewComponent } from '../../components/multiselectView/multiselectView.component';
+import { NgbdModalContent } from '../../../modal-content.component'
+import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
 
 import { MemberService } from './member.services';
 import { HouseTypeService } from '../house-type//house-type.services';
@@ -25,22 +17,18 @@ import * as _ from 'lodash';
   selector: 'app-member',
   templateUrl: './member.component.html',
   styleUrls: ['./member.component.scss'],
-  providers: [MemberService, CardRenderService, HouseTypeService, HouseTypeRenderService, MultiselectViewService],
+  providers: [MemberService, HouseTypeService],
 })
 export class MemberComponent implements OnInit, AfterViewInit {
 
   query: string = '';
 
   settingsCard = {
+    mode: 'external',
     actions: {
       columnTitle: '操作'
     },
-    add: {
-      addButtonContent: '<i class="ion-ios-plus-outline"></i>',
-      createButtonContent: '<i class="ion-checkmark"></i>',
-      cancelButtonContent: '<i class="ion-close"></i>',
-      confirmCreate: true,
-    },
+    hideSubHeader: true,
     edit: {
       editButtonContent: '<i class="ion-edit"></i>',
       saveButtonContent: '<i class="ion-checkmark"></i>',
@@ -74,17 +62,6 @@ export class MemberComponent implements OnInit, AfterViewInit {
         type: 'number',
         filter: false
       },
-      isRecharge: {
-        title: '是否可充值',
-        filter: false,
-        editor: {
-          type: 'checkbox',
-          config: {
-            true: '是',
-            false: '否',
-          },
-        },
-      },
       remark: {
         title: '备注',
         type: 'string',
@@ -93,17 +70,12 @@ export class MemberComponent implements OnInit, AfterViewInit {
     }
   };
 
-
   settingsCardUpgrade = {
+    mode: 'external',
     actions: {
       columnTitle: '操作'
     },
-    add: {
-      addButtonContent: '<i class="ion-ios-plus-outline"></i>',
-      createButtonContent: '<i class="ion-checkmark"></i>',
-      cancelButtonContent: '<i class="ion-close"></i>',
-      confirmCreate: true,
-    },
+    hideSubHeader: true,
     edit: {
       editButtonContent: '<i class="ion-edit"></i>',
       saveButtonContent: '<i class="ion-checkmark"></i>',
@@ -122,29 +94,15 @@ export class MemberComponent implements OnInit, AfterViewInit {
         filter: false,
         width: '30px',
       },
-      oldCard: {
+      oldCardTxt: {
         title: '旧卡',
         filter: false,
-        type: 'custom',
-        renderComponent: CardRenderComponent,
-        editor: {
-          type: 'list',
-          config: {
-            list: [],
-          },
-        },
+        type: 'string',
       },
-      newCard: {
+      newCardTxt: {
         title: '新卡',
         filter: false,
-        type: 'custom',
-        renderComponent: CardRenderComponent,
-        editor: {
-          type: 'list',
-          config: {
-            list: [],
-          },
-        },
+        type: 'string',
       },
       needInte: {
         title: '升级所需积分',
@@ -164,17 +122,12 @@ export class MemberComponent implements OnInit, AfterViewInit {
     }
   };
 
-
   settingsIntegral = {
+    mode: 'external',
     actions: {
       columnTitle: '操作'
     },
-    add: {
-      addButtonContent: '<i class="ion-ios-plus-outline"></i>',
-      createButtonContent: '<i class="ion-checkmark"></i>',
-      cancelButtonContent: '<i class="ion-close"></i>',
-      confirmCreate: true,
-    },
+    hideSubHeader: true,
     edit: {
       editButtonContent: '<i class="ion-edit"></i>',
       saveButtonContent: '<i class="ion-checkmark"></i>',
@@ -201,25 +154,12 @@ export class MemberComponent implements OnInit, AfterViewInit {
       inteType: {
         title: '方式类型',
         type: 'string',
-        filter: false,
-        editor: {
-          type: 'list',
-          config: {
-            list: [{ value: '天数', title: '天数' }, { value: '金额', title: '金额' }],
-          },
-        },
+        filter: false
       },
-      cardType: {
+      cardTypeTxt: {
         title: '会员卡类型',
-        type: 'custom',
-        filter: false,
-        renderComponent: CardRenderComponent,
-        editor: {
-          type: 'list',
-          config: {
-            list: [],
-          },
-        },
+        type: 'string',
+        filter: false
       },
       dayOrFee: {
         title: '天数/金额',
@@ -233,23 +173,13 @@ export class MemberComponent implements OnInit, AfterViewInit {
       },
       startDate: {
         title: '活动开始日期',
-        type: 'custom',
-        filter: false,
-        renderComponent: DateTimeComponent,
-        editor: {
-          type: 'custom',
-          component: DatepickerViewComponent,
-        },
+        type: 'string',
+        filter: false
       },
       endDate: {
         title: '活动结束日期',
-        type: 'custom',
-        filter: false,
-        renderComponent: DateTimeComponent,
-        editor: {
-          type: 'custom',
-          component: DatepickerViewComponent,
-        },
+        type: 'string',
+        filter: false
       },
       remark: {
         title: '备注',
@@ -259,17 +189,12 @@ export class MemberComponent implements OnInit, AfterViewInit {
     }
   };
 
-
   settingsInteExchange = {
+    mode: 'external',
     actions: {
       columnTitle: '操作'
     },
-    add: {
-      addButtonContent: '<i class="ion-ios-plus-outline"></i>',
-      createButtonContent: '<i class="ion-checkmark"></i>',
-      cancelButtonContent: '<i class="ion-close"></i>',
-      confirmCreate: true,
-    },
+    hideSubHeader: true,
     edit: {
       editButtonContent: '<i class="ion-edit"></i>',
       saveButtonContent: '<i class="ion-checkmark"></i>',
@@ -298,17 +223,10 @@ export class MemberComponent implements OnInit, AfterViewInit {
         type: 'string',
         filter: false
       },
-      cardType: {
+      cardTypeTxt: {
         title: '会员卡类型',
         filter: false,
-        type: 'custom',
-        renderComponent: CardRenderComponent,
-        editor: {
-          type: 'list',
-          config: {
-            list: [],
-          },
-        },
+        type: 'string',
       },
       giftName: {
         title: '礼品名称',
@@ -322,23 +240,13 @@ export class MemberComponent implements OnInit, AfterViewInit {
       },
       startDate: {
         title: '活动开始日期',
-        type: 'custom',
-        filter: false,
-        renderComponent: DateTimeComponent,
-        editor: {
-          type: 'custom',
-          component: DatepickerViewComponent,
-        },
+        type: 'string',
+        filter: false
       },
       endDate: {
         title: '活动结束日期',
-        type: 'custom',
-        filter: false,
-        renderComponent: DateTimeComponent,
-        editor: {
-          type: 'custom',
-          component: DatepickerViewComponent,
-        },
+        type: 'string',
+        filter: false
       },
       remark: {
         title: '备注',
@@ -348,17 +256,12 @@ export class MemberComponent implements OnInit, AfterViewInit {
     }
   };
 
-
   settingsInteHouse = {
+    mode: 'external',
     actions: {
       columnTitle: '操作'
     },
-    add: {
-      addButtonContent: '<i class="ion-ios-plus-outline"></i>',
-      createButtonContent: '<i class="ion-checkmark"></i>',
-      cancelButtonContent: '<i class="ion-close"></i>',
-      confirmCreate: true,
-    },
+    hideSubHeader: true,
     edit: {
       editButtonContent: '<i class="ion-edit"></i>',
       saveButtonContent: '<i class="ion-checkmark"></i>',
@@ -387,58 +290,30 @@ export class MemberComponent implements OnInit, AfterViewInit {
         type: 'number',
         filter: false
       },
-      cardType: {
+      cardTypeTxt: {
         title: '会员卡类型',
         filter: false,
-        type: 'custom',
-        renderComponent: CardRenderComponent,
-        editor: {
-          type: 'list',
-          config: {
-            list: [],
-          },
-        },
+        type: 'string'
       },
-      houseType: {
+      houseTypeTxt: {
         title: '兑换房型',
-        type: 'custom',
-        filter: false,
-        renderComponent: HouseTypeRenderComponent,
-        editor: {
-          type: 'list',
-          config: {
-            list: [],
-          },
-        },
+        type: 'string',
+        filter: false
       },
       useWeeks: {
         title: '有效星期',
         type: 'string',
-        filter: false,
-        editor: {
-          type: 'custom',
-          component: MultiselectViewComponent,
-        },
+        filter: false
       },
       startDate: {
         title: '活动开始日期',
-        type: 'custom',
-        filter: false,
-        renderComponent: DateTimeComponent,
-        editor: {
-          type: 'custom',
-          component: DatepickerViewComponent,
-        },
+        type: 'string',
+        filter: false
       },
       endDate: {
         title: '活动结束日期',
-        type: 'custom',
-        filter: false,
-        renderComponent: DateTimeComponent,
-        editor: {
-          type: 'custom',
-          component: DatepickerViewComponent,
-        },
+        type: 'string',
+        filter: false
       },
       remark: {
         title: '备注',
@@ -447,106 +322,371 @@ export class MemberComponent implements OnInit, AfterViewInit {
       }
     }
   };
+
+  configCard: FieldConfig[] = [
+    {
+      type: 'input',
+      label: '会员卡',
+      name: 'name',
+      placeholder: '输入会员卡',
+      validation: [Validators.required],
+    },
+    {
+      type: 'input',
+      label: '级别',
+      name: 'level',
+      placeholder: '输入级别',
+      validation: [Validators.required],
+    },
+    {
+      type: 'input',
+      label: '卡费',
+      name: 'cardFee',
+      placeholder: '输入卡费',
+      validation: [Validators.required],
+    },
+    {
+      type: 'input',
+      label: '备注',
+      name: 'remark',
+      placeholder: '输入备注',
+    }
+  ];
+
+  configCardUpgrade: FieldConfig[] = [
+    {
+      label: '旧卡',
+      name: 'oldCard',
+      type: 'select',
+      placeholder: '请选择',
+      options: []
+    },
+    {
+      label: '新卡',
+      name: 'newCard',
+      type: 'select',
+      placeholder: '请选择',
+      options: []
+    },
+    {
+      type: 'input',
+      label: '升级所需积分',
+      name: 'needInte',
+      placeholder: '输入升级所需积分',
+      validation: [Validators.required],
+    },
+    {
+      type: 'input',
+      label: '升级消耗积分',
+      name: 'takeInte',
+      placeholder: '输入升级消耗积分',
+    },
+    {
+      type: 'input',
+      label: '备注',
+      name: 'remark',
+      placeholder: '输入备注',
+    }
+  ];
+
+  configIntegral: FieldConfig[] = [
+    {
+      type: 'input',
+      label: '名称',
+      name: 'name',
+      placeholder: '输入名称',
+      validation: [Validators.required],
+    },
+    {
+      type: 'input',
+      label: '方式类型',
+      name: 'type',
+      placeholder: '输入方式类型',
+      validation: [Validators.required],
+    },
+    {
+      type: 'check',
+      label: '会员卡类型',
+      name: 'cardType',
+      check: 'radio',
+      options: []
+    },
+    {
+      type: 'input',
+      label: '金额',
+      name: 'dayOrFee',
+      placeholder: '输入金额',
+    },
+    {
+      type: 'input',
+      label: '积分',
+      name: 'integral',
+      placeholder: '输入积分',
+    },
+    {
+      type: 'datepicker',
+      label: '活动开始日期',
+      name: 'startDate',
+      placeholder: '输入活动开始日期',
+    },
+    {
+      type: 'datepicker',
+      label: '活动结束日期',
+      name: 'endDate',
+      placeholder: '输入活动结束日期',
+    },
+    {
+      type: 'input',
+      label: '备注',
+      name: 'remark',
+      placeholder: '输入备注',
+    }
+  ];
+
+  configInteExchange: FieldConfig[] = [
+    {
+      type: 'input',
+      label: '名称',
+      name: 'name',
+      placeholder: '输入名称',
+      validation: [Validators.required],
+    },
+    {
+      type: 'input',
+      label: '兑换类型',
+      name: 'exchangeType',
+      placeholder: '输入兑换类型',
+      validation: [Validators.required],
+    },
+    {
+      type: 'check',
+      label: '会员卡类型',
+      name: 'cardType',
+      check: 'radio',
+      options: []
+    },
+    {
+      type: 'input',
+      label: '礼品名称',
+      name: 'giftName',
+      placeholder: '输入礼品名称',
+    },
+    {
+      type: 'input',
+      label: '所需积分',
+      name: 'exchangeInte',
+      placeholder: '输入所需积分',
+    },
+    {
+      type: 'input',
+      label: '活动开始日期',
+      name: 'startDate',
+      placeholder: '输入活动开始日期',
+    },
+    {
+      type: 'input',
+      label: '活动结束日期',
+      name: 'endDate',
+      placeholder: '输入活动结束日期',
+    },
+    {
+      type: 'input',
+      label: '备注',
+      name: 'remark',
+      placeholder: '输入备注',
+    }
+  ];
+
+  configInteHouse: FieldConfig[] = [
+    {
+      type: 'input',
+      label: '名称',
+      name: 'name',
+      placeholder: '输入名称',
+      validation: [Validators.required],
+    },
+    {
+      type: 'input',
+      label: '所需积分',
+      name: 'takeInte',
+      placeholder: '输入所需积分',
+      validation: [Validators.required],
+    },
+    {
+      type: 'check',
+      label: '会员卡类型',
+      name: 'cardType',
+      check: 'radio',
+      options: []
+    },
+    {
+      type: 'select',
+      label: '兑换房型',
+      name: 'houseType',
+      options: []
+    },
+    {
+      type: 'multiselect',
+      label: '有效星期',
+      name: 'useWeeks',
+      options: []
+    },
+    {
+      type: 'input',
+      label: '活动开始日期',
+      name: 'startDate',
+      placeholder: '输入活动开始日期',
+    },
+    {
+      type: 'input',
+      label: '活动结束日期',
+      name: 'endDate',
+      placeholder: '输入活动结束日期',
+    },
+    {
+      type: 'input',
+      label: '备注',
+      name: 'remark',
+      placeholder: '输入备注',
+    }
+  ];
+
   sourceCard: LocalDataSource = new LocalDataSource();
   sourceCardUpgrade: LocalDataSource = new LocalDataSource();
   sourceIntegral: LocalDataSource = new LocalDataSource();
   sourceInteExchange: LocalDataSource = new LocalDataSource();
   sourceInteHouse: LocalDataSource = new LocalDataSource();
+  modalConfig: any = {};
 
   constructor(
+    private modalService: NgbModal,
     private memberService: MemberService,
-    private cardRenderService: CardRenderService,
     private houseTypeService: HouseTypeService,
-    private houseTypeRenderService: HouseTypeRenderService,
-    private multiselectViewService: MultiselectViewService,
     private _state: GlobalState) {
-    this.getDataList();
+    this.getDataList('');
   }
   ngOnInit() {
-
+    this.modalConfig.SetCard = this.configCard;
+    this.modalConfig.SetCardUpgrade = this.configCardUpgrade;
+    this.modalConfig.SetIntegral = this.configIntegral;
+    this.modalConfig.SetInteExchange = this.configInteExchange;
+    this.modalConfig.SetInteHouse = this.configInteHouse;
   }
   ngAfterViewInit() {
 
   }
 
-  getDataList(): void {
-    const that = this;
-    this.memberService.getMembers('SetCard').then((data) => {
-      this.sourceCard.load(data);
-      const card = [];
-      _.each(data, (d) => {
-        card.push({ value: d.id, title: d.name });
-        that.cardRenderService.append(d.id, d.name);
+  getDataList(modalname): void {
+    if (!modalname || modalname == 'SetCard') {
+      this.memberService.getMembers('SetCard').then((data) => {
+        this.sourceCard.load(data);
+        const that = this;
+        let cardT1 = _.find(this.configIntegral, function (f) { return f.name == 'cardType'; });
+        let cardT2 = _.find(this.configCardUpgrade, function (f) { return f.name == 'oldCard'; });
+        let cardT3 = _.find(this.configCardUpgrade, function (f) { return f.name == 'newCard'; });
+        let cardT4 = _.find(this.configInteExchange, function (f) { return f.name == 'cardType'; });
+        let cardT5 = _.find(this.configInteHouse, function (f) { return f.name == 'cardType'; });
+        
+        _.each(data, function (d) {
+          cardT1.options.push({ id: d.id, name: d.name });
+          cardT2.options.push({ id: d.id, name: d.name });
+          cardT3.options.push({ id: d.id, name: d.name });
+          cardT4.options.push({ id: d.id, name: d.name });
+          cardT5.options.push({ id: d.id, name: d.name });
+        });
       });
-      this.settingsCardUpgrade.columns.oldCard.editor.config.list = card;
-      this.settingsCardUpgrade.columns.newCard.editor.config.list = card;
-      this.settingsIntegral.columns.cardType.editor.config.list = card;
-      this.settingsInteExchange.columns.cardType.editor.config.list = card;
-      this.settingsInteHouse.columns.cardType.editor.config.list = card;
-    });
-    this.memberService.getMembers('SetCardUpgrade').then((data) => {
-      this.sourceCardUpgrade.load(data);
-    });
-    this.memberService.getMembers('SetIntegral').then((data) => {
-      this.sourceIntegral.load(data);
-    });
-    this.memberService.getMembers('SetInteExchange').then((data) => {
-      this.sourceInteExchange.load(data);
-    });
-    this.memberService.getMembers('SetInteHouse').then((data) => {
-      const myOptions = [
-        { id: '星期一', name: '星期一' },
-        { id: '星期二', name: '星期二' },
-        { id: '星期三', name: '星期三' },
-        { id: '星期四', name: '星期四' },
-        { id: '星期五', name: '星期五' },
-        { id: '星期六', name: '星期六' },
-        { id: '星期日', name: '星期日' },
-      ];
-      _.each(myOptions, (o) => { this.multiselectViewService.append(o.id, o.name); });
-      this.sourceInteHouse.load(data);
-    });
+    }
+
+    if (!modalname || modalname == 'SetCardUpgrade') {
+      this.memberService.getMembers('SetCardUpgrade').then((data) => {
+        this.sourceCardUpgrade.load(data);
+      });
+    }
+
+    if (!modalname || modalname == 'SetIntegral') {
+      this.memberService.getMembers('SetIntegral').then((data) => {
+        this.sourceIntegral.load(data);
+      });
+    }
+
+    if (!modalname || modalname == 'SetInteExchange') {
+      this.memberService.getMembers('SetInteExchange').then((data) => {
+        this.sourceInteExchange.load(data);
+      });
+    }
+
+    if (!modalname || modalname == 'SetInteHouse') {
+      this.memberService.getMembers('SetInteHouse').then((data) => {
+        let cardT1 = _.find(this.configInteHouse, function (f) { return f.name == 'useWeeks'; });
+        cardT1.options = [
+          { id: '星期一', name: '星期一' },
+          { id: '星期二', name: '星期二' },
+          { id: '星期三', name: '星期三' },
+          { id: '星期四', name: '星期四' },
+          { id: '星期五', name: '星期五' },
+          { id: '星期六', name: '星期六' },
+          { id: '星期日', name: '星期日' },
+        ];
+        this.sourceInteHouse.load(data);
+      });
+    }
 
     this.houseTypeService.getHouseTypes().then((data) => {
-      const house = [];
+      let cardT1 = _.find(this.configInteHouse, function (f) { return f.name == 'houseType'; });
       _.each(data, (d) => {
-        house.push({ value: d.id, title: d.typeName });
-        that.houseTypeRenderService.append(d.id, d.typeName);
+        cardT1.options.push({ id: d.id, name: d.typeName });
       });
-      this.settingsInteHouse.columns.houseType.editor.config.list = house;
     });
   }
-  // 新增
-  onCreateConfirm(modelName, event): void {
-    if (event.newData) {
-      this.memberService.create(modelName, event.newData).then((data) => {
-        event.confirm.resolve(event.newData);
-        this.getDataList();
-      });
-    } else {
-      event.confirm.reject();
-    }
-  }
-  // 修改
-  onSaveConfirm(modelName, event): void {
-    if (event.newData && event.newData.id) {
-      this.memberService.update(modelName, event.newData.id, event.newData).then((data) => {
-        event.confirm.resolve(event.newData);
-        this.getDataList();
-      });
-    } else {
-      event.confirm.reject();
-    }
-  }
-  // 删除
-  onDeleteConfirm(modelName, event): void {
-    if (window.confirm('你确定要删除吗?')) {
-      this.memberService.delete(modelName, event.data.id).then((data) => {
-        event.confirm.resolve();
-      });
-    } else {
-      event.confirm.reject();
-    }
+
+  onCreate(modalname, title) {
+    const that = this;
+    const modalRef = this.modalService.open(NgbdModalContent);
+    modalRef.componentInstance.title = title;
+    modalRef.componentInstance.config = this.modalConfig[modalname];
+    modalRef.result.then((result) => {
+      if (result !== 'no') {
+        console.log(result);
+        that.memberService.create(modalname, JSON.parse(result)).then(
+          function (v) {
+            that.getDataList(modalname);
+          },
+          (err) => {
+            alert(err);
+          }
+        )
+      }
+    }, (reason) => {
+    });
   }
 
+  onEdit(modalname, title, event) {
+    console.log(event);
+    const that = this;
+    const modalRef = this.modalService.open(NgbdModalContent);
+    modalRef.componentInstance.title = title;
+    modalRef.componentInstance.config = this.modalConfig[modalname];
+    modalRef.componentInstance.formValue = event.data;
+    modalRef.result.then((result) => {
+      if (result !== 'no') {
+        console.log(result);
+        that.memberService.update(modalname, event.data.id, JSON.parse(result)).then(
+          function (v) {
+            that.getDataList(modalname);
+          },
+          (err) => { }
+        )
+      }
+    }, (reason) => {
+    });
+  }
+
+  //删除
+  onDelete(modalname, event) {
+    if (window.confirm('你确定要删除吗?')) {
+      this.memberService.delete(modalname, event.data.id).then((data) => {
+        this.getDataList(modalname);
+      });
+    }
+  }
 }

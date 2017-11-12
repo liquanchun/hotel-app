@@ -2,7 +2,8 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-
+import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
+import { NgbdModalContent } from '../../../modal-content.component'
 import { SetPaytypeService } from './set-paytype.services';
 import { GlobalState } from '../../../global.state';
 
@@ -20,14 +21,10 @@ export class SetPaytypeComponent implements OnInit, AfterViewInit {
   query: string = '';
 
   settings = {
+    mode: 'external',
+    hideSubHeader: true,
     actions: {
       columnTitle: '操作'
-    },
-    add: {
-      addButtonContent: '<i class="ion-ios-plus-outline"></i>',
-      createButtonContent: '<i class="ion-checkmark"></i>',
-      cancelButtonContent: '<i class="ion-close"></i>',
-      confirmCreate: true,
     },
     edit: {
       editButtonContent: '<i class="ion-edit"></i>',
@@ -103,9 +100,54 @@ export class SetPaytypeComponent implements OnInit, AfterViewInit {
     }
   };
 
+  config: FieldConfig[] = [
+    {
+      type: 'input',
+      label: '代码',
+      name: 'code',
+      placeholder: '输入代码',
+      validation: [Validators.required],
+    },
+    {
+      type: 'input',
+      label: '名称',
+      name: 'name',
+      placeholder: '输入名称',
+      validation: [Validators.required],
+    },
+    {
+      type: 'input',
+      label: '支付类型',
+      name: 'payType',
+      placeholder: '输入支付类型',
+    },
+    {
+      type: 'truefalse',
+      label: '是否可退',
+      name: 'isReturn',
+    },
+    {
+      type: 'truefalse',
+      label: '是否积分',
+      name: 'isIntegral',
+    },
+    {
+      type: 'truefalse',
+      label: '是否默认',
+      name: 'isDefault',
+    },
+    {
+      type: 'input',
+      label: '备注',
+      name: 'remark',
+      placeholder: '输入备注',
+    }
+  ];
+
   source: LocalDataSource = new LocalDataSource();
 
   constructor(
+    private modalService: NgbModal,
     private setPaytypeService: SetPaytypeService,
     private _state: GlobalState) {
     this.getDataList();
@@ -122,36 +164,53 @@ export class SetPaytypeComponent implements OnInit, AfterViewInit {
       this.source.load(data);
     });
   }
-  // 新增
-  onCreateConfirm(event): void {
-    if (event.newData) {
-      this.setPaytypeService.create(event.newData).then((data) => {
-        event.confirm.resolve(event.newData);
-        this.getDataList();
-      });
-    } else {
-      event.confirm.reject();
-    }
+  newHouse() {
+    const that = this;
+    const modalRef = this.modalService.open(NgbdModalContent);
+    modalRef.componentInstance.title = '新增支付方式';
+    modalRef.componentInstance.config = this.config;
+    modalRef.result.then((result) => {
+      if (result !== 'no') {
+        console.log(result);
+        that.setPaytypeService.create(JSON.parse(result)).then(
+          function (v) {
+            that.getDataList();
+          },
+          (err) => {
+            alert(err);
+          }
+        )
+      }
+    }, (reason) => {
+    });
   }
-  // 修改
-  onSaveConfirm(event): void {
-    if (event.newData && event.newData.id) {
-      this.setPaytypeService.update(event.newData.id, event.newData).then((data) => {
-        event.confirm.resolve(event.newData);
-        this.getDataList();
-      });
-    } else {
-      event.confirm.reject();
-    }
+
+  onEdit(event) {
+    console.log(event);
+    const that = this;
+    const modalRef = this.modalService.open(NgbdModalContent);
+    modalRef.componentInstance.title = '修改支付方式';
+    modalRef.componentInstance.config = this.config;
+    modalRef.componentInstance.formValue = event.data;
+    modalRef.result.then((result) => {
+      if (result !== 'no') {
+        console.log(result);
+        that.setPaytypeService.update(event.data.id, JSON.parse(result)).then(
+          function (v) {
+            that.getDataList();
+          },
+          (err) => { }
+        )
+      }
+    }, (reason) => {
+    });
   }
-  // 删除
-  onDeleteConfirm(event): void {
+  //删除
+  onDelete(event) {
     if (window.confirm('你确定要删除吗?')) {
       this.setPaytypeService.delete(event.data.id).then((data) => {
-        event.confirm.resolve();
+        this.getDataList();
       });
-    } else {
-      event.confirm.reject();
     }
   }
 

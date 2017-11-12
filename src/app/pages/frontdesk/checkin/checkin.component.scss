@@ -20,6 +20,7 @@
 .popover-content{
   width: 500px !important;
 }
+
 @import "../../../theme/sass/conf/conf";
 
 :host /deep/ .widgets {
@@ -34,6 +35,9 @@
       // border: 1px solid $border-light !important;
       line-height: 25px;
       vertical-align: middle;
+    } 
+    .tablebutton{
+      line-height: 20px !important;
     }
 
     table tr td {

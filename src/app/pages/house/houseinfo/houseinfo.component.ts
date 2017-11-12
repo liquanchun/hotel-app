@@ -4,9 +4,11 @@ import { NgbModal, ModalDismissReasons, NgbActiveModal } from '@ng-bootstrap/ng-
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
-import {NgbdModalContent} from '../../../modal-content.component'
-  
+import { NgbdModalContent } from '../../../modal-content.component'
+
 import { HouseinfoService } from './houseinfo.services';
+import { HouseTypeService } from '../../sys/house-type/house-type.services';
+
 import { GlobalState } from '../../../global.state';
 import { Common } from '../../../providers/common';
 import * as $ from 'jquery';
@@ -17,7 +19,7 @@ import * as _ from 'lodash';
   selector: 'app-houseinfo',
   templateUrl: './houseinfo.component.html',
   styleUrls: ['./houseinfo.component.scss'],
-  providers: [HouseinfoService],
+  providers: [HouseinfoService, HouseTypeService],
 })
 export class HouseinfoComponent implements OnInit, AfterViewInit {
 
@@ -63,7 +65,7 @@ export class HouseinfoComponent implements OnInit, AfterViewInit {
         filter: false,
         width: '80px',
       },
-      houseType: {
+      houseTypeTxt: {
         title: '房型',
         type: 'string',
         filter: false,
@@ -110,10 +112,7 @@ export class HouseinfoComponent implements OnInit, AfterViewInit {
       label: '房间类型',
       name: 'houseType',
       check: 'radio',
-      options: [
-        { id: '标准房', name: '标准房' },
-        { id: '豪华单间', name: '豪华单间' },
-      ]
+      options: []
     },
     {
       type: 'input',
@@ -127,16 +126,18 @@ export class HouseinfoComponent implements OnInit, AfterViewInit {
       name: 'remark',
       placeholder: '输入备注',
     }
-  ];  
+  ];
 
   source: LocalDataSource = new LocalDataSource();
 
   constructor(
     private modalService: NgbModal,
     private houseinfoService: HouseinfoService,
+    private _houseTypeService: HouseTypeService,
     private _common: Common,
     private _state: GlobalState) {
     this.getDataList();
+    this.getHouseType();
   }
   ngOnInit() {
 
@@ -150,7 +151,7 @@ export class HouseinfoComponent implements OnInit, AfterViewInit {
   onCreate() {
 
   }
-  openModal(id: string){
+  openModal(id: string) {
     this.modalService.open(id);
   }
 
@@ -160,20 +161,19 @@ export class HouseinfoComponent implements OnInit, AfterViewInit {
     modalRef.componentInstance.title = '新增房间信息';
     modalRef.componentInstance.config = this.config;
     modalRef.result.then((result) => {
-        if (result !== 'no') {
-          console.log(result);
-          result.state = '空净';
-          that.houseinfoService.create(JSON.parse(result)).then(
-            function (v) {
-              that.getDataList();
-            },
-            (err) => { 
-               alert(err);
-            }
-          )
-        }
-      }, (reason) => {
-      });
+      if (result !== 'no') {
+        console.log(result);
+        that.houseinfoService.create(JSON.parse(result)).then(
+          function (v) {
+            that.getDataList();
+          },
+          (err) => {
+            alert(err);
+          }
+        )
+      }
+    }, (reason) => {
+    });
   }
 
   onSearch(query: string = '') {
@@ -192,20 +192,20 @@ export class HouseinfoComponent implements OnInit, AfterViewInit {
     modalRef.componentInstance.config = this.config;
     modalRef.componentInstance.formValue = event.data;
     modalRef.result.then((result) => {
-        if (result !== 'no') {
-          console.log(result);
-          that.houseinfoService.update(event.data.id,JSON.parse(result)).then(
-            function (v) {
-              that.getDataList();
-            },
-            (err) => { }
-          )
-        }
-      }, (reason) => {
-      });
+      if (result !== 'no') {
+        console.log(result);
+        that.houseinfoService.update(event.data.id, JSON.parse(result)).then(
+          function (v) {
+            that.getDataList();
+          },
+          (err) => { }
+        )
+      }
+    }, (reason) => {
+    });
   }
   //删除
-  onDelete(event){
+  onDelete(event) {
     if (window.confirm('你确定要删除吗?')) {
       this.houseinfoService.delete(event.data.id).then((data) => {
         this.getDataList();
@@ -217,6 +217,16 @@ export class HouseinfoComponent implements OnInit, AfterViewInit {
     this.houseinfoService.getHouseinfos().then((data) => {
       this.source.load(data);
       this.totalRecord = data.length;
+    });
+  }
+  getHouseType():void{
+
+    this._houseTypeService.getHouseTypes().then((data) => {
+      const that = this;
+      let houseT = _.find(this.config, function (f) { return f.name == 'houseType'; })
+      _.each(data, function (d) {
+        houseT.options.push({ id: d.id, name: d.typeName });
+      });
     });
   }
 }

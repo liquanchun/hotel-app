@@ -6,23 +6,23 @@
           <div class="form-group row">
             <label for="inputName" class="col-sm-2 col-form-label">客人姓名</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" id="inputName" placeholder="输入客人姓名">
-            </div>
-          </div>
-          <div class="form-group row">
-            <label for="inputMobile" class="col-sm-2 col-form-label">电话号码</label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" id="inputMobile" placeholder="输入电话号码">
+              <input [(ngModel)]="checkIn.cusname" type="text" class="form-control" id="inputName" placeholder="输入客人姓名">
             </div>
           </div>
           <div class="form-group row">
             <label for="inputId" class="col-sm-2 col-form-label">身份证号</label>
             <div class="col-sm-9">
-              <input type="text" class="form-control" id="inputId" placeholder="输入身份证号">
+              <input [(ngModel)]="checkIn.IDCard" type="text" class="form-control" id="inputId" placeholder="输入身份证号">
             </div>
             <div class="btn-group margin8 col-sm-1" role="group" aria-label="Basic example">
-              <button (click)="newHouse()" type="button" class="btn btn-success btn-sm">
+              <button (click)="readCard()" type="button" class="btn btn-success btn-sm">
                 <i class="fa fa-refresh" aria-hidden="true"></i> 读取身份证信息</button>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputMobile" class="col-sm-2 col-form-label">电话号码</label>
+            <div class="col-sm-10">
+              <input [(ngModel)]="checkIn.cusphone" type="text" class="form-control" id="inputMobile" placeholder="输入电话号码">
             </div>
           </div>
           <div class="form-group row">
@@ -30,24 +30,30 @@
             <div class="col-sm-10">
               <div class="form-check form-check-inline">
                 <label class="form-check-label">
-                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1"> 全天房
+                  <input [(ngModel)]="checkIn.InType" class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="全天房"> 全天房
                 </label>
               </div>
               <div class="form-check form-check-inline">
                 <label class="form-check-label">
-                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2"> 钟点房
+                  <input [(ngModel)]="checkIn.InType" class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="钟点房"> 钟点房
                 </label>
               </div>
               <div class="form-check form-check-inline">
                 <label class="form-check-label">
-                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> 特殊房
+                  <input [(ngModel)]="checkIn.InType" class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="特殊房"> 特殊房
                 </label>
               </div>
               <div class="form-check form-check-inline">
                 <label class="form-check-label">
-                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> 免费房
+                  <input [(ngModel)]="checkIn.InType" class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="免费房"> 免费房
                 </label>
               </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputremark" class="col-sm-2 col-form-label">备注</label>
+            <div class="col-sm-10">
+              <input [(ngModel)]="checkIn.remark" type="text" class="form-control" id="inputremark" placeholder="输入备注信息">
             </div>
           </div>
         </div>
@@ -61,23 +67,10 @@
                   <button placement="right" 
                   (shown)="showPop()" [ngbPopover]="popContent" popoverTitle="房间信息列表" type="button" class="btn btn-success btn-sm" container="body">
                     <i class="fa fa-refresh" aria-hidden="true"></i> 选择房间</button>
-
-                  <button type="button" style="visibility:hidden" class="btn btn-outline-secondary" [ngbPopover]="popContent">
-                    Default popover
-                  </button>
-
-                  <button type="button" style="visibility:hidden" placement="right" class="btn btn-outline-secondary" [ngbPopover]="popContent"
-                    container="body">
-                    Popover appended to body
-                  </button>
-                  <button type="button" style="visibility:hidden" placement="right" class="btn btn-outline-secondary" [ngbPopover]="popContent"
-                  container="body">
-                  Popover appended to body
-                </button>
                 </div>
 
-                <ng2-smart-table [settings]="settingsHouse" [source]="sourceHouse" (deleteConfirm)="onDeleteConfirm($event)" (editConfirm)="onSaveConfirm($event)"
-                  (createConfirm)="onCreateConfirm($event)">
+                <ng2-smart-table [settings]="settingsHouse" [source]="selectedGrid" (deleteConfirm)="onDeleteConfirm($event)" (editConfirm)="onSaveConfirm($event)"
+                  (userRowSelect)="onUserRowSelect($event)"  (createConfirm)="onCreateConfirm($event)">
                 </ng2-smart-table>
               </div>
             </div>
@@ -100,7 +93,13 @@
               <i class="fa fa-search" aria-hidden="true"></i> 查询</button>
           </span>
         </div>
-        <ng2-smart-table [settings]="settings" [source]="source">
+        <div class="btn-group margin8 pull-right" role="group" aria-label="Basic example">
+          <button *ngFor="let hs of houseType;" (click)="onSearch(hs.id)" type="button" class="btn {{hs.color}} btn-sm">
+            <i class="fa {{hs.icon}}" aria-hidden="true"></i> {{hs.type}}
+            <span class="badge badge-danger">{{ hs.count }}</span>
+          </button>
+        </div>
+        <ng2-smart-table [settings]="settings" [source]="popGrid"  (userRowSelect)="rowClicked($event)">
         </ng2-smart-table>
       </ng-template>
 

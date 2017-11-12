@@ -15,7 +15,7 @@ import * as _ from 'lodash';
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
-    <div class="modal-body">
+    <div class="modal-body" style="padding-bottom:5px;">
       <dynamic-form [config]="config" #form="dynamicForm">
       </dynamic-form>
       <input type="hidden" [value]="form.value | json" #formvalue>
@@ -42,8 +42,8 @@ export class NgbdModalContent implements OnInit {
     _.delay(function (that) {
       const sf = that;
       _.each(that.config, (e) => {
-        if (sf.formValue[e.name]) {
-          sf.form.setValue(e.name, sf.formValue[e.name]);
+        if (sf.formValue && sf.formValue[e.name]) {
+          sf.form.setValue(e.name, sf.formValue[e.name].toString());
         }
       });
     }, 100, this);

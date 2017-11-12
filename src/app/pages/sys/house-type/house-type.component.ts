@@ -2,6 +2,8 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
+import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
+import { NgbdModalContent } from '../../../modal-content.component'
 
 import { HouseTypeService } from './house-type.services';
 import { GlobalState } from '../../../global.state';
@@ -20,14 +22,10 @@ export class HouseTypeComponent implements OnInit, AfterViewInit {
   query: string = '';
 
   settings = {
+    mode: 'external',
+    hideSubHeader: true,
     actions: {
       columnTitle: '操作'
-    },
-    add: {
-      addButtonContent: '<i class="ion-ios-plus-outline"></i>',
-      createButtonContent: '<i class="ion-checkmark"></i>',
-      cancelButtonContent: '<i class="ion-close"></i>',
-      confirmCreate: true,
     },
     edit: {
       editButtonContent: '<i class="ion-edit"></i>',
@@ -85,9 +83,57 @@ export class HouseTypeComponent implements OnInit, AfterViewInit {
     }
   };
 
+  config: FieldConfig[] = [
+    {
+      type: 'input',
+      label: '房型',
+      name: 'typeName',
+      placeholder: '输入房型',
+      validation: [Validators.required],
+    },
+    {
+      type: 'input',
+      label: '全价',
+      name: 'allPrice',
+      placeholder: '输入全价',
+      validation: [Validators.required],
+    },
+    {
+      type: 'input',
+      label: '起步价',
+      name: 'startPrice',
+      placeholder: '输入起步价',
+    },
+    {
+      type: 'input',
+      label: '单位时间内加价',
+      name: 'addPrice',
+      placeholder: '输入单位时间内加价',
+    },
+    {
+      type: 'input',
+      label: '加价封顶额',
+      name: 'addMaxPrice',
+      placeholder: '输入加价封顶额',
+    },
+    {
+      type: 'input',
+      label: '预收房费',
+      name: 'preReceiveFee',
+      placeholder: '输入预收房费',
+    },
+    {
+      type: 'input',
+      label: '备注',
+      name: 'remark',
+      placeholder: '输入备注',
+    }
+  ];
+
   source: LocalDataSource = new LocalDataSource();
 
   constructor(
+    private modalService: NgbModal,
     private houseTypeService: HouseTypeService,
     private _state: GlobalState) {
     this.getDataList();
@@ -104,36 +150,54 @@ export class HouseTypeComponent implements OnInit, AfterViewInit {
       this.source.load(data);
     });
   }
-  // 新增
-  onCreateConfirm(event): void {
-    if (event.newData) {
-      this.houseTypeService.create(event.newData).then((data) => {
-        event.confirm.resolve(event.newData);
-        this.getDataList();
-      });
-    } else {
-      event.confirm.reject();
-    }
+  
+  newHouse() {
+    const that = this;
+    const modalRef = this.modalService.open(NgbdModalContent);
+    modalRef.componentInstance.title = '新增房型设置';
+    modalRef.componentInstance.config = this.config;
+    modalRef.result.then((result) => {
+      if (result !== 'no') {
+        console.log(result);
+        that.houseTypeService.create(JSON.parse(result)).then(
+          function (v) {
+            that.getDataList();
+          },
+          (err) => {
+            alert(err);
+          }
+        )
+      }
+    }, (reason) => {
+    });
   }
-  // 修改
-  onSaveConfirm(event): void {
-    if (event.newData && event.newData.id) {
-      this.houseTypeService.update(event.newData.id, event.newData).then((data) => {
-        event.confirm.resolve(event.newData);
-        this.getDataList();
-      });
-    } else {
-      event.confirm.reject();
-    }
+
+  onEdit(event) {
+    console.log(event);
+    const that = this;
+    const modalRef = this.modalService.open(NgbdModalContent);
+    modalRef.componentInstance.title = '修改房型设置';
+    modalRef.componentInstance.config = this.config;
+    modalRef.componentInstance.formValue = event.data;
+    modalRef.result.then((result) => {
+      if (result !== 'no') {
+        console.log(result);
+        that.houseTypeService.update(event.data.id, JSON.parse(result)).then(
+          function (v) {
+            that.getDataList();
+          },
+          (err) => { }
+        )
+      }
+    }, (reason) => {
+    });
   }
-  // 删除
-  onDeleteConfirm(event): void {
+  //删除
+  onDelete(event) {
     if (window.confirm('你确定要删除吗?')) {
       this.houseTypeService.delete(event.data.id).then((data) => {
-        event.confirm.resolve();
+        this.getDataList();
       });
-    } else {
-      event.confirm.reject();
     }
   }
 

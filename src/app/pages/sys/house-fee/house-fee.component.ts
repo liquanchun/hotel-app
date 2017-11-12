@@ -2,8 +2,11 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { NgbModal, ModalDismissReasons, NgbTabset } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
+import { NgbdModalContent } from '../../../modal-content.component'
+import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
 
 import { HouseFeeService } from './house-fee.services';
+import { HouseTypeService } from '../../sys/house-type/house-type.services';
 import { GlobalState } from '../../../global.state';
 
 import * as $ from 'jquery';
@@ -13,21 +16,16 @@ import * as _ from 'lodash';
   selector: 'app-house-fee',
   templateUrl: './house-fee.component.html',
   styleUrls: ['./house-fee.component.scss'],
-  providers: [HouseFeeService],
+  providers: [HouseFeeService, HouseTypeService],
 })
 export class HouseFeeComponent implements OnInit, AfterViewInit {
 
   query: string = '';
 
   settingsAll = {
+    mode: 'external',
     actions: {
       columnTitle: '操作'
-    },
-    add: {
-      addButtonContent: '<i class="ion-ios-plus-outline"></i>',
-      createButtonContent: '<i class="ion-checkmark"></i>',
-      cancelButtonContent: '<i class="ion-close"></i>',
-      confirmCreate: true,
     },
     edit: {
       editButtonContent: '<i class="ion-edit"></i>',
@@ -39,6 +37,7 @@ export class HouseFeeComponent implements OnInit, AfterViewInit {
       deleteButtonContent: '<i class="ion-trash-a"></i>',
       confirmDelete: true
     },
+    hideSubHeader: true,
     columns: {
       id: {
         title: 'ID',
@@ -48,9 +47,9 @@ export class HouseFeeComponent implements OnInit, AfterViewInit {
         width: '30px',
       },
       name: {
-        title: '房型',
+        title: '名称',
         type: 'string',
-        filter: false
+        filter: false,
       },
       halfPriceHours: {
         title: '首日计半价时长',
@@ -97,14 +96,9 @@ export class HouseFeeComponent implements OnInit, AfterViewInit {
 
 
   settingsHours = {
+    mode: 'external',
     actions: {
       columnTitle: '操作'
-    },
-    add: {
-      addButtonContent: '<i class="ion-ios-plus-outline"></i>',
-      createButtonContent: '<i class="ion-checkmark"></i>',
-      cancelButtonContent: '<i class="ion-close"></i>',
-      confirmCreate: true,
     },
     edit: {
       editButtonContent: '<i class="ion-edit"></i>',
@@ -116,6 +110,7 @@ export class HouseFeeComponent implements OnInit, AfterViewInit {
       deleteButtonContent: '<i class="ion-trash-a"></i>',
       confirmDelete: true
     },
+    hideSubHeader: true,
     columns: {
       id: {
         title: 'ID',
@@ -169,14 +164,9 @@ export class HouseFeeComponent implements OnInit, AfterViewInit {
 
 
   settingsOther = {
+    mode: 'external',
     actions: {
       columnTitle: '操作'
-    },
-    add: {
-      addButtonContent: '<i class="ion-ios-plus-outline"></i>',
-      createButtonContent: '<i class="ion-checkmark"></i>',
-      cancelButtonContent: '<i class="ion-close"></i>',
-      confirmCreate: true,
     },
     edit: {
       editButtonContent: '<i class="ion-edit"></i>',
@@ -188,6 +178,7 @@ export class HouseFeeComponent implements OnInit, AfterViewInit {
       deleteButtonContent: '<i class="ion-trash-a"></i>',
       confirmDelete: true
     },
+    hideSubHeader: true,
     columns: {
       id: {
         title: 'ID',
@@ -249,17 +240,189 @@ export class HouseFeeComponent implements OnInit, AfterViewInit {
     }
   };
 
+  configAll: FieldConfig[] = [
+    {
+      type: 'input',
+      label: '名称',
+      name: 'name',
+      placeholder: '输入名称',
+      validation: [Validators.required],
+    },
+    {
+      type: 'input',
+      label: '首日计半价时长',
+      name: 'halfPriceHours',
+      placeholder: '输入首日计半价时长',
+      validation: [Validators.required],
+    },
+    {
+      type: 'input',
+      label: '首日计全价时长',
+      name: 'allPriceHours',
+      placeholder: '输入首日计全价时长',
+      validation: [Validators.required],
+    },
+    {
+      type: 'input',
+      label: '退房时间',
+      name: 'leaveTime',
+      placeholder: '输入退房时间',
+    },
+    {
+      type: 'input',
+      label: '加收缓冲时长',
+      name: 'addFeeHours',
+      placeholder: '输入加收缓冲时长',
+    },
+    {
+      type: 'input',
+      label: '固定加收全日租',
+      name: 'addAllDay',
+      placeholder: '输入固定加收全日租',
+    },
+    {
+      type: 'input',
+      label: '加租全日租时长',
+      name: 'addAllHours',
+      placeholder: '输入加租全日租时长',
+    },
+    {
+      type: 'input',
+      label: '备注',
+      name: 'remark',
+      placeholder: '输入备注',
+    }
+  ];
+
+  configHours: FieldConfig[] = [
+    {
+      type: 'input',
+      label: '名称',
+      name: 'name',
+      placeholder: '输入名称',
+      validation: [Validators.required],
+    },
+    {
+      type: 'input',
+      label: '时长',
+      name: 'hours',
+      placeholder: '输入时长',
+      validation: [Validators.required],
+    },
+    {
+      type: 'input',
+      label: '计半价时长',
+      name: 'halfPriceHours',
+      placeholder: '输入计半价时长',
+    },
+    {
+      type: 'input',
+      label: '入住时间起',
+      name: 'checkInTime1',
+      placeholder: '输入入住时间起',
+    },
+    {
+      type: 'input',
+      label: '入住时间止',
+      name: 'checkInTime2',
+      placeholder: '输入入住时间止',
+    },
+    {
+      type: 'input',
+      label: '加收缓冲时间',
+      name: 'addBuffTime',
+      placeholder: '输入加收缓冲时间',
+    },
+    {
+      type: 'input',
+      label: '超过多少分钟转正常',
+      name: 'turnNormal',
+      placeholder: '输入超过多少分钟转正常',
+    },
+    {
+      type: 'input',
+      label: '备注',
+      name: 'remark',
+      placeholder: '输入备注',
+    }
+  ];
+
+  configOther: FieldConfig[] = [
+    {
+      type: 'input',
+      label: '名称',
+      name: 'name',
+      placeholder: '输入名称',
+      validation: [Validators.required],
+    },
+    {
+      type: 'input',
+      label: '计半价时长',
+      name: 'halfPriceHours',
+      placeholder: '输入计半价时长',
+    },
+    {
+      type: 'input',
+      label: '计全价时长',
+      name: 'allPriceHours',
+      placeholder: '输入计全价时长',
+    },
+    {
+      type: 'input',
+      label: '入住时间起',
+      name: 'checkInTime1',
+      placeholder: '输入入住时间起',
+    },
+    {
+      type: 'input',
+      label: '入住时间止',
+      name: 'checkInTime2',
+      placeholder: '输入入住时间止',
+    },
+    {
+      type: 'input',
+      label: '退房时间',
+      name: 'leaveTime',
+      placeholder: '输入退房时间',
+    },
+    {
+      type: 'input',
+      label: '加收缓冲时间',
+      name: 'addBuffTime',
+      placeholder: '输入加收缓冲时间',
+    },
+    {
+      type: 'input',
+      label: '超过多少分钟转正常',
+      name: 'turnNormal',
+      placeholder: '输入超过多少分钟转正常',
+    },
+    {
+      type: 'input',
+      label: '备注',
+      name: 'remark',
+      placeholder: '输入备注',
+    }
+  ];
+
+  modalConfig: any = {};
+
   sourceAll: LocalDataSource = new LocalDataSource();
   sourceHours: LocalDataSource = new LocalDataSource();
   sourceOther: LocalDataSource = new LocalDataSource();
 
   constructor(
+    private modalService: NgbModal,
     private houseFeeService: HouseFeeService,
+    private _houseTypeService: HouseTypeService,
     private _state: GlobalState) {
     this.getDataList();
+    //this.getHouseType();
   }
   ngOnInit() {
-
+    this.modalConfig.SetAllhousePrice = this.configAll;
+    this.modalConfig.SetHourhousePrice = this.configHours;
+    this.modalConfig.SetOtherhousePrice = this.configOther;
   }
   ngAfterViewInit() {
 
@@ -276,37 +439,65 @@ export class HouseFeeComponent implements OnInit, AfterViewInit {
       this.sourceOther.load(data);
     });
   }
-  // 新增
-  onCreateConfirm(modelName, event): void {
-    if (event.newData) {
-      this.houseFeeService.create(modelName, event.newData).then((data) => {
-        event.confirm.resolve(event.newData);
-        this.getDataList();
-      });
-    } else {
-      event.confirm.reject();
-    }
+
+  onNewFee(modalname, title) {
+    const that = this;
+    const modalRef = this.modalService.open(NgbdModalContent);
+    modalRef.componentInstance.title = title;
+    modalRef.componentInstance.config = this.modalConfig[modalname];
+    modalRef.result.then((result) => {
+      if (result !== 'no') {
+        console.log(result);
+        that.houseFeeService.create(modalname, JSON.parse(result)).then(
+          function (v) {
+            that.getDataList();
+          },
+          (err) => {
+            alert(err);
+          }
+        )
+      }
+    }, (reason) => {
+    });
   }
-  // 修改
-  onSaveConfirm(modelName, event): void {
-    if (event.newData && event.newData.id) {
-      this.houseFeeService.update(modelName, event.newData.id, event.newData).then((data) => {
-        event.confirm.resolve(event.newData);
-        this.getDataList();
-      });
-    } else {
-      event.confirm.reject();
-    }
+
+  onEdit(modalname, title, event) {
+    console.log(event);
+    const that = this;
+    const modalRef = this.modalService.open(NgbdModalContent);
+    modalRef.componentInstance.title = title;
+    modalRef.componentInstance.config = this.modalConfig[modalname];
+    modalRef.componentInstance.formValue = event.data;
+    modalRef.result.then((result) => {
+      if (result !== 'no') {
+        console.log(result);
+        that.houseFeeService.update(modalname, event.data.id, JSON.parse(result)).then(
+          function (v) {
+            that.getDataList();
+          },
+          (err) => { }
+        )
+      }
+    }, (reason) => {
+    });
   }
-  // 删除
-  onDeleteConfirm(modelName, event): void {
+
+  //删除
+  onDelete(modalname, event) {
     if (window.confirm('你确定要删除吗?')) {
-      this.houseFeeService.delete(modelName, event.data.id).then((data) => {
-        event.confirm.resolve();
+      this.houseFeeService.delete(modalname, event.data.id).then((data) => {
+        this.getDataList();
       });
-    } else {
-      event.confirm.reject();
     }
   }
 
+  getHouseType(): void {
+    this._houseTypeService.getHouseTypes().then((data) => {
+      const that = this;
+      let houseT = _.find(this.configAll, function (f) { return f.name == 'houseType'; })
+      _.each(data, function (d) {
+        houseT.options.push({ id: d.id, name: d.typeName });
+      });
+    });
+  }
 }

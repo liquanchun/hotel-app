@@ -1,9 +1,10 @@
-import { Component, OnInit, AfterViewInit , ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { Subject } from 'rxjs/Subject';
 import { debounceTime } from 'rxjs/operator/debounceTime';
+import { NgbdModalContent } from '../../../modal-content.component'
 
 import { SetAgentService } from './set-agent.services';
 import { GlobalState } from '../../../global.state';
@@ -11,8 +12,6 @@ import { Common } from '../../../providers/common';
 import { DateTimeComponent } from '../../components/dateTimeRender/dateTimeRender.component';
 import { DatepickerViewComponent } from '../../components/datepickerView/datepickerView.component';
 import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
-import { DynamicFormComponent }
-  from '../../../theme/components/dynamic-form/containers/dynamic-form/dynamic-form.component';
 
 import * as $ from 'jquery';
 import * as _ from 'lodash';
@@ -25,7 +24,6 @@ import * as _ from 'lodash';
 })
 export class SetAgentComponent implements OnInit, AfterViewInit {
 
-  @ViewChild(DynamicFormComponent) form: DynamicFormComponent;
   title = '中介平台';
   totalRecord = 0;
   page = 1;
@@ -37,12 +35,6 @@ export class SetAgentComponent implements OnInit, AfterViewInit {
       columnTitle: '操作'
     },
     hideSubHeader: true,
-    add: {
-      addButtonContent: '<i class="ion-ios-plus-outline"></i>',
-      createButtonContent: '<i class="ion-checkmark"></i>',
-      cancelButtonContent: '<i class="ion-close"></i>',
-      confirmCreate: false,
-    },
     edit: {
       editButtonContent: '<i class="ion-edit"></i>',
       saveButtonContent: '<i class="ion-checkmark"></i>',
@@ -93,23 +85,13 @@ export class SetAgentComponent implements OnInit, AfterViewInit {
       },
       contractDate1: {
         title: '合同开始日期',
-        type: 'custom',
+        type: 'string',
         filter: false,
-        renderComponent: DateTimeComponent,
-        editor: {
-          type: 'custom',
-          component: DatepickerViewComponent,
-        },
       },
       contractDate2: {
         title: '合同截止日期',
-        type: 'custom',
+        type: 'string',
         filter: false,
-        renderComponent: DateTimeComponent,
-        editor: {
-          type: 'custom',
-          component: DatepickerViewComponent,
-        },
       },
       accountFee: {
         title: '挂账金额',
@@ -121,13 +103,7 @@ export class SetAgentComponent implements OnInit, AfterViewInit {
         title: '返佣模式',
         type: 'string',
         filter: false,
-        width: '80px',
-        editor: {
-          type: 'list',
-          config: {
-            list: [{ value: '按单', title: '按单' }, { value: '按金额', title: '按金额' }],
-          },
-        },
+        width: '80px'
       },
       commissionRate: {
         title: '返佣点数',
@@ -216,21 +192,10 @@ export class SetAgentComponent implements OnInit, AfterViewInit {
       label: '备注',
       name: 'remark',
       placeholder: '输入备注',
-    },
-    {
-      label: '保存',
-      name: 'submit',
-      type: 'button',
-      callback: this.backTop,
-    },
+    }
   ];
 
   source: LocalDataSource = new LocalDataSource();
-  private tableDisplay: string = 'block';
-  private formDisplay: string = 'none';
-
-  private isNewAgent: boolean = false;
-  private editAgent: any;
 
   private successMessage: string;
   private _success = new Subject<string>();
@@ -238,6 +203,7 @@ export class SetAgentComponent implements OnInit, AfterViewInit {
   private alterType: string;
 
   constructor(
+    private modalService: NgbModal,
     private setAgentService: SetAgentService,
     private _common: Common,
     private _state: GlobalState) {
@@ -247,23 +213,8 @@ export class SetAgentComponent implements OnInit, AfterViewInit {
     setTimeout(() => this.staticAlertClosed = true, 20000);
     this._success.subscribe((message) => this.successMessage = message);
     debounceTime.call(this._success, 5000).subscribe(() => this.successMessage = null);
-
-    this._state.subscribe('backup-click', (x) => {
-      this.isNewAgent = false;
-      this.tableDisplay = 'block';
-      this.formDisplay = 'none';
-    });
   }
   ngAfterViewInit() {
-    let previousValid = this.form.valid;
-    this.form.changes.subscribe(() => {
-      if (this.form.valid !== previousValid) {
-        previousValid = this.form.valid;
-        this.form.setDisabled('submit', !previousValid);
-      }
-    });
-
-    this.form.setDisabled('submit', true);
   }
   onPageChange(p) {
     console.log("page:" + p);
@@ -282,36 +233,49 @@ export class SetAgentComponent implements OnInit, AfterViewInit {
     });
   }
 
-  onNewAgent(event):void{
-    this.tableDisplay = 'none';
-    this.formDisplay = 'block';
-    this.isNewAgent = true;
-    this.title = '新增中介平台';
+  onCreate() {
+    const that = this;
+    const modalRef = this.modalService.open(NgbdModalContent);
+    modalRef.componentInstance.title = '新增协议单位';
+    modalRef.componentInstance.config = this.config;
+    modalRef.result.then((result) => {
+      if (result !== 'no') {
+        console.log(result);
+        that.setAgentService.create(JSON.parse(result)).then(
+          function (v) {
+            that.getDataList();
+          },
+          (err) => {
+            alert(err);
+          }
+        )
+      }
+    }, (reason) => {
+    });
   }
-  // 新增
-  onCreateConfirm(event): void {
-    if (event.newData) {
-      this.setAgentService.create(event.newData).then((data) => {
-        event.confirm.resolve(event.newData);
-        this.getDataList();
-      });
-    } else {
-      event.confirm.reject();
-    }
-  }
-  // 修改
-  onSaveConfirm(event): void {
-    if (event.newData && event.newData.id) {
-      this.setAgentService.update(event.newData.id, event.newData).then((data) => {
-        event.confirm.resolve(event.newData);
-        this.getDataList();
-      });
-    } else {
-      event.confirm.reject();
-    }
+
+  onEdit(event) {
+    console.log(event);
+    const that = this;
+    const modalRef = this.modalService.open(NgbdModalContent);
+    modalRef.componentInstance.title = '修改协议单位';
+    modalRef.componentInstance.config = this.config;
+    modalRef.componentInstance.formValue = event.data;
+    modalRef.result.then((result) => {
+      if (result !== 'no') {
+        console.log(result);
+        that.setAgentService.update(event.data.id, JSON.parse(result)).then(
+          function (v) {
+            that.getDataList();
+          },
+          (err) => { }
+        )
+      }
+    }, (reason) => {
+    });
   }
   //删除
-  onDelete(event){
+  onDelete(event) {
     if (window.confirm('你确定要删除吗?')) {
       this.setAgentService.delete(event.data.id).then((data) => {
         this.getDataList();
@@ -321,66 +285,5 @@ export class SetAgentComponent implements OnInit, AfterViewInit {
 
   changeSuccessMessage(msg) {
     this._success.next(msg);
-  }
-  onEdit(event): void {
-    this.editAgent = event;
-    this.isNewAgent = false;
-    this.tableDisplay = 'none';
-    this.formDisplay = 'block';
-    this.title = '修改协议单位';
-
-    this.form.setValue('name', event.data.name);
-    this.form.setValue('linkMan', event.data.linkMan);
-    this.form.setValue('mobile', event.data.mobile);
-    this.form.setValue('address', event.data.address);
-    this.form.setValue('contractNo', event.data.contractNo);
-    this.form.setValue('contractDate1', {
-      "year": this._common.getDateYear(event.data.contractDate1),
-      "month": this._common.getDateMonth(event.data.contractDate1),
-      "day": this._common.getDateDay(event.data.contractDate1)
-    });
-    this.form.setValue('contractDate2', {
-      "year": this._common.getDateYear(event.data.contractDate2),
-      "month": this._common.getDateMonth(event.data.contractDate2),
-      "day": this._common.getDateDay(event.data.contractDate2)
-    });
-    this.form.setValue('commissionType', event.data.commissionType);
-    this.form.setValue('commissionRate', event.data.commissionRate);
-    this.form.setValue('remark', event.data.remark);
-    this.form.setValue('typeName', event.data.typeName);
-    this.form.setDisabled('submit', false);
-  }
-  submit(value: { [name: string]: any }) {
-    const that = this;
-    value.contractDate1 = this._common.getDateString(value.contractDate1);
-    value.contractDate2 = this._common.getDateString(value.contractDate2);
-    if(this.isNewAgent){
-      this.setAgentService.create(value).then(function (menu) {
-        that.getDataList();
-        that.form.setDisabled('submit', false);
-        that.changeSuccessMessage(`保存成功。`);
-        that.backTop();
-      }, (err) => {
-        that.alterType = 'danger';
-        that.changeSuccessMessage(`保存失败。${err}`);
-      });
-    } else {
-      value.id = this.editAgent.data.id;
-      this.setAgentService.update(value.id, value).then(function (menu) {
-        that.getDataList();
-        that.form.setDisabled('submit', false);
-        that.changeSuccessMessage(`保存成功。`);
-        that.backTop();
-      }, (err) => {
-        that.alterType = 'danger';
-        that.changeSuccessMessage(`保存失败。${err}`);
-      });
-    }
-  }
-
-  backTop(): void {
-    this.isNewAgent = false;
-    this.tableDisplay = 'block';
-    this.formDisplay = 'none';
   }
 }

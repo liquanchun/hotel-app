@@ -25,6 +25,7 @@ import { CheckinComponent } from './checkin/checkin.component';
 import { CheckoutComponent } from './checkout/checkout.component';
 import { CouponComponent } from './coupon/coupon.component';
 import { ScheduleComponent } from './schedule/schedule.component';
+import { ButtonViewComponent } from './checkin/buttonview.component';
 
 @NgModule({
   imports: [
@@ -48,7 +49,9 @@ import { ScheduleComponent } from './schedule/schedule.component';
     CheckoutComponent,
     CouponComponent,
     ScheduleComponent,
+    ButtonViewComponent
   ],
+  entryComponents: [ButtonViewComponent],
   providers: [GlobalState, Config, HttpService, AppState,Common]
 })
 export class FrontdeskModule {}

@@ -5,6 +5,7 @@ import { FormButtonComponent } from '../form-button/form-button.component';
 import { FormInputComponent } from '../form-input/form-input.component';
 import { FormSelectComponent } from '../form-select/form-select.component';
 import { FormCheckComponent } from '../form-check/form-check.component';
+import { FormTrueFalseComponent } from '../form-truefalse/form-truefalse.component';
 import { FormDatepickerComponent } from '../form-datepicker/form-datepicker.component';
 import { FormMultiSelectComponent } from '../form-multiselect/form-multiselect.component';
 
@@ -16,6 +17,7 @@ const components: { [type: string]: Type<Field> } = {
   input: FormInputComponent,
   select: FormSelectComponent,
   check: FormCheckComponent,
+  truefalse:FormTrueFalseComponent,
   datepicker: FormDatepickerComponent,
   multiselect: FormMultiSelectComponent,
 };

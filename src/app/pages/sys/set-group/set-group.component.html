@@ -1,7 +1,6 @@
 <div class="row">
   <div class="col-md-12">
     <ba-card [title]="title" class="card-primary" baCardClass="with-scroll">
-      <div [style.display]="tableDisplay">
         <div class="row">
           <div class="col-3">
             <div class="input-group">
@@ -20,19 +19,9 @@
           </div>
         </div>
 
-        <ng2-smart-table [settings]="settings" [source]="source" (edit)="onEdit($event)" (delete)="onDelete($event)"
-          (editConfirm)="onSaveConfirm($event)" (createConfirm)="onCreateConfirm($event)"></ng2-smart-table>
+        <ng2-smart-table [settings]="settings" [source]="source" (edit)="onEdit($event)" (delete)="onDelete($event)"></ng2-smart-table>
         <ngb-pagination style="margin-top: 5px;" *ngIf="totalRecord>10" (pageChange)="onPageChange($event)" size="sm" class="pull-right"
           [(collectionSize)]="totalRecord" [(page)]="page" [maxSize]="5" [boundaryLinks]="true"></ngb-pagination>
-      </div>
-      <div [style.display]="formDisplay">
-        <div class="col-5 col-offset-3">
-          <ngb-alert *ngIf="successMessage" type="success" (close)="successMessage = null">{{ successMessage }}</ngb-alert>
-          <dynamic-form [config]="config" #form="dynamicForm"  (submit)="submit($event)">
-          </dynamic-form>
-          {{ form.valid }} {{ form.value | json }}
-        </div>
-      </div>
     </ba-card>
   </div>
 </div>
