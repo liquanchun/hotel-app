@@ -21,7 +21,7 @@ import { ButtonViewComponent } from './buttonview.component';
   selector: 'app-qt-checkin',
   templateUrl: './checkin.component.html',
   styleUrls: ['./checkin.component.scss'],
-  providers: [CheckinService, HouseinfoService, ReadIdCardService,HouseTypeService],
+  providers: [CheckinService, HouseinfoService, ReadIdCardService, HouseTypeService],
 })
 export class CheckinComponent implements OnInit, AfterViewInit {
   @Input() showEditButton: boolean = true;
@@ -32,8 +32,9 @@ export class CheckinComponent implements OnInit, AfterViewInit {
   private _success = new Subject<string>();
   private staticAlertClosed = false;
   private alterType: string;
-  private checkIn: any = { cusname: '', cusphone: '', IDCard: '', InType: '', remark: '' };
+  private checkIn: any = { cusname: '', cusphone: '', IDCard: '', InType: '',PayType:'', remark: '', prereceivefee: 0 };
   private selectedRow: any;
+  private paytype: any = ['预授权','现金','刷卡','支付宝','微信'];
 
   settingsHouse = {
     actions: {
@@ -70,8 +71,8 @@ export class CheckinComponent implements OnInit, AfterViewInit {
         filter: false,
         editable: false
       },
-      cardFee: {
-        title: '房价',
+      houseFee: {
+        title: '房费',
         type: 'number',
         filter: false,
         editable: false
@@ -133,6 +134,12 @@ export class CheckinComponent implements OnInit, AfterViewInit {
       },
       houseTypeTxt: {
         title: '房型',
+        type: 'string',
+        filter: false,
+        width: '70px',
+      },
+      houseFee: {
+        title: '房费',
         type: 'string',
         filter: false,
         width: '70px',
@@ -204,8 +211,8 @@ export class CheckinComponent implements OnInit, AfterViewInit {
 
     this._houseTypeService.getHouseTypes().then((data) => {
       const that = this;
-      _.each(data,function(d){
-        that.houseType.push({ type: d.typeName, id:d.id, color: 'btn-info', icon: 'fa-refresh', count: 0 });
+      _.each(data, function (d) {
+        that.houseType.push({ type: d.typeName, id: d.id, color: 'btn-info', icon: 'fa-refresh', count: 0 });
       });
     });
   }
@@ -221,7 +228,9 @@ export class CheckinComponent implements OnInit, AfterViewInit {
             coupons: 1,
             cusname: this.checkIn.cusname,
             cusid: this.checkIn.IDCard,
-            button: '读取身份证_' + event.data.code
+            button: '读取身份证_' + event.data.code,
+            preFee: event.data.preFee,
+            houseFee:event.data.houseFee
           });
       }
     } else {
@@ -229,16 +238,27 @@ export class CheckinComponent implements OnInit, AfterViewInit {
         return n['code'] == event.data.code;
       });
     }
+    $("#inputprefee").val(_.sumBy(this.selectedHouse, function (o) { return o['preFee']; }));
+    $("#inputhousefee").val(_.sumBy(this.selectedHouse, function (o) { return o['houseFee']; }));
     this.selectedGrid.load(this.selectedHouse);
   }
   // 删除
   onDeleteConfirm(event): void {
     if (window.confirm('你确定要删除吗?')) {
+      _.remove(this.selectedHouse, function (n) {
+        return n['code'] == event.data.code;
+      });
+      $("#inputprefee").val(_.sumBy(this.selectedHouse, function (o) { return o['preFee']; }));
+      $("#inputhousefee").val(_.sumBy(this.selectedHouse, function (o) { return o['houseFee']; }));
       event.confirm.resolve();
     } else {
       event.confirm.reject();
     }
   }
+  onSaveConfirm(event): void {
+    event.confirm.resolve();
+  }
+
   onUserRowSelect(event) {
     this.selectedRow = event.data;
   }
@@ -251,5 +271,15 @@ export class CheckinComponent implements OnInit, AfterViewInit {
     this.popGrid.setFilter([
       { field: 'houseType', search: query },
     ], false);
+  }
+
+  onKeyPress(event: any) {
+    event.returnValue = false;
+    // let keyCode = event.keyCode;
+    // if ((keyCode >= 48 && keyCode <= 57){
+    //   event.returnValue = true;
+    // } else {
+    //   event.returnValue = false;
+    // }
   }
 }
