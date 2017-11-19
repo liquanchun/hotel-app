@@ -28,7 +28,20 @@
           </div>
         </div>
 
-        <ng2-smart-table [settings]="settings" [source]="source"></ng2-smart-table>
+        <ng-template #popContent let-c="close" let-d="dismiss">
+            <div class="modal-header">
+                <h4 class="modal-title">入住房间信息</h4>
+                <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                  <ng2-smart-table [settings]="settingsHouse" [source]="selectedGrid">
+                    </ng2-smart-table>
+              </div>
+        </ng-template>
+
+        <ng2-smart-table [settings]="settings" [source]="source" (edit)="open($event,popContent)" ></ng2-smart-table>
         <ngb-pagination style="margin-top: 5px;" *ngIf="totalRecord>10" (pageChange)="onPageChange($event)" size="sm" class="pull-right"
           [(collectionSize)]="totalRecord" [(page)]="page" [maxSize]="5" [boundaryLinks]="true"></ngb-pagination>
       </div>

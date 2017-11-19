@@ -21,7 +21,7 @@ import { ComponentsModule } from '../components/components.module';
 import { routing } from './order.routing';
 import { OrderComponent } from './order.component';
 import { OrderlistComponent } from './list/orderlist.component';
-
+import { ButtonViewComponent } from './list/buttonview.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -40,7 +40,9 @@ import { OrderlistComponent } from './list/orderlist.component';
   declarations: [
     OrderComponent,
     OrderlistComponent,
+    ButtonViewComponent,
   ],
+  entryComponents: [ButtonViewComponent],
   providers: [GlobalState, Config, HttpService, AppState,Common]
 })
 export class OrderModule {}

@@ -120,18 +120,14 @@ export class DicComponent implements OnInit, AfterViewInit {
       if (this.newDicName) {
         // TODO
         const focusNode = tree.treeModel.getFocusedNode();
-        if (focusNode) {
-          this.dicService
-            .create(focusNode.data.id, this.newDicName)
-            .then(function (role) {
-              that.getNodes();
-              that.newDicName = '';
-            }, (err) => {
-              alert(`保存失败。${err}`);
-            });
-        } else {
-          alert('请选择父节点。');
-        }
+        this.dicService
+          .create(focusNode ? focusNode.data.id : 0, this.newDicName)
+          .then(function (role) {
+            that.getNodes();
+            that.newDicName = '';
+          }, (err) => {
+            alert(`保存失败。${err}`);
+          });
       } else {
         alert('子节点名称不能为空。');
       }

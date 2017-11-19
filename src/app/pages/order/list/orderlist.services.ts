@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 
 @Injectable()
 export class OrderlistService {
-  private modelName = 'fworderlist';  // URL to web api
+  private modelName = 'yxorder';  // URL to web api
   constructor(private _httpService: HttpService) {
   }
 

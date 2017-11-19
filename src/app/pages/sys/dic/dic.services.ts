@@ -15,7 +15,19 @@ export class DicService {
       fnCallBack(that.createTree(dics, 0));
     });
   }
-
+  getDicByName(name, fnCallBack) {
+    let dicList = [];
+    this._httpService.getModelList(this.modelName).then(function (data) {
+      const parentData = _.find(data, (f) => { return f['dicName'] == name; });
+      if (parentData) {
+        const filteData = _.filter(data, (f) => { return f['parentId'] == parentData['id']; });
+        _.each(filteData, function (d) {
+          dicList.push({ id: d.id, name: d.dicName });
+        });
+        fnCallBack(dicList);
+      }
+    });
+  }
   delete(id: any) {
     return this._httpService.delete(this.modelName, id);
   }

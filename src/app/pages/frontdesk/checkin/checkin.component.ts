@@ -13,29 +13,46 @@ import { HouseinfoService } from '../../house/houseinfo/houseinfo.services';
 import { CheckinService } from './checkin.services';
 import { ReadIdCardService } from './idcardread.services';
 import { HouseTypeService } from '../../sys/house-type/house-type.services';
+import { SetPaytypeService } from '../../sys/set-paytype/set-paytype.services';
+import { DicService } from '../../sys/dic/dic.services';
 
 import { GlobalState } from '../../../global.state';
 import { ButtonViewComponent } from './buttonview.component';
+import { retry } from 'rxjs/operator/retry';
 
 @Component({
   selector: 'app-qt-checkin',
   templateUrl: './checkin.component.html',
   styleUrls: ['./checkin.component.scss'],
-  providers: [CheckinService, HouseinfoService, ReadIdCardService, HouseTypeService],
+  providers: [CheckinService, HouseinfoService, ReadIdCardService, HouseTypeService, SetPaytypeService, DicService],
 })
 export class CheckinComponent implements OnInit, AfterViewInit {
   @Input() showEditButton: boolean = true;
   title = '客人入住';
-
+  private isSaved: boolean = false;
   private message: string;
   private successMessage: string;
   private _success = new Subject<string>();
   private staticAlertClosed = false;
   private alterType: string;
-  private checkIn: any = { cusname: '', cusphone: '', IDCard: '', InType: '',PayType:'', remark: '', prereceivefee: 0 };
+  private checkIn: any = {
+    cusname: '',
+    cusphone: '',
+    idCard: '',
+    inType: '',
+    comeType: '',
+    payType: '',
+    billNo: '',
+    remark: '',
+    houseFee: 0,
+    prereceivefee: 0
+  };
   private selectedRow: any;
-  private paytype: any = ['预授权','现金','刷卡','支付宝','微信'];
-
+  private paytype: any = [];
+  private checkinType: any = [
+    { id: 1, name: '全天房' }, { id: 2, name: '钟点房' }, { id: 3, name: '特殊房' }, { id: 4, name: '免费房' }
+  ];
+  private comeType: any = [];
   settingsHouse = {
     actions: {
       columnTitle: '操作'
@@ -65,7 +82,7 @@ export class CheckinComponent implements OnInit, AfterViewInit {
         filter: false,
         editable: false
       },
-      code: {
+      houseCode: {
         title: '房号',
         type: 'number',
         filter: false,
@@ -92,7 +109,7 @@ export class CheckinComponent implements OnInit, AfterViewInit {
         type: 'string',
         filter: false
       },
-      cusid: {
+      idcard: {
         title: '客人身份证',
         type: 'string',
         filter: false
@@ -167,6 +184,8 @@ export class CheckinComponent implements OnInit, AfterViewInit {
     private _houseinfoService: HouseinfoService,
     private _houseTypeService: HouseTypeService,
     private _readIdCardService: ReadIdCardService,
+    private _setPaytypeService: SetPaytypeService,
+    private _dicService: DicService,
     fb: FormBuilder) {
 
     this._state.subscribe('read.idcard', (data) => {
@@ -197,7 +216,7 @@ export class CheckinComponent implements OnInit, AfterViewInit {
   readCard() {
     const cust = this._readIdCardService.getIDcard();
     this.checkIn.cusname = cust.name;
-    this.checkIn.IDCard = cust.idcard;
+    this.checkIn.idCard = cust.idcard;
   }
 
   changeSuccessMessage(msg) {
@@ -215,6 +234,15 @@ export class CheckinComponent implements OnInit, AfterViewInit {
         that.houseType.push({ type: d.typeName, id: d.id, color: 'btn-info', icon: 'fa-refresh', count: 0 });
       });
     });
+
+    this._setPaytypeService.getSetPaytypes().then((data) => {
+      const that = this;
+      _.each(data, function (d) {
+        that.paytype.push({ id: d.id, name: d.name });
+      });
+    });
+
+    this._dicService.getDicByName('客源', (data) => { this.comeType = data; });
   }
   //选择房间
   rowClicked(event): void {
@@ -222,15 +250,16 @@ export class CheckinComponent implements OnInit, AfterViewInit {
       if (!_.some(this.selectedHouse, ['code', event.data.code])) {
         this.selectedHouse.push(
           {
-            houseType: event.data.houseTypeTxt,
-            code: event.data.code,
+            houseTypeTxt: event.data.houseTypeTxt,
+            houseType: event.data.houseType,
+            houseCode: event.data.code,
             days: 1,
             coupons: 1,
             cusname: this.checkIn.cusname,
-            cusid: this.checkIn.IDCard,
+            idcard: this.checkIn.idCard,
             button: '读取身份证_' + event.data.code,
-            preFee: event.data.preFee,
-            houseFee:event.data.houseFee
+            prereceivefee: event.data.preFee,
+            houseFee: event.data.houseFee
           });
       }
     } else {
@@ -238,8 +267,8 @@ export class CheckinComponent implements OnInit, AfterViewInit {
         return n['code'] == event.data.code;
       });
     }
-    $("#inputprefee").val(_.sumBy(this.selectedHouse, function (o) { return o['preFee']; }));
-    $("#inputhousefee").val(_.sumBy(this.selectedHouse, function (o) { return o['houseFee']; }));
+    this.checkIn.prereceivefee = _.sumBy(this.selectedHouse, function (o) { return o['prereceivefee']; });
+    this.checkIn.houseFee = _.sumBy(this.selectedHouse, function (o) { return o['houseFee']; });
     this.selectedGrid.load(this.selectedHouse);
   }
   // 删除
@@ -248,8 +277,8 @@ export class CheckinComponent implements OnInit, AfterViewInit {
       _.remove(this.selectedHouse, function (n) {
         return n['code'] == event.data.code;
       });
-      $("#inputprefee").val(_.sumBy(this.selectedHouse, function (o) { return o['preFee']; }));
-      $("#inputhousefee").val(_.sumBy(this.selectedHouse, function (o) { return o['houseFee']; }));
+      this.checkIn.prereceivefee = _.sumBy(this.selectedHouse, function (o) { return o['prereceivefee']; });
+      this.checkIn.houseFee = _.sumBy(this.selectedHouse, function (o) { return o['houseFee']; });
       event.confirm.resolve();
     } else {
       event.confirm.reject();
@@ -281,5 +310,44 @@ export class CheckinComponent implements OnInit, AfterViewInit {
     // } else {
     //   event.returnValue = false;
     // }
+  }
+  //确认入住
+  onConfirm(): void {
+    if (!this.checkIn.cusname || !this.checkIn.cusphone || !this.checkIn.idCard || !this.checkIn.inType || !this.checkIn.payType) {
+      alert('请填写完整。');
+      return;
+    }
+    if (this.selectedHouse.length == 0) {
+      alert('请选择房间。');
+      return;
+    }
+    this.isSaved = true;
+    const that = this;
+    this._checkinService.create(
+      {
+        YxOrder: this.checkIn,
+        YxOrderList: this.selectedHouse
+      }
+    ).then(
+      function (v) {
+        alert('保存成功。');
+        that.isSaved = false;
+        // that.checkIn.cusname = '';
+        // that.checkIn.cusphone ='';
+        // that.checkIn.idCard ='';
+        // that.checkIn.inType ='';
+        // that.checkIn.remark ='';
+        // that.checkIn.houseFee ='';
+        // that.checkIn.prereceivefee ='';
+        // that.checkIn.payType = '';
+        // that.checkIn.billNo = '';
+        // that.selectedHouse = [];
+        // that.selectedGrid.load(that.selectedHouse);
+      },
+      (err) => {
+        alert('保存失败，' + err);
+        that.isSaved = false;
+      }
+      )
   }
 }
