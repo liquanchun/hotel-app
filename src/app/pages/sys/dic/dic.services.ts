@@ -22,7 +22,7 @@ export class DicService {
       if (parentData) {
         const filteData = _.filter(data, (f) => { return f['parentId'] == parentData['id']; });
         _.each(filteData, function (d) {
-          dicList.push({ id: d.id, name: d.dicName });
+          dicList.push({ id: d.id, name: d.dicName,color:d.remark});
         });
         fnCallBack(dicList);
       }

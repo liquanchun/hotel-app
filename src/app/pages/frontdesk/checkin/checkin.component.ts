@@ -332,17 +332,17 @@ export class CheckinComponent implements OnInit, AfterViewInit {
       function (v) {
         alert('保存成功。');
         that.isSaved = false;
-        // that.checkIn.cusname = '';
-        // that.checkIn.cusphone ='';
-        // that.checkIn.idCard ='';
-        // that.checkIn.inType ='';
-        // that.checkIn.remark ='';
-        // that.checkIn.houseFee ='';
-        // that.checkIn.prereceivefee ='';
-        // that.checkIn.payType = '';
-        // that.checkIn.billNo = '';
-        // that.selectedHouse = [];
-        // that.selectedGrid.load(that.selectedHouse);
+        that.checkIn.cusname = '';
+        that.checkIn.cusphone ='';
+        that.checkIn.idCard ='';
+        that.checkIn.inType ='';
+        that.checkIn.remark ='';
+        that.checkIn.houseFee ='';
+        that.checkIn.prereceivefee ='';
+        that.checkIn.payType = '';
+        that.checkIn.billNo = '';
+        that.selectedHouse = [];
+        that.selectedGrid.load(that.selectedHouse);
       },
       (err) => {
         alert('保存失败，' + err);

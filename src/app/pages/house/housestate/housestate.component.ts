@@ -7,6 +7,7 @@ import { NgbdModalContent } from '../../../modal-content.component'
 import { HousestateService } from './housestate.services';
 import { GlobalState } from '../../../global.state';
 import { Common } from '../../../providers/common';
+import { DicService } from '../../sys/dic/dic.services';
 import * as $ from 'jquery';
 import * as _ from 'lodash';
 
@@ -14,7 +15,7 @@ import * as _ from 'lodash';
   selector: 'app-housestate',
   templateUrl: './housestate.component.html',
   styleUrls: ['./housestate.component.scss'],
-  providers: [HousestateService],
+  providers: [HousestateService, DicService],
 })
 export class HousestateComponent implements OnInit, AfterViewInit {
 
@@ -25,15 +26,7 @@ export class HousestateComponent implements OnInit, AfterViewInit {
   houseState: any;
 
   //状态按钮组
-  stateData = [
-    { state: '空净', color: 'btn-info', icon: 'fa-refresh', count: 0 },
-    { state: '空脏', color: 'btn-secondary', icon: 'fa-refresh', count: 0 },
-    { state: '住人净', color: 'btn-success', icon: 'fa-refresh', count: 0 },
-    { state: '住人脏', color: 'btn-danger', icon: 'fa-refresh', count: 0 },
-    { state: '维修', color: 'btn-warning', icon: 'fa-refresh', count: 0 },
-    { state: '预约', color: 'btn-primary', icon: 'fa-refresh', count: 0 },
-    { state: '预离', color: 'btn-dark', icon: 'fa-refresh', count: 0 },
-  ];
+  stateData = [];
   //入住标准钮组
   checkInData = [
     { state: '全天房', color: 'btn-info', icon: 'fa-refresh', count: 0 },
@@ -50,16 +43,12 @@ export class HousestateComponent implements OnInit, AfterViewInit {
     { state: '艺龙', color: 'btn-warning', icon: 'fa-refresh', count: 0 },
   ];
   //客源
-  custData = [
-    { state: '散客', color: 'btn-info', icon: 'fa-refresh', count: 0 },
-    { state: '会员', color: 'btn-secondary', icon: 'fa-refresh', count: 0 },
-    { state: '单位', color: 'btn-success', icon: 'fa-refresh', count: 0 },
-    { state: '中介', color: 'btn-danger', icon: 'fa-refresh', count: 0 },
-  ];
+  custData = [];
 
   constructor(
     private modalService: NgbModal,
     private housestateService: HousestateService,
+    private _dicService: DicService,
     private _common: Common,
     private _state: GlobalState) {
     this.getDataList();
@@ -70,31 +59,39 @@ export class HousestateComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
 
   }
-
-  openModal(id: string) {
-    this.modalService.open(id);
-  }
-
   onSearch(query: string = '') {
     this.source = _.filter(this.sourcefilter, function (o) {
       return o['code'] && o['code'].indexOf(query) > -1
-        || o['state'] && o['state'].indexOf(query) > -1
-        || o['housetype'] && o['housetype'].indexOf(query) > -1
+        || o['stateTxt'] && o['stateTxt'].indexOf(query) > -1
+        || o['houseTypeTxt'] && o['houseTypeTxt'].indexOf(query) > -1
         || o['tags'] && o['tags'].indexOf(query) > -1;
     });
   }
 
+  getDataListById(id: number): void {
+    this.source = _.filter(this.sourcefilter, (f) => { return f['state'] == id; });
+  }
+
   getDataList(): void {
-    this.housestateService.getHousestates().then((data) => {
-      this.source = data;
-      this.sourcefilter = data;
-      this.houseState = _.countBy(data, 'state');
-      const that = this;
-      _.each(this.stateData, (e) => {
-        if (that.houseState[e.state]) {
-          e.count = that.houseState[e.state];
-        }
+    this._dicService.getDicByName('客源', (data) => { this.custData = data; });
+
+    this._dicService.getDicByName('房屋状态', (data) => {
+      this.stateData = data;
+
+      this.housestateService.getHousestates().then((data) => {
+        this.source = data;
+        this.sourcefilter = data;
+        this.houseState = _.countBy(data, 'state');
+        const that = this;
+        _.each(this.stateData, (e) => {
+          if (that.houseState[e.id]) {
+            e.count = that.houseState[e.id];
+          }else{
+            e.count = 0;
+          }
+        });
       });
+
     });
   }
 }

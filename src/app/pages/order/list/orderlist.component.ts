@@ -202,7 +202,7 @@ export class OrderlistComponent implements OnInit, AfterViewInit {
   }
   open(event,content) {
     const orderId = event.data.id;
-    const orderDetail = _.filter(this.orderDetail,(f)=>{ return f['orderId'] = orderId ;});
+    const orderDetail = _.filter(this.orderDetail,(f)=>{ return f['orderId'] == orderId ;});
     this.selectedGrid.load(orderDetail);
 
     this.modalService.open(content).result.then((result) => {
