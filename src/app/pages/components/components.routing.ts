@@ -7,6 +7,7 @@ import { HouseTypeRenderComponent } from './houseTypeRender/houseType.component'
 import { DateTimeComponent } from './dateTimeRender/dateTimeRender.component';
 import { DatepickerViewComponent } from './datepickerView/datepickerView.component';
 import { MultiselectViewComponent } from './multiselectView/multiselectView.component';
+import { DateQueryComponent } from './datequery/datequery.component';
 // noinspection TypeScriptValidateTypes
 const routes: Routes = [
   {
@@ -19,6 +20,7 @@ const routes: Routes = [
       { path: 'datetimerender', component: DateTimeComponent },
       { path: 'datepickerview', component: DatepickerViewComponent },
       { path: 'multiselect-dropdown-component', component: DatepickerViewComponent },
+      { path: 'datequery', component: DateQueryComponent },
     ]
   }
 ];

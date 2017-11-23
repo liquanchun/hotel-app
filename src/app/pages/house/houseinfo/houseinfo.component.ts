@@ -77,7 +77,7 @@ export class HouseinfoComponent implements OnInit, AfterViewInit {
         filter: false,
         width: '80px',
       },
-      state: {
+      stateTxt: {
         title: '房屋状态',
         type: 'string',
         filter: false,

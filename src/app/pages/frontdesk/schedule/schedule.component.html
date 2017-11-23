@@ -1,43 +1,35 @@
 <div class="row">
-  <div class="col-md-12">
-    <ba-card [title]="title" class="card-primary" baCardClass="with-scroll">
-      <div>
-        <div class="row">
-          <div class="col-3">
-            <div class="input-group">
-              <input #search type="text" class="form-control" (keydown.enter)="onSearch(search.value)" placeholder="Search for..." aria-label="Search for...">
-              <span class="input-group-btn btn-group">
+    <div class="col-md-12">
+        <ba-card [title]="title" class="card-primary" baCardClass="with-scroll">
+            <div>
+                <div class="row">
+                    <div class="col-3">
+                        <div class="input-group">
+                            <input #search type="text" class="form-control" (keydown.enter)="onSearch(search.value)" placeholder="Search for..." aria-label="Search for...">
+                            <span class="input-group-btn btn-group">
                         <button class="btn btn-secondary" (click)="onSearch(search.value)" type="button"><i class="fa fa-search" aria-hidden="true"></i> 查询</button>
                     </span>
-            </div>
-          </div>
+                        </div>
+                    </div>
 
-          <div class="col-9">
-            <div class="row">
-              <div class="col-9">
-                <div class="btn-group margin8 pull-right" role="group" aria-label="Basic example">
-                  <button (click)="getDataList()" type="button" class="btn btn-info btn-sm"><i class="fa fa-refresh" aria-hidden="true"></i> 全部</button>
-                  <button (click)="getDataList()" type="button" class="btn btn-info btn-sm"><i class="fa fa-refresh" aria-hidden="true"></i> 昨天</button>
-                  <button (click)="getDataList()" type="button" class="btn btn-info btn-sm"><i class="fa fa-refresh" aria-hidden="true"></i> 今天</button>
-                  <button (click)="getDataList()" type="button" class="btn btn-info btn-sm"><i class="fa fa-refresh" aria-hidden="true"></i> 上周</button>
-                  <button (click)="getDataList()" type="button" class="btn btn-info btn-sm"><i class="fa fa-refresh" aria-hidden="true"></i> 本周</button>
-                  <button (click)="getDataList()" type="button" class="btn btn-info btn-sm"><i class="fa fa-refresh" aria-hidden="true"></i> 本月</button>
+                    <div class="col-9">
+                        <div class="row">
+                            <div class="col-9">
+                                <date-query></date-query>
+                            </div>
+                            <div class="col-3">
+                                <div class="btn-group margin8" role="group" aria-label="Basic example">
+                                    <button (click)="getDataList()" type="button" class="btn btn-info btn-sm"><i class="fa fa-refresh" aria-hidden="true"></i> 未入住</button>
+                                    <button (click)="getDataList()" type="button" class="btn btn-info btn-sm"><i class="fa fa-refresh" aria-hidden="true"></i> 已入住</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              <div class="col-3">
-                  <div class="btn-group margin8" role="group" aria-label="Basic example">
-                    <button (click)="getDataList()" type="button" class="btn btn-info btn-sm"><i class="fa fa-refresh" aria-hidden="true"></i> 未入住</button>
-                    <button (click)="getDataList()" type="button" class="btn btn-info btn-sm"><i class="fa fa-refresh" aria-hidden="true"></i> 已入住</button>
-                  </div>
-                </div>
-            </div>
-          </div>
-        </div>
 
-        <ng2-smart-table [settings]="settings" [source]="source"></ng2-smart-table>
-        <ngb-pagination style="margin-top: 5px;" *ngIf="totalRecord>10" (pageChange)="onPageChange($event)" size="sm" class="pull-right"
-          [(collectionSize)]="totalRecord" [(page)]="page" [maxSize]="5" [boundaryLinks]="true"></ngb-pagination>
-      </div>
-    </ba-card>
-  </div>
+                <ng2-smart-table [settings]="settings" [source]="source"></ng2-smart-table>
+                <ngb-pagination style="margin-top: 5px;" *ngIf="totalRecord>10" (pageChange)="onPageChange($event)" size="sm" class="pull-right" [(collectionSize)]="totalRecord" [(page)]="page" [maxSize]="5" [boundaryLinks]="true"></ngb-pagination>
+            </div>
+        </ba-card>
+    </div>
 </div>

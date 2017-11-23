@@ -34,13 +34,16 @@ export class OrderlistComponent implements OnInit, AfterViewInit {
   settings = {
     mode: 'external',
     actions: {
-      columnTitle: '查看',
-      delete:false,
+      columnTitle: '操作',
     },
     hideSubHeader: true,
     edit: {
-      editButtonContent: '<span>详情</span>',
+      editButtonContent: '详情',
       confirmSave: false,
+    },
+    delete: {
+      deleteButtonContent: '取消',
+      confirmDelete: true
     },
     columns: {
       id: {
@@ -94,17 +97,6 @@ export class OrderlistComponent implements OnInit, AfterViewInit {
         title: '结账状态',
         type: 'string',
         filter: false
-      },
-      button: {
-        title: '...',
-        type: 'custom',
-        renderComponent: ButtonViewComponent,
-        onComponentInitFunction(instance) {
-          instance.save.subscribe(row => {
-            alert(`${row.name} saved!`)
-          });
-        },
-        editable: false
       }
     }
   };
@@ -176,7 +168,6 @@ export class OrderlistComponent implements OnInit, AfterViewInit {
 
   }
   ngAfterViewInit() {
-
   }
   onPageChange(p) {
     console.log("page:" + p);
@@ -200,6 +191,13 @@ export class OrderlistComponent implements OnInit, AfterViewInit {
       this.totalRecord = data['orderList'].length;
     });
   }
+  onDelete(event){
+    if (window.confirm('你确定要删除吗?')) {
+      this.orderlistService.delete(event.data.id).then((data) => {
+        this.getDataList();
+      });
+    }
+  }
   open(event,content) {
     const orderId = event.data.id;
     const orderDetail = _.filter(this.orderDetail,(f)=>{ return f['orderId'] == orderId ;});
@@ -211,5 +209,9 @@ export class OrderlistComponent implements OnInit, AfterViewInit {
     _.delay(function (text) {
       $(".modal-dialog").css("max-width", "745px");
     }, 100, 'later');
+  }
+
+  onClickDate(date){
+      console.log(date);
   }
 }

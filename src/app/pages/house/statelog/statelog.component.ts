@@ -25,9 +25,7 @@ export class StatelogComponent implements OnInit, AfterViewInit {
 
   settings = {
     mode: 'external',
-    actions: {
-      columnTitle: '操作'
-    },
+    actions: false,
     hideSubHeader: true,
     columns: {
       id: {
@@ -49,14 +47,20 @@ export class StatelogComponent implements OnInit, AfterViewInit {
         filter: false,
         width: '80px',
       },
-      oldState: {
+      oldStateTxt: {
         title: '原状态',
         type: 'string',
         filter: false,
         width: '80px',
       },
-      newState: {
+      newStateTxt: {
         title: '新状态',
+        type: 'string',
+        filter: false,
+        width: '80px',
+      },
+      orderNo: {
+        title: '订单号',
         type: 'string',
         filter: false,
         width: '80px',

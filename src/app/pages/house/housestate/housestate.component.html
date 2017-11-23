@@ -64,8 +64,8 @@
                                 <span class="badge badge-info">{{house.houseTypeTxt}}</span>
                             </h4>
                             <div [ngSwitch]="house.stateTxt">
-                                <p *ngSwitchCase="'住人净'" class="card-text">house.cusName</p>
-                                <p *ngSwitchCase="'住人脏'" class="card-text">house.cusName</p>
+                                <p *ngSwitchCase="'住人净'" class="card-text">{{house.cusName}}</p>
+                                <p *ngSwitchCase="'住人脏'" class="card-text">{{house.cusName}}</p>
                                 <p *ngSwitchDefault class="card-text">{{house.stateTxt}}</p>
                             </div>
 
@@ -105,7 +105,7 @@
                 </span>
                             </p>
 
-                            <a *ngIf="house.stateTxt == '空净'" href="#" class="card-link">入住</a>
+                            <a *ngIf="house.stateTxt == '空净'" [routerLink]="['/pages/frontdesk/checkin', house.code ]" class="card-link">入住</a>
                             <a *ngIf="house.stateTxt == '住人净' || house.stateTxt == '住人脏'" href="#" class="card-link">退房</a>
                         </div>
                     </div>

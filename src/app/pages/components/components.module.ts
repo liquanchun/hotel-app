@@ -14,6 +14,7 @@ import { HouseTypeRenderComponent } from './houseTypeRender/houseType.component'
 import { DateTimeComponent } from './dateTimeRender/dateTimeRender.component';
 import { DatepickerViewComponent } from './datepickerView/datepickerView.component';
 import { MultiselectViewComponent } from './multiselectView/multiselectView.component';
+import { DateQueryComponent } from './datequery/datequery.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -33,12 +34,14 @@ import { MultiselectViewComponent } from './multiselectView/multiselectView.comp
     DateTimeComponent,
     DatepickerViewComponent,
     MultiselectViewComponent,
+    DateQueryComponent
   ],
   exports: [CardRenderComponent,
     HouseTypeRenderComponent,
     DateTimeComponent,
     MultiselectViewComponent,
-    DatepickerViewComponent
+    DatepickerViewComponent,
+    DateQueryComponent
   ]
 })
 export class ComponentsModule { }

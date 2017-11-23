@@ -13,7 +13,7 @@ const routes: Routes = [
     component: FrontdeskComponent,
     children: [
       { path: 'changwork', component: ChangworkComponent },
-      { path: 'checkin', component: CheckinComponent },
+      { path: 'checkin/:code', component: CheckinComponent },
       { path: 'checkout', component: CheckoutComponent },
       { path: 'coupon', component: CouponComponent },
       { path: 'schedule', component: ScheduleComponent },

@@ -1,6 +1,7 @@
 import { Component, ViewChild, OnInit, AfterViewInit, Input } from '@angular/core';
 import { NgbModal, ModalDismissReasons, NgbAlert } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
+import {ActivatedRoute,Params} from '@angular/router';
 import { Subject } from 'rxjs/Subject';
 import { debounceTime } from 'rxjs/operator/debounceTime';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -19,6 +20,7 @@ import { DicService } from '../../sys/dic/dic.services';
 import { GlobalState } from '../../../global.state';
 import { ButtonViewComponent } from './buttonview.component';
 import { retry } from 'rxjs/operator/retry';
+import { ReturnStatement } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-qt-checkin',
@@ -161,7 +163,7 @@ export class CheckinComponent implements OnInit, AfterViewInit {
         filter: false,
         width: '70px',
       },
-      state: {
+      stateTxt: {
         title: '房屋状态',
         type: 'string',
         filter: false,
@@ -169,14 +171,17 @@ export class CheckinComponent implements OnInit, AfterViewInit {
       }
     }
   };
-  houseType = [
-  ];
+  houseType = [];
+  houseInfoSelect = [];
   //选择房间表格
   selectedGrid: LocalDataSource = new LocalDataSource();
   //弹出框选择
   popGrid: LocalDataSource = new LocalDataSource();
   //选择的房间
   selectedHouse: any = [];
+
+  //链接过来的房间号
+  private checkInCode:string;
 
   constructor(
     private _state: GlobalState,
@@ -186,6 +191,7 @@ export class CheckinComponent implements OnInit, AfterViewInit {
     private _readIdCardService: ReadIdCardService,
     private _setPaytypeService: SetPaytypeService,
     private _dicService: DicService,
+    private route: ActivatedRoute,
     fb: FormBuilder) {
 
     this._state.subscribe('read.idcard', (data) => {
@@ -205,6 +211,8 @@ export class CheckinComponent implements OnInit, AfterViewInit {
 
     this._success.subscribe((message) => this.successMessage = message);
     debounceTime.call(this._success, 5000).subscribe(() => this.successMessage = null);
+
+    this.checkInCode = this.route.snapshot.params['code'];
   }
 
   ngAfterViewInit() {
@@ -224,15 +232,17 @@ export class CheckinComponent implements OnInit, AfterViewInit {
   }
 
   getDataList(): void {
+    //待选择的房价
     this._houseinfoService.getHouseinfos().then((data) => {
-      this.popGrid.load(data);
-    });
-
-    this._houseTypeService.getHouseTypes().then((data) => {
-      const that = this;
-      _.each(data, function (d) {
-        that.houseType.push({ type: d.typeName, id: d.id, color: 'btn-info', icon: 'fa-refresh', count: 0 });
-      });
+      this.houseInfoSelect = _.filter(data, (f) => { return f['state'] == '1001'; });
+      
+      //初始化链接过来的房屋
+      if(this.checkInCode){
+        const findHouse = _.find(data,f => {return f['code'] == this.checkInCode ;});
+        this.setCheckInHouse(findHouse);
+      }
+      this.popGrid.load(this.houseInfoSelect);
+      this.getHouseType();
     });
 
     this._setPaytypeService.getSetPaytypes().then((data) => {
@@ -243,6 +253,40 @@ export class CheckinComponent implements OnInit, AfterViewInit {
     });
 
     this._dicService.getDicByName('客源', (data) => { this.comeType = data; });
+  }
+
+  setCheckInHouse(house){
+    this.selectedHouse.push(
+      {
+        houseTypeTxt: house['houseTypeTxt'],
+        houseType: house['houseType'],
+        houseCode: house['code'],
+        days: 1,
+        coupons: 1,
+        cusname: this.checkIn.cusname,
+        idcard: this.checkIn.idCard,
+        button: '读取身份证_' + house['code'],
+        prereceivefee: house['preFee'],
+        houseFee: house['houseFee']
+      });
+      this.refreshTable();
+  }
+  
+  getHouseType(){
+    //房型
+    this._houseTypeService.getHouseTypes().then((data) => {
+      const that = this;
+      const houseTypeCount = _.countBy(this.houseInfoSelect, 'houseType');
+      _.each(data, function (d) {
+        //计算房型的数量
+        if (houseTypeCount[d.id]) {
+          d.count = houseTypeCount[d.id];
+        } else {
+          d.count = 0;
+        }
+        that.houseType.push({ type: d.typeName, id: d.id, color: 'btn-info', icon: 'fa-refresh', count: d.count });
+      });
+    });
   }
   //选择房间
   rowClicked(event): void {
@@ -267,6 +311,10 @@ export class CheckinComponent implements OnInit, AfterViewInit {
         return n['code'] == event.data.code;
       });
     }
+    this.refreshTable();
+  }
+  //刷新表格数据
+  refreshTable(){
     this.checkIn.prereceivefee = _.sumBy(this.selectedHouse, function (o) { return o['prereceivefee']; });
     this.checkIn.houseFee = _.sumBy(this.selectedHouse, function (o) { return o['houseFee']; });
     this.selectedGrid.load(this.selectedHouse);
@@ -301,7 +349,9 @@ export class CheckinComponent implements OnInit, AfterViewInit {
       { field: 'houseType', search: query },
     ], false);
   }
-
+  onSelectHouseType(id: number) {
+    this.popGrid.load(_.filter(this.houseInfoSelect, (f) => { return f['houseType'] == id; }));
+  }
   onKeyPress(event: any) {
     event.returnValue = false;
     // let keyCode = event.keyCode;
@@ -333,12 +383,12 @@ export class CheckinComponent implements OnInit, AfterViewInit {
         alert('保存成功。');
         that.isSaved = false;
         that.checkIn.cusname = '';
-        that.checkIn.cusphone ='';
-        that.checkIn.idCard ='';
-        that.checkIn.inType ='';
-        that.checkIn.remark ='';
-        that.checkIn.houseFee ='';
-        that.checkIn.prereceivefee ='';
+        that.checkIn.cusphone = '';
+        that.checkIn.idCard = '';
+        that.checkIn.inType = '';
+        that.checkIn.remark = '';
+        that.checkIn.houseFee = '';
+        that.checkIn.prereceivefee = '';
         that.checkIn.payType = '';
         that.checkIn.billNo = '';
         that.selectedHouse = [];
