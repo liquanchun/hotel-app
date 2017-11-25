@@ -4,13 +4,7 @@
       <div>
         <div class="row">
           <div class="col-3">
-            <div class="input-group">
-              <input #search type="text" class="form-control" (keydown.enter)="onSearch(search.value)" placeholder="Search for..." aria-label="Search for...">
-              <span class="input-group-btn btn-group">
-                <button class="btn btn-secondary" (click)="onSearch(search.value)" type="button">
-                  <i class="fa fa-search" aria-hidden="true"></i> 查询</button>
-              </span>
-            </div>
+            <search-input (searchClick)="onSearch($event)"></search-input>
           </div>
         </div>
 

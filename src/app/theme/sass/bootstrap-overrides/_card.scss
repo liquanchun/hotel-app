@@ -47,13 +47,15 @@ $card-header-font-size: 16px;
 
 .card {
     >.card-body {
-        padding: 5px 15px;
+        padding: 3px 2px;
         height: 100%;
+        overflow-x: hidden;
     }
     >.card-header {
-        color: $default-text;
+        color: white;
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
+        background-color:#708090;
     }
     >.card-footer {
         color: $default-text;

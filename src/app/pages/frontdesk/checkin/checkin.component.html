@@ -125,13 +125,7 @@
 
 
             <ng-template #popContent>
-                <div class="input-group">
-                    <input #search type="text" class="form-control" (keydown.enter)="onSearch(search.value)" placeholder="Search for..." aria-label="Search for...">
-                    <span class="input-group-btn btn-group">
-            <button class="btn btn-secondary" (click)="onSearch(search.value)" type="button">
-              <i class="fa fa-search" aria-hidden="true"></i> 查询</button>
-          </span>
-                </div>
+                <search-input (searchClick)="onSearch($event)"></search-input>
                 <div class="btn-group margin8 pull-right" role="group" aria-label="Basic example">
                     <button *ngFor="let hs of houseType;" (click)="onSelectHouseType(hs.id)" type="button" class="btn {{hs.color}} btn-sm">
             <i class="fa {{hs.icon}}" aria-hidden="true"></i> {{hs.type}}
