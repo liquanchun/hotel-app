@@ -11,4 +11,5 @@ export interface FieldConfig {
   value?: any,
   check?: string,
   callback?: any,
+  time?:string
 }

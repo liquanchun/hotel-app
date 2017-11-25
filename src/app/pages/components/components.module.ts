@@ -15,6 +15,7 @@ import { DateTimeComponent } from './dateTimeRender/dateTimeRender.component';
 import { DatepickerViewComponent } from './datepickerView/datepickerView.component';
 import { MultiselectViewComponent } from './multiselectView/multiselectView.component';
 import { DateQueryComponent } from './datequery/datequery.component';
+import { SearchInputComponent } from './searchinput/searchinput.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -34,14 +35,16 @@ import { DateQueryComponent } from './datequery/datequery.component';
     DateTimeComponent,
     DatepickerViewComponent,
     MultiselectViewComponent,
-    DateQueryComponent
+    DateQueryComponent,
+    SearchInputComponent
   ],
   exports: [CardRenderComponent,
     HouseTypeRenderComponent,
     DateTimeComponent,
     MultiselectViewComponent,
     DatepickerViewComponent,
-    DateQueryComponent
+    DateQueryComponent,
+    SearchInputComponent
   ]
 })
 export class ComponentsModule { }

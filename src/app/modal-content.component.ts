@@ -21,7 +21,7 @@ import * as _ from 'lodash';
       <input type="hidden" [value]="form.value | json" #formvalue>
     </div>
     <div class="modal-footer btn-group">
-      <button type="button" class="btn btn-success" (click)="activeModal.close(formvalue.value)"><i class="fa fa-floppy-o" aria-hidden="true"></i> 保存</button>
+      <button type="button" class="btn btn-success" (click)="onSave(formvalue.value)"><i class="fa fa-floppy-o" aria-hidden="true"></i> 保存</button>
       <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('no')"><i class="fa fa-undo" aria-hidden="true"></i> 取消</button>
     </div>
   `
@@ -31,11 +31,18 @@ export class NgbdModalContent implements OnInit {
   @Input() title;
   @Input() config;
   @Input() formValue: any;
+  @Input() saveFun:any;
   constructor(public activeModal: NgbActiveModal) {
 
   }
   ngOnInit() {
 
+  }
+  onSave(formValue){
+    const that = this;
+    this.saveFun(formValue,function(){
+      that.activeModal.close('no');
+    });
   }
   ngAfterViewInit() {
     const that = this;

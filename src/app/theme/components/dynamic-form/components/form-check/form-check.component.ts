@@ -12,7 +12,7 @@ import * as _ from 'lodash';
   template: ` 
     <div class="dynamic-field form-group row" [formGroup]="group" >
       <div class="col-md-3"><label>{{config.label}}</label></div>
-      <div class="col-md-9">
+      <div [ngClass]="{'col-md-9':config.validation === undefined,'col-md-8':config.validation !== undefined}">
         <div *ngFor="let option of config.options" class="form-check form-check-inline">
           <label class="form-check-label">
             <input [name]="config.name"  [formControlName]="config.name" class="form-check-input" (click)="onCheck(option.id,$event)" [type]="config.check" [id]="option.id" [value]="option.id"> {{ option.name }}
@@ -20,6 +20,7 @@ import * as _ from 'lodash';
         </div>
         <input type="hidden" [value]="selectVal" (input)="selectVal=$event.target.value" >
       </div>
+      <span style='color:red' class="col-md-1" *ngIf="config.validation">*</span>
     </div>
   `,
 })

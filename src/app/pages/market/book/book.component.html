@@ -4,17 +4,12 @@
             <div>
                 <div class="row">
                     <div class="col-3">
-                        <div class="input-group">
-                            <input #search type="text" class="form-control" (keydown.enter)="onSearch(search.value)" placeholder="Search for..." aria-label="Search for...">
-                            <span class="input-group-btn btn-group">
-                        <button class="btn btn-secondary" (click)="onSearch(search.value)" type="button"><i class="fa fa-search" aria-hidden="true"></i> 查询</button>
-                    </span>
-                        </div>
+                        <search-input (searchClick)="onSearch($event)"></search-input>
                     </div>
 
                     <div class="col-9">
                         <div class="row">
-                            <div class="col-9">
+                            <div class="col-8">
                                 <date-query></date-query>
                             </div>
                             <div class="col-3">
@@ -23,11 +18,16 @@
                                     <button (click)="getDataList()" type="button" class="btn btn-info btn-sm"><i class="fa fa-refresh" aria-hidden="true"></i> 取消</button>
                                 </div>
                             </div>
+                            <div class="col-1">
+                                <div class="btn-group margin8" role="group" aria-label="Basic example">
+                                    <button (click)="onCreate()" type="button" class="btn btn-info btn-sm"><i class="fa fa-refresh" aria-hidden="true"></i> 新增</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <ng2-smart-table [settings]="settings" [source]="source"></ng2-smart-table>
+                <ng2-smart-table [settings]="settings" [source]="source" (delete)="onDelete($event)" (edit)="onEdit($event)"></ng2-smart-table>
                 <ngb-pagination style="margin-top: 5px;" *ngIf="totalRecord>10" (pageChange)="onPageChange($event)" size="sm" class="pull-right" [(collectionSize)]="totalRecord" [(page)]="page" [maxSize]="5" [boundaryLinks]="true"></ngb-pagination>
             </div>
         </ba-card>

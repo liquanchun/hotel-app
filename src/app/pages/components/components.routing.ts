@@ -8,6 +8,7 @@ import { DateTimeComponent } from './dateTimeRender/dateTimeRender.component';
 import { DatepickerViewComponent } from './datepickerView/datepickerView.component';
 import { MultiselectViewComponent } from './multiselectView/multiselectView.component';
 import { DateQueryComponent } from './datequery/datequery.component';
+import { SearchInputComponent } from './searchinput/searchinput.component';
 // noinspection TypeScriptValidateTypes
 const routes: Routes = [
   {
@@ -21,6 +22,7 @@ const routes: Routes = [
       { path: 'datepickerview', component: DatepickerViewComponent },
       { path: 'multiselect-dropdown-component', component: DatepickerViewComponent },
       { path: 'datequery', component: DateQueryComponent },
+      { path: 'searchinput', component: SearchInputComponent },
     ]
   }
 ];

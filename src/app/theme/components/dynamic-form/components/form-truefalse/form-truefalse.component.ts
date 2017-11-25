@@ -12,11 +12,12 @@ import * as _ from 'lodash';
   template: ` 
     <div class="dynamic-field form-group row" [formGroup]="group" >
       <div class="col-md-3"></div>
-      <div class="col-md-9">
+      <div class="col-md-8">
           <label class="form-check-label">
             <input [name]="config.name"  [formControlName]="config.name" class="form-check-input" (click)="onCheck(config.name,$event)" type="checkbox"> {{ config.label }}
           </label>
       </div>
+      <span style='color:red' class="col-md-1" *ngIf="config.validation">*</span>
     </div>
   `,
 })

@@ -37,16 +37,17 @@ export class Pages implements OnInit {
     const that = this;
     PAGES_MENU[0]['children'] = [];
     PAGES_MENU[0]['children'].push(that.dashboard);
+    if (!that.menuItems) {
+      this._menuItemService.getMenuList().then((menus) => {
+        that.menuItems = menus;
+        const mi2 = _.filter(menus, ['parentId', 0]);
+        _.each(mi2, (m) => {
+          that.showMenu(m.menuName);
+        });
+        that._menuService.updateMenuByRoutes(<Routes>PAGES_MENU);
 
-    this._menuItemService.getMenuList().then((menus) => {
-      that.menuItems = menus;
-      const mi2 = _.filter(menus, ['parentId', 0]);
-      _.each(mi2, (m) => {
-        that.showMenu(m.menuName);
       });
-      that._menuService.updateMenuByRoutes(<Routes>PAGES_MENU);
-
-    });
+    }
   }
 
   showMenu(menu) {

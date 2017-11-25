@@ -12,12 +12,13 @@ import { FieldConfig } from '../../models/field-config.interface';
       class="dynamic-field form-input row" 
       [formGroup]="group">
       <label for="config.name" class="col-md-3 col-form-label">{{ config.label }}</label>
-      <div class="col-md-9">
+      <div class="col-md-8">
       <input class="form-control" 
         type="text"
         [attr.placeholder]="config.placeholder"
         [formControlName]="config.name">
       </div>  
+      <span style='color:red' class="col-md-1" *ngIf="config.validation">*</span>
     </div>
   `
 })

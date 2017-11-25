@@ -20,4 +20,9 @@ export class Common {
     getDateString(date: any): string {
         return `${date.year}-${date.month}-${date.day}`
     }
+    // 根据日期对象获取日期字符串(标准格式)
+    getDateString2(date: any): string {
+        const time = date.time ? ' ' + date.time : '';
+        return `${date.year}-${_.padStart(date.month,2,'0')}-${_.padStart(date.day,2,'0')}${time}`
+    }
 }
