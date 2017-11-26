@@ -6,8 +6,8 @@ import * as _ from 'lodash';
 @Component({
     selector: 'search-input',
     template: `
-    <div class="input-group">
-        <input #search type="text" class="form-control" (keydown.enter)="onSearch(search.value)" placeholder="Search for..." aria-label="Search for...">
+    <div class="input-group" style="height:32px;">
+        <input #search type="text" style="padding:3px;" class="form-control" (keydown.enter)="onSearch(search.value)" placeholder="Search for..." aria-label="Search for...">
         <span class="input-group-btn btn-group">
             <button class="btn btn-secondary" (click)="onSearch(search.value)" type="button"><i class="fa fa-search" aria-hidden="true"></i> 查询</button>
         </span>

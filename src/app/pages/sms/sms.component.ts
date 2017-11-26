@@ -7,24 +7,8 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
   template: `<router-outlet></router-outlet>`,
 })
 export class SmsComponent implements OnInit {
-  @ViewChild('content') content: ElementRef;
+  constructor(private _state: GlobalState) {
 
-  private message: string;
-  constructor(private _state: GlobalState, private modalService: NgbModal) {
-    const that = this;
-    //删除提示对话框
-    this._state.subscribe('delete.confirm', (confirm) => {
-      this.message = `你确定要删除${confirm.message}吗？`;
-      this.modalService
-        .open(this.content, { backdrop: 'static', size: 'sm', keyboard: false })
-        .result
-        .then((result) => {
-          if (result === 'yes') {
-            //that._state.notifyDataChanged('delete.confirm.result', 'yes');
-            confirm.callback();
-          }
-        }, (reason) => { });
-    });
   }
 
   ngOnInit() {

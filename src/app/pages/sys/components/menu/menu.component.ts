@@ -1,8 +1,6 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { NgbModal, ModalDismissReasons, NgbAlert } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
-import { Subject } from 'rxjs/Subject';
-import { debounceTime } from 'rxjs/operator/debounceTime';
 
 import { TreeNode, TreeModel, TREE_ACTIONS, KEYS, IActionMapping, ITreeOptions } from 'angular-tree-component';
 import { MenuService } from './menu.services';
@@ -134,11 +132,6 @@ export class MenuComponent implements OnInit, AfterViewInit {
     },
   ];
 
-  private successMessage: string;
-  private _success = new Subject<string>();
-  private staticAlertClosed = false;
-  private alterType: string;
-
   constructor(
     private menuService: MenuService,
     private roleService: RoleService,
@@ -160,10 +153,6 @@ export class MenuComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.isNewMenu = true;
     this.getNodes();
-
-    setTimeout(() => this.staticAlertClosed = true, 20000);
-    this._success.subscribe((message) => this.successMessage = message);
-    debounceTime.call(this._success, 5000).subscribe(() => this.successMessage = null);
   }
   ngAfterViewInit() {
     let previousValid = this.form.valid;
@@ -191,10 +180,8 @@ export class MenuComponent implements OnInit, AfterViewInit {
       this.menuService.create(saveMenu).then(function (menu) {
         that.getNodes();
         that.form.setDisabled('submit', false);
-        that.changeSuccessMessage(`保存成功。`);
       }, (err) => {
-        that.alterType = 'danger';
-        that.changeSuccessMessage(`保存失败。${err}`);
+
       });
     } else {
       saveMenu.ParentId = this.selectedMenu && this.selectedMenu.data ? this.selectedMenu.data.parentId : 0;
@@ -202,18 +189,13 @@ export class MenuComponent implements OnInit, AfterViewInit {
         that.getNodes();
         that.form.setDisabled('submit', false);
       }, (err) => {
-        that.alterType = 'danger';
-        that.changeSuccessMessage(`保存失败。${err}`);
+
       });
     }
   }
 
   backTop() {
     console.log('back');
-  }
-
-  changeSuccessMessage(msg) {
-    this._success.next(msg);
   }
 
   getNodes() {

@@ -14,6 +14,7 @@ const routes: Routes = [
     children: [
       { path: 'changwork', component: ChangworkComponent },
       { path: 'checkin/:code', component: CheckinComponent },
+      { path: 'checkin', component: CheckinComponent },
       { path: 'checkout', component: CheckoutComponent },
       { path: 'coupon', component: CouponComponent },
       { path: 'schedule', component: ScheduleComponent },

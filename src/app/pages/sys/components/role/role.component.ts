@@ -14,12 +14,9 @@ import { GlobalState } from '../../../../global.state';
   providers: [RoleService],
 })
 export class RoleComponent implements OnInit, AfterViewInit {
-
-  @ViewChild('content') content: ElementRef;
-
   private isNewRole: boolean;
   private roles: any;
-  private message: string;
+  
   private selectedRole: any;
   private newRoleName: string;
 

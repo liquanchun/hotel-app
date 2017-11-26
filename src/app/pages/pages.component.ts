@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Routes } from '@angular/router';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { BaMenuService } from '../theme';
@@ -30,7 +30,6 @@ export class Pages implements OnInit {
   constructor(private _menuService: BaMenuService,
     private _state: GlobalState,
     private _menuItemService: MenuService) {
-
   }
 
   ngOnInit() {

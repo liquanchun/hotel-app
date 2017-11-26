@@ -1,8 +1,6 @@
 import { Component, ViewChild, OnInit, AfterViewInit, Input } from '@angular/core';
 import { NgbModal, ModalDismissReasons, NgbAlert } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
-import { Subject } from 'rxjs/Subject';
-import { debounceTime } from 'rxjs/operator/debounceTime';
 
 import * as $ from 'jquery';
 import * as _ from 'lodash';
@@ -24,7 +22,6 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
   public loading = false;
   private isNewCheckout: boolean;
 
-  private message: string;
   private selectedCheckout: any;
 
   private checkouts: any;
@@ -44,11 +41,6 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
   private roles: any;
 
   private selectVal: any = [];
-
-  private successMessage: string;
-  private _success = new Subject<string>();
-  private staticAlertClosed = false;
-  private alterType: string;
 
   constructor(
     private _state: GlobalState,
@@ -77,10 +69,6 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getCheckoutList();
-    setTimeout(() => this.staticAlertClosed = true, 20000);
-
-    this._success.subscribe((message) => this.successMessage = message);
-    debounceTime.call(this._success, 5000).subscribe(() => this.successMessage = null);
   }
 
   getCheckoutList() {
@@ -88,8 +76,6 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
     this.checkoutService.getCheckouts().then(function (checkouts) {
       that.checkouts = checkouts;
     }, (err) => {
-      that.alterType = 'danger';
-      that.changeSuccessMessage(err);
     });
   }
 
@@ -106,12 +92,8 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
       values['isvalid'] = values['isvalid'] ? values['isvalid'] : 0;
       values['pwd'] = Md5.hashStr(values['pwd']).toString();
       this.checkoutService.create(values).then(function (checkout) {
-        that.alterType = 'success';
-        that.changeSuccessMessage('保存成功。');
         that.checkouts.push(checkout);
       }, (err) => {
-        that.alterType = 'danger';
-        that.changeSuccessMessage(`保存失败。${err}`);
       });
     }
   }
@@ -124,10 +106,6 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
     } else {
       this.selectVal.push(id);
     }
-  }
-
-  changeSuccessMessage(msg) {
-    this._success.next(msg);
   }
 
   onKey(event: any) { // without type info

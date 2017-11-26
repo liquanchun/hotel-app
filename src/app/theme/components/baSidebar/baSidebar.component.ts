@@ -52,6 +52,7 @@ export class BaSidebar {
   public menuCollapseStateChange(isCollapsed:boolean):void {
     this.isMenuCollapsed = isCollapsed;
     this._state.notifyDataChanged('menu.isCollapsed', this.isMenuCollapsed);
+    console.log('baSidebar.components');
   }
 
   public updateSidebarHeight():void {

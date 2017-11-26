@@ -5,12 +5,14 @@ import { routing } from './pages.routing';
 import { NgaModule } from '../theme/nga.module';
 import { AppTranslationModule } from '../app.translation.module';
 
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+
 import { Pages } from './pages.component';
 import { Router, Routes, RouterModule } from '@angular/router';
 import * as _ from 'lodash';
 
 @NgModule({
-  imports: [CommonModule, AppTranslationModule, NgaModule, routing],
+  imports: [CommonModule, AppTranslationModule, NgaModule, routing,BrowserAnimationsModule],
   declarations: [Pages]
 })
 export class PagesModule implements OnInit {

@@ -1,8 +1,6 @@
 import { Component, ViewChild, OnInit, AfterViewInit, Input } from '@angular/core';
 import { NgbModal, ModalDismissReasons, NgbAlert } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
-import { Subject } from 'rxjs/Subject';
-import { debounceTime } from 'rxjs/operator/debounceTime';
 
 import * as $ from 'jquery';
 import * as _ from 'lodash';
@@ -24,10 +22,7 @@ export class UserComponent implements OnInit, AfterViewInit {
 
   public loading = false;
   private isNewUser: boolean;
-
-  private message: string;
   private selectedUser: any;
-
   private users: any;
   private usersfilter: any;
 
@@ -45,11 +40,6 @@ export class UserComponent implements OnInit, AfterViewInit {
   private roles: any;
 
   private selectVal: any = [];
-
-  private successMessage: string;
-  private _success = new Subject<string>();
-  private staticAlertClosed = false;
-  private alterType: string;
 
   constructor(
     private _state: GlobalState,
@@ -87,10 +77,6 @@ export class UserComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.getUserList();
-    setTimeout(() => this.staticAlertClosed = true, 20000);
-
-    this._success.subscribe((message) => this.successMessage = message);
-    debounceTime.call(this._success, 5000).subscribe(() => this.successMessage = null);
   }
 
   getUserList() {
@@ -102,8 +88,6 @@ export class UserComponent implements OnInit, AfterViewInit {
       that.usersfilter = users;
     }, (err) => {
       that.loading = false;
-      that.alterType = 'danger';
-      that.changeSuccessMessage(err);
     });
   }
 
@@ -134,12 +118,8 @@ export class UserComponent implements OnInit, AfterViewInit {
       values['isvalid'] = values['isvalid'] ? values['isvalid'] : 0;
       values['pwd'] = Md5.hashStr(values['pwd']).toString();
       this.userService.create(values).then(function (user) {
-        that.alterType = 'success';
-        that.changeSuccessMessage('保存成功。');
         that.users.push(user);
       }, (err) => {
-        that.alterType = 'danger';
-        that.changeSuccessMessage(`保存失败。${err}`);
       });
       // sessionStorage.setItem('userId', this.userId.value);
     }
@@ -161,8 +141,6 @@ export class UserComponent implements OnInit, AfterViewInit {
           _.remove(that.users, r => r['Id'] === that.selectedUser.id);
           that.selectedUser = null;
         }, (err) => {
-          that.alterType = 'danger';
-          that.changeSuccessMessage(`删除失败。${err}`);
         });
       },
     };
@@ -178,10 +156,6 @@ export class UserComponent implements OnInit, AfterViewInit {
     } else {
       this.selectVal.push(id);
     }
-  }
-
-  changeSuccessMessage(msg) {
-    this._success.next(msg);
   }
 
   onKey(event: any) { // without type info

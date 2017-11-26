@@ -96,7 +96,7 @@ export class HouseinfoComponent implements OnInit, AfterViewInit {
       type: 'select',
       label: '楼层',
       name: 'floor',
-      options: ['6楼', '7楼', '8楼'],
+      options: [{id:'6楼',name:'6楼'}, {id:'7楼',name:'7楼'},{id:'8楼',name:'8楼'}],
       placeholder: '选择楼层',
       validation: [Validators.required],
     },

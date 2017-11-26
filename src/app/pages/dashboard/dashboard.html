@@ -1,29 +1,21 @@
 <div class="row">
-  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-    <pie-chart></pie-chart>
+  <div class="col-md-12">
+    <div echarts [options]="chartOption1" class="demo-chart1"></div>
   </div>
 </div>
-
 <div class="row">
-  <ba-card class="col-xlg-6 col-xl-6 col-lg-12 col-sm-12 col-12"
-           title="房态分布图" baCardClass="traffic-panel medium-card">
-    <traffic-chart></traffic-chart>
-  </ba-card>
-
-  <ba-card class="col-xlg-6 col-xl-6 col-lg-12 col-sm-12 col-12"
-           title="营业报表" baCardClass="medium-card">
-    <line-chart></line-chart>
-  </ba-card>
+  <div class="col-md-6">
+    <div echarts [options]="chartOption2" class="demo-chart2"></div>
+  </div>
+  <div class="col-md-6">
+    <div echarts [options]="chartOption3" class="demo-chart3"></div>
+  </div>
 </div>
-
-<div class="row shift-up">
-  <ba-card class="col-xlg-3 col-lg-6 col-md-12 col-sm-12 col-12" 
-        title="待办&提醒"
-           baCardClass="xmedium-card feed-comply-panel with-scroll todo-panel">
-    <todo></todo>
-  </ba-card>
-  <ba-card class="col-xlg-6 col-lg-6 col-md-12 col-sm-12 col-12" title="本月预约"
-           baCardClass="xmedium-card feed-comply-panel with-scroll calendar-panel">
-    <calendar></calendar>
-  </ba-card>
+<div class="row">
+  <div class="col-md-6">
+    <div echarts [options]="chartOption4" class="demo-chart4"></div>
+  </div>
+  <div class="col-md-6">
+    <div echarts [options]="chartOption5" class="demo-chart5"></div>
+  </div>
 </div>

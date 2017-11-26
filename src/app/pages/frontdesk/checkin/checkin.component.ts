@@ -2,8 +2,6 @@ import { Component, ViewChild, OnInit, AfterViewInit, Input } from '@angular/cor
 import { NgbModal, ModalDismissReasons, NgbAlert } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import {ActivatedRoute,Params} from '@angular/router';
-import { Subject } from 'rxjs/Subject';
-import { debounceTime } from 'rxjs/operator/debounceTime';
 import { LocalDataSource } from 'ng2-smart-table';
 
 import * as $ from 'jquery';
@@ -32,11 +30,7 @@ export class CheckinComponent implements OnInit, AfterViewInit {
   @Input() showEditButton: boolean = true;
   title = '客人入住';
   private isSaved: boolean = false;
-  private message: string;
-  private successMessage: string;
-  private _success = new Subject<string>();
-  private staticAlertClosed = false;
-  private alterType: string;
+  
   private checkIn: any = {
     cusname: '',
     cusphone: '',
@@ -207,11 +201,6 @@ export class CheckinComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    setTimeout(() => this.staticAlertClosed = true, 20000);
-
-    this._success.subscribe((message) => this.successMessage = message);
-    debounceTime.call(this._success, 5000).subscribe(() => this.successMessage = null);
-
     this.checkInCode = this.route.snapshot.params['code'];
   }
 
@@ -225,10 +214,6 @@ export class CheckinComponent implements OnInit, AfterViewInit {
     const cust = this._readIdCardService.getIDcard();
     this.checkIn.cusname = cust.name;
     this.checkIn.idCard = cust.idcard;
-  }
-
-  changeSuccessMessage(msg) {
-    this._success.next(msg);
   }
 
   getDataList(): void {

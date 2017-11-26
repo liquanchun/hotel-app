@@ -3,6 +3,7 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
+import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 
 import { ButtonViewComponent } from './buttonview.component';
 import { OrderlistService } from './orderlist.services';
@@ -12,6 +13,7 @@ import { Common } from '../../../providers/common';
 import * as $ from 'jquery';
 import * as _ from 'lodash';
 import { retry } from 'rxjs/operator/retry';
+import { fail } from 'assert';
 
 @Component({
   selector: 'app-orderlist',
@@ -21,6 +23,7 @@ import { retry } from 'rxjs/operator/retry';
 })
 export class OrderlistComponent implements OnInit, AfterViewInit {
 
+  loading = false;
   greeting = {};
   name = 'World';
 
@@ -155,14 +158,24 @@ export class OrderlistComponent implements OnInit, AfterViewInit {
   source: LocalDataSource = new LocalDataSource();
   selectedGrid: LocalDataSource = new LocalDataSource();
 
-  orderDetail:any = [];
+  orderDetail: any = [];
 
+  private toastOptions: ToastOptions = {
+    title: "提示信息",
+    msg: "The message",
+    showClose: true,
+    timeout: 2000,
+    theme: "bootstrap",
+  };
   constructor(
     private orderlistService: OrderlistService,
     private modalService: NgbModal,
     private _common: Common,
+    private toastyService: ToastyService,
+    private toastyConfig: ToastyConfig,
     private _state: GlobalState) {
     this.getDataList();
+    this.toastyConfig.position = 'top-center';
   }
   ngOnInit() {
 
@@ -182,25 +195,35 @@ export class OrderlistComponent implements OnInit, AfterViewInit {
       { field: 'createdBy', search: query },
     ], false);
   }
-  onEdit(event):void{
+  onEdit(event): void {
   }
   getDataList(): void {
+    this.loading = true;
     this.orderlistService.getOrderlists().then((data) => {
       this.source.load(data['orderList']);
       this.orderDetail = data['orderDetailList'];
       this.totalRecord = data['orderList'].length;
+      this.loading = false;
+    }, (err) => {
+      this.loading = false;
     });
   }
-  onDelete(event){
+  onDelete(event) {
     if (window.confirm('你确定要删除吗?')) {
       this.orderlistService.delete(event.data.id).then((data) => {
+        this.toastOptions.msg = "删除成功。";
+        this.toastyService.success(this.toastOptions);
         this.getDataList();
+      }, (err) => {
+        this.toastOptions.title = "删除失败。";
+        this.toastOptions.msg = err.message;
+        this.toastyService.error(this.toastOptions);
       });
     }
   }
-  open(event,content) {
+  open(event, content) {
     const orderId = event.data.id;
-    const orderDetail = _.filter(this.orderDetail,(f)=>{ return f['orderId'] == orderId ;});
+    const orderDetail = _.filter(this.orderDetail, (f) => { return f['orderId'] == orderId; });
     this.selectedGrid.load(orderDetail);
 
     this.modalService.open(content).result.then((result) => {
@@ -211,7 +234,7 @@ export class OrderlistComponent implements OnInit, AfterViewInit {
     }, 100, 'later');
   }
 
-  onClickDate(date){
-      console.log(date);
+  onClickDate(date) {
+    console.log(date);
   }
 }

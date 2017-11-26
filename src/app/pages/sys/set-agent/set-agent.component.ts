@@ -2,8 +2,6 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { Subject } from 'rxjs/Subject';
-import { debounceTime } from 'rxjs/operator/debounceTime';
 import { NgbdModalContent } from '../../../modal-content.component'
 
 import { SetAgentService } from './set-agent.services';
@@ -197,11 +195,6 @@ export class SetAgentComponent implements OnInit, AfterViewInit {
 
   source: LocalDataSource = new LocalDataSource();
 
-  private successMessage: string;
-  private _success = new Subject<string>();
-  private staticAlertClosed = false;
-  private alterType: string;
-
   constructor(
     private modalService: NgbModal,
     private setAgentService: SetAgentService,
@@ -210,9 +203,7 @@ export class SetAgentComponent implements OnInit, AfterViewInit {
     this.getDataList();
   }
   ngOnInit() {
-    setTimeout(() => this.staticAlertClosed = true, 20000);
-    this._success.subscribe((message) => this.successMessage = message);
-    debounceTime.call(this._success, 5000).subscribe(() => this.successMessage = null);
+
   }
   ngAfterViewInit() {
   }
@@ -281,9 +272,5 @@ export class SetAgentComponent implements OnInit, AfterViewInit {
         this.getDataList();
       });
     }
-  }
-
-  changeSuccessMessage(msg) {
-    this._success.next(msg);
   }
 }

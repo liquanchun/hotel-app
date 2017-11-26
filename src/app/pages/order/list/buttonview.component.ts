@@ -3,8 +3,6 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 import { ViewCell } from 'ng2-smart-table';
 import { GlobalState } from '../../../global.state';
-import { Subject } from 'rxjs/Subject';
-import { debounceTime } from 'rxjs/operator/debounceTime';
 
 import * as _ from 'lodash';
 @Component({

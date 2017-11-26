@@ -7,6 +7,8 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { NgaModule } from '../../theme/nga.module';
 import { DynamicFormModule } from '../../theme/components/dynamic-form/dynamic-form.module';
 
+import {ToastyModule} from 'ng2-toasty';
+
 import { Config } from '../../providers/config';
 import { GlobalState } from '../../global.state';
 import { AppState } from '../../app.service';
@@ -36,6 +38,7 @@ import { ButtonViewComponent } from './list/buttonview.component';
     NgbModule,
     LoadingModule,
     Ng2SmartTableModule,
+    ToastyModule.forRoot()
   ],
   declarations: [
     OrderComponent,

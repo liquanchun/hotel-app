@@ -1,8 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ViewCell } from 'ng2-smart-table';
 import { GlobalState } from '../../../global.state';
-import { Subject } from 'rxjs/Subject';
-import { debounceTime } from 'rxjs/operator/debounceTime';
 
 import { ReadIdCardService } from './idcardread.services';
 import * as _ from 'lodash';

@@ -16,7 +16,7 @@ export class FunctionComponent implements OnInit, AfterViewInit {
 
   private roles: any;
   private closeResult: string;
-  private message: string;
+  
   private selectedRole: any;
   private selectedUser: any;
 
@@ -131,10 +131,8 @@ export class FunctionComponent implements OnInit, AfterViewInit {
   // 删除选择的角色
   onDeleteRole(content) {
     let that = this;
-    this.onDelCallBack(content, `${this.selectedRole.role_name}角色`, function () {
       _.remove(that.roles, r => r['role_id'] === that.selectedRole.role_id);
       that.selectedRole = null;
-    });
   }
 
   onSelectedRole(role) {
@@ -156,20 +154,6 @@ export class FunctionComponent implements OnInit, AfterViewInit {
   // 删除选择的用户
   onDeleteUser(content) {
     let that = this;
-    this.onDelCallBack(content, `${this.selectedUser.user_name}用户`, function () {
-      _.remove(that.smartTableData, r => r['firstName'] === that.selectedUser.user_id);
-      that.selectedUser = null;
-    });
-  }
-
-  onDelCallBack(content, keystring, callback) {
-    this.message = `你确定要删除${keystring}吗？`;
-    this.modalService.open(content, { backdrop: 'static', size: 'sm', keyboard: false }).result.then((result) => {
-      this.closeResult = `Closed with: ${result}`;
-      if (result === 'yes') {
-        callback();
-      }
-    }, (reason) => { });
   }
 
 }
