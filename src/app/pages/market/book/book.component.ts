@@ -24,8 +24,6 @@ import { retry } from 'rxjs/operator/retry';
 export class BookComponent implements OnInit, AfterViewInit {
 
   title = '预定管理';
-  totalRecord = 89;
-  page = 1;
   query: string = '';
 
   settings = {
@@ -251,7 +249,6 @@ export class BookComponent implements OnInit, AfterViewInit {
   getDataList(): void {
     this.bookService.getBooks().then((data) => {
       this.source.load(data);
-      this.totalRecord = data.length;
     });
   }
 

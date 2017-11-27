@@ -30,8 +30,6 @@ export class OrderlistComponent implements OnInit, AfterViewInit {
   @ViewChild('p') public popover: NgbPopover;
 
   title = '订单查询';
-  totalRecord = 89;
-  page = 1;
   query: string = '';
 
   settings = {
@@ -174,11 +172,10 @@ export class OrderlistComponent implements OnInit, AfterViewInit {
     private toastyService: ToastyService,
     private toastyConfig: ToastyConfig,
     private _state: GlobalState) {
-    this.getDataList();
     this.toastyConfig.position = 'top-center';
   }
   ngOnInit() {
-
+    this.getDataList();
   }
   ngAfterViewInit() {
   }
@@ -202,10 +199,11 @@ export class OrderlistComponent implements OnInit, AfterViewInit {
     this.orderlistService.getOrderlists().then((data) => {
       this.source.load(data['orderList']);
       this.orderDetail = data['orderDetailList'];
-      this.totalRecord = data['orderList'].length;
       this.loading = false;
     }, (err) => {
       this.loading = false;
+      this.toastOptions.msg = err;
+      this.toastyService.error(this.toastOptions);
     });
   }
   onDelete(event) {
@@ -216,7 +214,7 @@ export class OrderlistComponent implements OnInit, AfterViewInit {
         this.getDataList();
       }, (err) => {
         this.toastOptions.title = "删除失败。";
-        this.toastOptions.msg = err.message;
+        this.toastOptions.msg = err;
         this.toastyService.error(this.toastOptions);
       });
     }

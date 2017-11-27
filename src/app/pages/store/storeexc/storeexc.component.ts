@@ -19,8 +19,6 @@ import * as _ from 'lodash';
 export class StoreexcComponent implements OnInit, AfterViewInit {
 
   title = '调拨查询';
-  totalRecord = 89;
-  page = 1;
   query: string = '';
 
   settings = {
@@ -105,7 +103,6 @@ export class StoreexcComponent implements OnInit, AfterViewInit {
   getDataList(): void {
     this.storeexcService.getStoreexcs().then((data) => {
       this.source.load(data);
-      this.totalRecord = data.length;
     });
   }
 }

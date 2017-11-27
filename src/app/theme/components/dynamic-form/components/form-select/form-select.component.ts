@@ -16,7 +16,7 @@ import * as $ from 'jquery';
       <div class="col-md-9">
       <select [formControlName]="config.name">
         <option value="">{{ config.placeholder }}</option>
-        <option value="option.id" *ngFor="let option of config.options">
+        <option [value]="option.id" *ngFor="let option of config.options">
           {{ option.name }}
         </option>
       </select>

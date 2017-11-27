@@ -19,8 +19,6 @@ import * as _ from 'lodash';
 export class GoodsstoreComponent implements OnInit, AfterViewInit {
 
   title = '货品库存';
-  totalRecord = 89;
-  page = 1;
   query: string = '';
 
   settings = {
@@ -115,7 +113,6 @@ export class GoodsstoreComponent implements OnInit, AfterViewInit {
   getDataList(): void {
     this.goodsstoreService.getGoodsstores().then((data) => {
       this.source.load(data);
-      this.totalRecord = data.length;
     });
   }
 }

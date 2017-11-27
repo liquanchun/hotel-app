@@ -19,8 +19,6 @@ import * as _ from 'lodash';
 export class MemberComponent implements OnInit, AfterViewInit {
 
   title = '会员信息管理';
-  totalRecord = 89;
-  page = 1;
   query: string = '';
 
   settings = {
@@ -121,7 +119,6 @@ export class MemberComponent implements OnInit, AfterViewInit {
   getDataList(): void {
     this.memberService.getMembers().then((data) => {
       this.source.load(data);
-      this.totalRecord = data.length;
     });
   }
 }

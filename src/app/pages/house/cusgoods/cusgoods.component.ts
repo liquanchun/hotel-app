@@ -19,8 +19,6 @@ import * as _ from 'lodash';
 export class CusgoodsComponent implements OnInit, AfterViewInit {
 
   title = '客人物品管理';
-  totalRecord = 89;
-  page = 1;
   query: string = '';
 
   settings = {
@@ -130,7 +128,6 @@ export class CusgoodsComponent implements OnInit, AfterViewInit {
   getDataList(): void {
     this.cusgoodsService.getCusgoodss().then((data) => {
       this.source.load(data);
-      this.totalRecord = data.length;
     });
   }
 }

@@ -19,8 +19,6 @@ import * as _ from 'lodash';
 export class PremoneyComponent implements OnInit, AfterViewInit {
 
   title = '预定金查询';
-  totalRecord = 89;
-  page = 1;
   query: string = '';
 
   settings = {
@@ -115,7 +113,6 @@ export class PremoneyComponent implements OnInit, AfterViewInit {
   getDataList(): void {
     this.premoneyService.getPremoneys().then((data) => {
       this.source.load(data);
-      this.totalRecord = data.length;
     });
   }
 }

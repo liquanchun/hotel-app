@@ -23,8 +23,6 @@ import * as _ from 'lodash';
 export class SetAgentComponent implements OnInit, AfterViewInit {
 
   title = '中介平台';
-  totalRecord = 0;
-  page = 1;
   query: string = '';
 
   settings = {

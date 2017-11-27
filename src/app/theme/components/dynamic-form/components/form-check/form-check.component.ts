@@ -56,6 +56,7 @@ export class FormCheckComponent implements Field, OnInit, AfterViewInit {
         this.selectVal.push(id);
       }
     } else {
+      this.selectVal = [];
       this.selectVal.push(id);
     }
     this.group.controls[this.config.name].setValue(this.selectVal.toString(), { emitEvent: true });

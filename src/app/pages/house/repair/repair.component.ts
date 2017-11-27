@@ -19,8 +19,6 @@ import * as _ from 'lodash';
 export class RepairComponent implements OnInit, AfterViewInit {
 
   title = '维修记录';
-  totalRecord = 89;
-  page = 1;
   query: string = '';
 
   settings = {
@@ -117,7 +115,6 @@ export class RepairComponent implements OnInit, AfterViewInit {
   getDataList(): void {
     this.repairService.getRepairs().then((data) => {
       this.source.load(data);
-      this.totalRecord = data.length;
     });
   }
 }

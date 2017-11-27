@@ -23,8 +23,6 @@ import * as _ from 'lodash';
 export class SetGroupComponent implements OnInit, AfterViewInit {
 
   title = '协议单位';
-  totalRecord = 89;
-  page = 1;
   query: string = '';
 
   settings = {
@@ -194,7 +192,6 @@ export class SetGroupComponent implements OnInit, AfterViewInit {
   getDataList(): void {
     this.setGroupService.getSetGroups().then((data) => {
       this.source.load(data);
-      this.totalRecord = data.length;
     });
   }
 

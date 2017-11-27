@@ -19,8 +19,6 @@ import * as _ from 'lodash';
 export class CouponComponent implements OnInit, AfterViewInit {
 
   title = '早餐券管理';
-  totalRecord = 89;
-  page = 1;
   query: string = '';
 
   settings = {
@@ -105,7 +103,6 @@ export class CouponComponent implements OnInit, AfterViewInit {
   getDataList(): void {
     this.couponService.getCoupons().then((data) => {
       this.source.load(data);
-      this.totalRecord = data.length;
     });
   }
 }

@@ -5,6 +5,7 @@ import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/fo
 import { LocalDataSource } from 'ng2-smart-table';
 import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
 import { NgbdModalContent } from '../../../modal-content.component'
+import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 
 import { HouseinfoService } from './houseinfo.services';
 import { HouseTypeService } from '../../sys/house-type/house-type.services';
@@ -23,9 +24,8 @@ import * as _ from 'lodash';
 })
 export class HouseinfoComponent implements OnInit, AfterViewInit {
 
+  loading = false;
   title = '房间管理';
-  totalRecord = 89;
-  page = 1;
   query: string = '';
 
   settings = {
@@ -96,7 +96,7 @@ export class HouseinfoComponent implements OnInit, AfterViewInit {
       type: 'select',
       label: '楼层',
       name: 'floor',
-      options: [{id:'6楼',name:'6楼'}, {id:'7楼',name:'7楼'},{id:'8楼',name:'8楼'}],
+      options: [{ id: '6楼', name: '6楼' }, { id: '7楼', name: '7楼' }, { id: '8楼', name: '8楼' }],
       placeholder: '选择楼层',
       validation: [Validators.required],
     },
@@ -130,17 +130,26 @@ export class HouseinfoComponent implements OnInit, AfterViewInit {
 
   source: LocalDataSource = new LocalDataSource();
 
+  private toastOptions: ToastOptions = {
+    title: "提示信息",
+    msg: "The message",
+    showClose: true,
+    timeout: 2000,
+    theme: "bootstrap",
+  };
   constructor(
     private modalService: NgbModal,
     private houseinfoService: HouseinfoService,
     private _houseTypeService: HouseTypeService,
     private _common: Common,
+    private toastyService: ToastyService,
+    private toastyConfig: ToastyConfig,
     private _state: GlobalState) {
-    this.getDataList();
-    this.getHouseType();
+    this.toastyConfig.position = 'top-center';
   }
   ngOnInit() {
-
+    this.getDataList();
+    this.getHouseType();
   }
   ngAfterViewInit() {
 
@@ -151,29 +160,25 @@ export class HouseinfoComponent implements OnInit, AfterViewInit {
   onCreate() {
 
   }
-  openModal(id: string) {
-    this.modalService.open(id);
-  }
 
   newHouse() {
     const that = this;
     const modalRef = this.modalService.open(NgbdModalContent);
     modalRef.componentInstance.title = '新增房间信息';
     modalRef.componentInstance.config = this.config;
-    modalRef.result.then((result) => {
-      if (result !== 'no') {
-        console.log(result);
-        that.houseinfoService.create(JSON.parse(result)).then(
-          function (v) {
-            that.getDataList();
-          },
-          (err) => {
-            alert(err);
-          }
-        )
-      }
-    }, (reason) => {
-    });
+    modalRef.componentInstance.saveFun = (result, closeBack) => {
+      that.houseinfoService.create(JSON.parse(result)).then((data) => {
+          closeBack();
+          that.toastOptions.msg = "新增成功。";
+          that.toastyService.success(that.toastOptions);
+          that.getDataList();
+        },
+        (err) => {
+          that.toastOptions.msg = err;
+          that.toastyService.error(that.toastOptions);
+        }
+      )
+    };
   }
 
   onSearch(query: string = '') {
@@ -185,41 +190,51 @@ export class HouseinfoComponent implements OnInit, AfterViewInit {
   }
 
   onEdit(event) {
-    console.log(event);
     const that = this;
     const modalRef = this.modalService.open(NgbdModalContent);
     modalRef.componentInstance.title = '修改房间信息';
     modalRef.componentInstance.config = this.config;
     modalRef.componentInstance.formValue = event.data;
-    modalRef.result.then((result) => {
-      if (result !== 'no') {
-        console.log(result);
-        that.houseinfoService.update(event.data.id, JSON.parse(result)).then(
-          function (v) {
-            that.getDataList();
-          },
-          (err) => { }
-        )
-      }
-    }, (reason) => {
-    });
+    modalRef.componentInstance.saveFun = (result, closeBack) => {
+      that.houseinfoService.update(event.data.id, JSON.parse(result)).then((data) => {
+          closeBack();
+          that.toastOptions.msg = "修改成功。";
+          that.toastyService.success(that.toastOptions);
+          that.getDataList();
+        },
+        (err) => {
+          that.toastOptions.msg = err;
+          that.toastyService.error(that.toastOptions);
+        }
+      )
+    };
   }
   //删除
   onDelete(event) {
     if (window.confirm('你确定要删除吗?')) {
       this.houseinfoService.delete(event.data.id).then((data) => {
+        this.toastOptions.msg = "删除成功。";
+        this.toastyService.success(this.toastOptions);
         this.getDataList();
+      }, (err) => {
+        this.toastOptions.msg = err;
+        this.toastyService.error(this.toastOptions);
       });
     }
   }
 
   getDataList(): void {
+    this.loading = true;
     this.houseinfoService.getHouseinfos().then((data) => {
       this.source.load(data);
-      this.totalRecord = data.length;
+      this.loading = false;
+    }, (err) => {
+      this.loading = false;
+      this.toastOptions.msg = err;
+      this.toastyService.error(this.toastOptions);
     });
   }
-  getHouseType():void{
+  getHouseType(): void {
 
     this._houseTypeService.getHouseTypes().then((data) => {
       const that = this;

@@ -27,6 +27,8 @@ import { HousestateComponent } from './housestate/housestate.component';
 import { RepairComponent } from './repair/repair.component';
 import { StatelogComponent } from './statelog/statelog.component';
 
+import {ToastyModule} from 'ng2-toasty';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -41,6 +43,7 @@ import { StatelogComponent } from './statelog/statelog.component';
     NgbModule,
     LoadingModule,
     Ng2SmartTableModule,
+    ToastyModule.forRoot()
   ],
   declarations: [
     HouseComponent,

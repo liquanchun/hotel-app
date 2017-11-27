@@ -19,8 +19,6 @@ import * as _ from 'lodash';
 export class StoreoutComponent implements OnInit, AfterViewInit {
 
   title = '出库查询';
-  totalRecord = 89;
-  page = 1;
   query: string = '';
 
   settings = {
@@ -110,7 +108,6 @@ export class StoreoutComponent implements OnInit, AfterViewInit {
   getDataList(): void {
     this.storeoutService.getStoreouts().then((data) => {
       this.source.load(data);
-      this.totalRecord = data.length;
     });
   }
 }

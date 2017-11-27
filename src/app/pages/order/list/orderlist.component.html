@@ -28,7 +28,6 @@
 
                 <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '4px' }"></ngx-loading>
                 <ng2-smart-table [settings]="settings" [source]="source" (delete)="onDelete($event)" (edit)="open($event,popContent)"></ng2-smart-table>
-                <ngb-pagination style="margin-top: 5px;" *ngIf="totalRecord>10" (pageChange)="onPageChange($event)" size="sm" class="pull-right" [(collectionSize)]="totalRecord" [(page)]="page" [maxSize]="5" [boundaryLinks]="true"></ngb-pagination>
             </div>
         </ba-card>
     </div>

@@ -242,17 +242,12 @@ export class MenuComponent implements OnInit, AfterViewInit {
       if (focusNode.data.children.length > 0) {
         alert('选择的节点有子节点，不能删除。');
       } else {
-        const that = this;
-        const confirm = {
-          message: `${focusNode.data.name}节点`,
-          callback: () => {
-            that.menuService.delete(focusNode.data.id).then(() => {
-              that.getNodes();
-              that.selectedMenu = null;
-            });
-          },
-        };
-        that._state.notifyDataChanged('delete.confirm', confirm);
+        if (window.confirm('你确定要删除吗?')) {
+          this.menuService.delete(focusNode.data.id).then(() => {
+            this.getNodes();
+            this.selectedMenu = null;
+          });
+        }
       }
     } else {
       alert('请选择你要删除的子节点。');

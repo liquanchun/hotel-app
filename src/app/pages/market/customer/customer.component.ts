@@ -19,8 +19,6 @@ import * as _ from 'lodash';
 export class CustomerComponent implements OnInit, AfterViewInit {
 
   title = '顾客档案';
-  totalRecord = 89;
-  page = 1;
   query: string = '';
 
   settings = {
@@ -139,7 +137,6 @@ export class CustomerComponent implements OnInit, AfterViewInit {
   getDataList(): void {
     this.customerService.getCustomers().then((data) => {
       this.source.load(data);
-      this.totalRecord = data.length;
     });
   }
 }

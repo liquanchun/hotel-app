@@ -19,8 +19,6 @@ import * as _ from 'lodash';
 export class AdddelComponent implements OnInit, AfterViewInit {
 
   title = '报损报溢';
-  totalRecord = 89;
-  page = 1;
   query: string = '';
 
   settings = {
@@ -110,7 +108,6 @@ export class AdddelComponent implements OnInit, AfterViewInit {
   getDataList(): void {
     this.adddelService.getAdddels().then((data) => {
       this.source.load(data);
-      this.totalRecord = data.length;
     });
   }
 }

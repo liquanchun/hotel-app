@@ -172,7 +172,6 @@ input.search-input {
 // .pagination>li>span {
 //     background: transparent;
 // }
-
 .pagination>li:first-child>a,
 .pagination>li:first-child>span {
     border-top-left-radius: 0px;
@@ -333,7 +332,6 @@ th {
 //     background-color: rgba(0, 0, 0, .3)!important;
 //     border-color: $border!important;
 // }
-
 .pagination>li>a:hover,
 .pagination>li>span:hover,
 .pagination>li>a:focus,
@@ -347,6 +345,7 @@ th {
 .page-item.disabled .page-link:hover {
     background-color: rgba(255, 255, 255, .1);
     color: $default-text;
+    line-height: 1 !important;
 }
 
 .editable-buttons .btn-with-icon i {

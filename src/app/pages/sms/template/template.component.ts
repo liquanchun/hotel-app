@@ -22,8 +22,6 @@ import * as _ from 'lodash';
 export class TemplateComponent implements OnInit, AfterViewInit {
 
   title = '短信模板';
-  totalRecord = 89;
-  page = 1;
   query: string = '';
 
   settings = {
@@ -228,7 +226,6 @@ export class TemplateComponent implements OnInit, AfterViewInit {
   getDataList(): void {
     this.templateService.getTemplates().then((data) => {
       this.source.load(data);
-      this.totalRecord = data.length;
     });
   }
 }

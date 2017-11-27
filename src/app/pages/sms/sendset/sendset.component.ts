@@ -22,8 +22,6 @@ import * as _ from 'lodash';
 export class SendsetComponent implements OnInit, AfterViewInit {
 
   title = '短信设置';
-  totalRecord = 89;
-  page = 1;
   query: string = '';
 
   constructor(

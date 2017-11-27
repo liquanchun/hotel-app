@@ -19,8 +19,6 @@ import * as _ from 'lodash';
 export class PreauthComponent implements OnInit, AfterViewInit {
 
   title = '预授权查询';
-  totalRecord = 89;
-  page = 1;
   query: string = '';
 
   settings = {
@@ -120,7 +118,6 @@ export class PreauthComponent implements OnInit, AfterViewInit {
   getDataList(): void {
     this.preauthService.getPreauths().then((data) => {
       this.source.load(data);
-      this.totalRecord = data.length;
     });
   }
 }

@@ -19,8 +19,6 @@ import * as _ from 'lodash';
 export class ScheduleComponent implements OnInit, AfterViewInit {
 
   title = '排房查询';
-  totalRecord = 89;
-  page = 1;
   query: string = '';
 
   settings = {
@@ -120,7 +118,6 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
   getDataList(): void {
     this.scheduleService.getSchedules().then((data) => {
       this.source.load(data);
-      this.totalRecord = data.length;
     });
   }
 }

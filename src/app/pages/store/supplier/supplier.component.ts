@@ -19,8 +19,6 @@ import * as _ from 'lodash';
 export class SupplierComponent implements OnInit, AfterViewInit {
 
   title = '房扫查询';
-  totalRecord = 89;
-  page = 1;
   query: string = '';
 
   settings = {
@@ -105,7 +103,6 @@ export class SupplierComponent implements OnInit, AfterViewInit {
   getDataList(): void {
     this.supplierService.getSuppliers().then((data) => {
       this.source.load(data);
-      this.totalRecord = data.length;
     });
   }
 }
