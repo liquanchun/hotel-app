@@ -1,129 +1,14 @@
 <div class="my-container">
-    <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '4px' }"></ngx-loading>
     <div class="row">
-        <!--用户信息card  -->
-        <div class="col-12 card">
-            <ngb-alert *ngIf="successMessage" [type]="alterType" (close)="successMessage = null">{{ successMessage }}</ngb-alert>
-            <!-- 按钮 -->
-            <div *ngIf="!isNewUser" class="row">
-
-                <div class="col-4">
-                    <div class="input-group">
-                        <input type="text" class="form-control" (keyup)="onKey($event)" placeholder="Search for..." aria-label="Search for...">
-                        <span class="input-group-btn btn-group">
-                                <button class="btn btn-secondary" type="button"><i class="fa fa-search" aria-hidden="true"></i> 查询</button>
-                            </span>
-                    </div>
-                </div>
-                <div class="col-8">
-                    <div class="btn-group margin8 pull-right" role="group" aria-label="Basic example">
-                        <button *ngIf="showEditButton"  (click)="onNewUser()" type="button" class="btn btn-info"><i class="fa fa-plus" aria-hidden="true"></i> 新增用户 </button>
-                        <button *ngIf="showEditButton"  (click)="onDeleteUser(content)" [disabled]="selectedUser==null" type="button" class="btn btn-info"><i class="fa fa-times" aria-hidden="true"></i> 删除</button>
-                        <button (click)="getUserList()" type="button" class="btn btn-info"><i class="fa fa-refresh" aria-hidden="true"></i> 刷新 </button>
-                    </div>
-                </div>
+        <div class="col-12">
+            <div class="btn-group margin8 pull-right" role="group" aria-label="Basic example">
+                <button (click)="onNewUser()" type="button" class="btn btn-info"><i class="fa fa-plus" aria-hidden="true"></i> 新增用户 </button>
+                <button (click)="getUserList()" type="button" class="btn btn-info"><i class="fa fa-refresh" aria-hidden="true"></i> 刷新 </button>
             </div>
-
-            <!--新增用户表单  -->
-            <div *ngIf="isNewUser" class="container">
-
-                <form [formGroup]="userForm" (ngSubmit)="onSubmit(userForm.value)" class="form-horizontal">
-                    <div class="form-group row " [ngClass]="{'has-error': (!userid.valid && userid.touched), 'has-success': (userid.valid && userid.touched)}">
-                        <label for="userid" class="col-sm-1 col-form-label offset-sm-2">用户ID</label>
-                        <div class="col-sm-5">
-                            <input [formControl]="userid" type="userid" class="form-control" id="userid" name="userid" placeholder="请输入用户ID">
-                        </div>
-                    </div>
-                    <div class="form-group row" [ngClass]="{'has-error': (!username.valid && username.touched), 'has-success': (username.valid && username.touched)}">
-                        <label for="username" class="col-sm-1 col-form-label  offset-sm-2">用户名</label>
-                        <div class="col-sm-5">
-                            <input [formControl]="username" type="username" class="form-control" id="username" name="username" placeholder="请输入用户名">
-                        </div>
-                    </div>
-                    <div class="form-group row" [ngClass]="{'has-error': (!mobile.valid && mobile.touched), 'has-success': (mobile.valid && mobile.touched)}">
-                        <label for="mobile" class="col-sm-1 col-form-label  offset-sm-2">电话号码</label>
-                        <div class="col-sm-5">
-                            <input [formControl]="mobile" type="mobile" class="form-control" id="mobile" name="mobile" placeholder="请输入电话号码">
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label for="weixin" class="col-sm-1 col-form-label  offset-sm-2">微信号</label>
-                        <div class="col-sm-5">
-                            <input [formControl]="weixin" type="weixin" class="form-control" id="weixin" name="weixin" placeholder="请输入微信号">
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label for="email" class="col-sm-1 col-form-label  offset-sm-2">Email</label>
-                        <div class="col-sm-5">
-                            <input [formControl]="email" type="email" class="form-control" id="email" name="email" placeholder="请输入Email">
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label for="email" class="col-sm-1 col-form-label  offset-sm-2">用户角色</label>
-                        <div class="col-sm-9">
-                            <div *ngFor="let role of roles" class="form-check form-check-inline">
-                                <label class="form-check-label">
-                                            <input class="form-check-input" (click)="onCheck(role.id,$event)" type="checkbox" id="inlineCheckbox1" value="{{role.id}}"> {{role.roleName}}
-                                        </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group row" [ngClass]="{'has-error': (!pwd.valid && pwd.touched), 'has-success': (pwd.valid && pwd.touched)}">
-                        <label for="pwd" class="col-sm-1 col-form-label  offset-sm-2">密码</label>
-                        <div class="col-sm-5">
-                            <input [formControl]="pwd" type="password" class="form-control" id="pwd" name="pwd" placeholder="请输入登录密码">
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <div class="col-sm-5 offset-sm-3">
-                            <div class="form-check">
-                                <label class="form-check-label">
-                                            <input class="form-check-input" [formControl]="isvalid" name="isvalid" type="checkbox"> 是否有效
-                                        </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <div class="offset-sm-3 col-sm-6">
-                            <button type="submit" [disabled]="!userForm.valid" class="btn btn-info"><i class="fa fa-floppy-o" aria-hidden="true"></i> 保存</button>
-                            <button type="button" (click)="onBack()" class="btn btn-info"><i class="fa fa-backward" aria-hidden="true"></i> 返回</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <!--用户表格  -->
-            <div *ngIf="!isNewUser" class="vertical-scroll">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th class="table-id">#</th>
-                            <th>用户ID</th>
-                            <th>用户名</th>
-                            <th>电话号码</th>
-                            <th>微信号</th>
-                            <th>Email</th>
-                            <th>用户角色</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let item of users">
-                            <td class="table-id" (click)="onTdClicked(item)" [class.selectedcolor]="selectedUser && item['userId'] === selectedUser['userId']">{{ item.id }}</td>
-                            <td (click)="onTdClicked(item)" [class.selectedcolor]="selectedUser && item['userId'] === selectedUser['userId']">{{ item.userId }}</td>
-                            <td (click)="onTdClicked(item)" [class.selectedcolor]="selectedUser && item['userId'] === selectedUser['userId']">{{ item.userName }}</td>
-                            <td (click)="onTdClicked(item)" [class.selectedcolor]="selectedUser && item['userId'] === selectedUser['userId']">{{ item.mobile }}</td>
-                            <td (click)="onTdClicked(item)" [class.selectedcolor]="selectedUser && item['userId'] === selectedUser['userId']">{{ item.weixin }}</td>
-                            <td (click)="onTdClicked(item)" [class.selectedcolor]="selectedUser && item['userId'] === selectedUser['userId']"><a class="email-link" href="mailto:{{ item.email }}">{{ item.email }}</a></td>
-                            <td (click)="onTdClicked(item)" [class.selectedcolor]="selectedUser && item['userId'] === selectedUser['userId']">{{ item.roleNames }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '4px' }"></ngx-loading>
+            <ng2-smart-table [settings]="settings" [source]="source" (edit)="onEdit($event)" (delete)="onDelete($event)">
+            </ng2-smart-table>
         </div>
+
     </div>
 </div>

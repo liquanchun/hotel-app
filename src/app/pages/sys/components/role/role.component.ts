@@ -1,6 +1,9 @@
 import { Component, ViewChild, ElementRef, OnInit, AfterViewInit } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
+import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
+import { NgbdModalContent } from '../../../../modal-content.component'
+import { FieldConfig } from '../../../../theme/components/dynamic-form/models/field-config.interface';
 import * as _ from 'lodash';
 import { RoleService } from './role.services';
 
@@ -14,19 +17,37 @@ import { GlobalState } from '../../../../global.state';
   providers: [RoleService],
 })
 export class RoleComponent implements OnInit, AfterViewInit {
-  private isNewRole: boolean;
   private roles: any;
   
   private selectedRole: any;
-  private newRoleName: string;
+
+  config: FieldConfig[] = [
+    {
+      type: 'input',
+      label: '角色',
+      name: 'roleName',
+      placeholder: '输入角色',
+    }
+  ];
+
+  private toastOptions: ToastOptions = {
+    title: "提示信息",
+    msg: "The message",
+    showClose: true,
+    timeout: 2000,
+    theme: "bootstrap",
+  };
 
   constructor(
+    private modalService: NgbModal,
     private _state: GlobalState,
+    private toastyService: ToastyService,
+    private toastyConfig: ToastyConfig,
     private roleService: RoleService) {
+      this.toastyConfig.position = 'top-center';
   }
 
   ngOnInit() {
-    this.isNewRole = true;
     this.getRoles();
   }
 
@@ -42,40 +63,39 @@ export class RoleComponent implements OnInit, AfterViewInit {
     });
   }
 
-  onSaveRole(event) {
-    const that = this;
-    this.isNewRole = !this.isNewRole;
-    if (this.isNewRole) {
-      if (this.newRoleName) {
-        // TODO
-        this.roleService
-          .create(that.newRoleName)
-          .then(function (role) {
-            that.roles.push(role);
-            that.newRoleName = '';
-          }, (err) => {
-            alert(`保存失败。${err}`);
-          });
-      } else {
-        alert('角色名称不能为空。');
-      }
-    }
+  onNewRole() {
+    const modalRef = this.modalService.open(NgbdModalContent);
+    modalRef.componentInstance.title = '新增房间信息';
+    modalRef.componentInstance.config = this.config;
+    modalRef.componentInstance.saveFun = (result, closeBack) => {
+      const roleobj = JSON.parse(result);
+      this.roleService.create(roleobj.roleName).then((data) => {
+          closeBack();
+          this.toastOptions.msg = "新增成功。";
+          this.toastyService.success(this.toastOptions);
+          this.getRoles();
+        },
+        (err) => {
+          this.toastOptions.msg = err;
+          this.toastyService.error(this.toastOptions);
+        }
+      )
+    };
   }
 
   // 删除选择的角色
   onDeleteRole() {
-    const that = this;
-    const confirm = {
-      message: `${that.selectedRole.roleName}角色`,
-      callback: () => {
-        that.roleService.delete(that.selectedRole.Id).then(() => {
-          _.remove(that.roles, r => r['Id'] === that.selectedRole.Id);
-          that.selectedRole = null;
-        });
-      },
-    };
 
-    that._state.notifyDataChanged('delete.confirm', confirm);
+    if (window.confirm('你确定要删除吗?')) {
+      this.roleService.delete(this.selectedRole.id).then((data) => {
+        this.toastOptions.msg = "删除成功。";
+        this.toastyService.success(this.toastOptions);
+        this.getRoles();
+      }, (err) => {
+        this.toastOptions.msg = err;
+        this.toastyService.error(this.toastOptions);
+      });
+    }
   }
 
   onSelectedRole(role) {

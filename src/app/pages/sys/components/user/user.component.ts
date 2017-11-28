@@ -1,6 +1,10 @@
 import { Component, ViewChild, OnInit, AfterViewInit, Input } from '@angular/core';
 import { NgbModal, ModalDismissReasons, NgbAlert } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
+import { FieldConfig } from '../../../../theme/components/dynamic-form/models/field-config.interface';
+import { NgbdModalContent } from '../../../../modal-content.component'
+import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 
 import * as $ from 'jquery';
 import * as _ from 'lodash';
@@ -18,60 +22,145 @@ import { GlobalState } from '../../../../global.state';
   providers: [UserService],
 })
 export class UserComponent implements OnInit, AfterViewInit {
-  @Input() showEditButton: boolean = true;
 
   public loading = false;
-  private isNewUser: boolean;
-  private selectedUser: any;
-  private users: any;
-  private usersfilter: any;
+  private roles: any = [];
+  settings = {
+    mode: 'external',
+    actions: {
+      columnTitle: '操作'
+    },
+    edit: {
+      editButtonContent: '<i class="ion-edit"></i>',
+      confirmSave: true,
+    },
+    delete: {
+      deleteButtonContent: '<i class="ion-trash-a"></i>',
+      confirmDelete: true
+    },
+    hideSubHeader: true,
+    columns: {
+      id: {
+        title: 'Id',
+        type: 'number',
+        editable: false,
+        filter: false,
+        width: '30px',
+      },
+      userName: {
+        title: '用户名',
+        type: 'string',
+        filter: false,
+        width: '80px',
+      },
+      userId: {
+        title: '用户ID',
+        type: 'string',
+        filter: false,
+        width: '80px',
+      },
+      mobile: {
+        title: '电话',
+        type: 'string',
+        filter: false,
+        width: '80px',
+      },
+      weixin: {
+        title: '微信',
+        type: 'string',
+        filter: false,
+        width: '80px',
+      },
+      roleNames: {
+        title: '角色',
+        type: 'string',
+        filter: false,
+        width: '80px',
+      },
+      pwd: {
+        title: '密码',
+        type: 'string',
+        filter: false,
+        width: '80px',
+      },
+      isValid: {
+        title: '是否启用',
+        type: 'bool',
+        filter: false,
+      },
+    }
+  };
 
-  private userForm: FormGroup;
-  private userid: AbstractControl;
-  private username: AbstractControl;
-  private mobile: AbstractControl;
-  private weixin: AbstractControl;
-  private email: AbstractControl;
-  private pwd: AbstractControl;
-  private isvalid: AbstractControl;
-
-  private submitted: boolean = false;
-  private editUser: any;
-  private roles: any;
-
-  private selectVal: any = [];
+  config: FieldConfig[] = [
+    {
+      type: 'input',
+      label: '用户Id',
+      name: 'userId',
+      placeholder: '输入用户Id',
+      validation: [Validators.required],
+    },
+    {
+      type: 'input',
+      label: '用户名',
+      name: 'userName',
+      placeholder: '输入用户名',
+    },
+    {
+      type: 'input',
+      label: '密码',
+      name: 'pwd',
+      placeholder: '输入密码',
+      password:true,      
+    },
+    {
+      type: 'input',
+      label: '电话',
+      name: 'mobile',
+      placeholder: '输入电话',
+    },
+    {
+      type: 'input',
+      label: '微信',
+      name: 'weixin',
+      placeholder: '输入微信',
+    },
+    {
+      type: 'check',
+      label: '角色',
+      name: 'roleIds',
+      check: 'checkbox',
+      options: this.roles
+    },
+    {
+      type: 'truefalse',
+      label: '是否启用',
+      name: 'isValid',
+    },
+  ];
+  source: LocalDataSource = new LocalDataSource();
+  private toastOptions: ToastOptions = {
+    title: "提示信息",
+    msg: "The message",
+    showClose: true,
+    timeout: 2000,
+    theme: "bootstrap",
+  };
 
   constructor(
+    private modalService: NgbModal,
     private _state: GlobalState,
-    private userService: UserService,
-    fb: FormBuilder) {
+    private toastyService: ToastyService,
+    private toastyConfig: ToastyConfig,
+    private userService: UserService) {
 
-    this.userForm = fb.group({
-      'userid': ['', Validators.compose([Validators.required, Validators.minLength(3)])],
-      'username': ['', Validators.compose([Validators.required, Validators.minLength(2)])],
-      'mobile': ['', Validators.compose([Validators.required, Validators.minLength(11)])],
-      'pwd': ['', Validators.compose([Validators.required, Validators.minLength(6)])],
-      'weixin': [''],
-      'email': [''],
-      'isvalid': [''],
-      'roleids': [''],
-    });
-
-    this.userid = this.userForm.controls['userid'];
-    this.username = this.userForm.controls['username'];
-    this.mobile = this.userForm.controls['mobile'];
-    this.weixin = this.userForm.controls['weixin'];
-    this.email = this.userForm.controls['email'];
-    this.pwd = this.userForm.controls['pwd'];
-    this.isvalid = this.userForm.controls['isvalid'];
-
+    const that = this;
     this._state.subscribe('role.dataChanged', (roles) => {
-      this.roles = roles;
+      _.each(roles, r => {
+        that.roles.push({ id: r.id, name: r.roleName });
+      })
     });
     this._state.subscribe('role.selectedChanged', (role) => {
-      this.users = _.filter(this.usersfilter, function (o) {
-        return o['roleIds'] && o['roleIds'].indexOf(role.id) > -1;
-      });
+      this.onSearch(role.roleName);
     });
   }
 
@@ -81,89 +170,75 @@ export class UserComponent implements OnInit, AfterViewInit {
 
   getUserList() {
     this.loading = true;
-    const that = this;
-    this.userService.getUsers().then(function (users) {
-      that.loading = false;
-      that.users = users;
-      that.usersfilter = users;
+    this.userService.getUsers().then((data) => {
+      this.source.load(data);
+      this.loading = false;
     }, (err) => {
-      that.loading = false;
+      this.loading = false;
+      this.toastOptions.msg = err;
+      this.toastyService.error(this.toastOptions);
     });
   }
 
   ngAfterViewInit() {
-    const that = this;
-    jQuery('.app-sys-user tbody tr td').click(function (e) {
-      e.preventDefault();
-      jQuery(this).parent().parent().children('tr').children('td').removeClass('selectedcolor');
-      jQuery(this).parent().children('td').addClass('selectedcolor');
-    });
   }
-
-  onTdClicked(item) {
-    this.selectedUser = {
-      id: item.id,
-      userId: item.userId,
-      userName: item.userName,
+  onSearch(query: string = '') {
+    this.source.setFilter([
+      { field: 'roleName', search: query },
+    ], false);
+  }
+  onNewUser() {
+    const that = this;
+    const modalRef = this.modalService.open(NgbdModalContent);
+    modalRef.componentInstance.title = '新增用户';
+    modalRef.componentInstance.config = this.config;
+    modalRef.componentInstance.saveFun = (result, closeBack) => {
+      that.userService.create(JSON.parse(result)).then((data) => {
+        closeBack();
+        that.toastOptions.msg = "新增成功。";
+        that.toastyService.success(that.toastOptions);
+        that.getUserList();
+      },
+        (err) => {
+          that.toastOptions.msg = err;
+          that.toastyService.error(that.toastOptions);
+        }
+      )
     };
   }
 
-  onSubmit(values: Object): void {
-    this.submitted = true;
+  onEdit(event) {
     const that = this;
-    if (this.userForm.valid) {
-      // your code goes here
-      console.log(values);
-      values['roleids'] = this.selectVal.toString();
-      values['isvalid'] = values['isvalid'] ? values['isvalid'] : 0;
-      values['pwd'] = Md5.hashStr(values['pwd']).toString();
-      this.userService.create(values).then(function (user) {
-        that.users.push(user);
-      }, (err) => {
-      });
-      // sessionStorage.setItem('userId', this.userId.value);
-    }
-  }
-
-  onNewUser() {
-    this.isNewUser = true;
-  }
-  onBack() {
-    this.isNewUser = false;
+    const modalRef = this.modalService.open(NgbdModalContent);
+    modalRef.componentInstance.title = '修改用户';
+    let newConfig = this.config;
+    modalRef.componentInstance.config = this.config;
+    modalRef.componentInstance.formValue = event.data;
+    modalRef.componentInstance.saveFun = (result, closeBack) => {
+      that.userService.update(event.data.id,JSON.parse(result)).then((data) => {
+        closeBack();
+        that.toastOptions.msg = "修改成功。";
+        that.toastyService.success(that.toastOptions);
+        that.getUserList();
+      },
+        (err) => {
+          that.toastOptions.msg = err;
+          that.toastyService.error(that.toastOptions);
+        }
+      )
+    };
   }
   // 删除选择的用户
-  onDeleteUser(content) {
-    const that = this;
-    const confirm = {
-      message: `${that.selectedUser.userName}用户`,
-      callback: () => {
-        that.userService.delete(that.selectedUser.id).then(() => {
-          _.remove(that.users, r => r['Id'] === that.selectedUser.id);
-          that.selectedUser = null;
-        }, (err) => {
-        });
-      },
-    };
-
-    that._state.notifyDataChanged('delete.confirm', confirm);
-  }
-
-  onCheck(id, event) {
-    if (_.indexOf(this.selectVal, id) > -1) {
-      _.remove(this.selectVal, function (n) {
-        return n === id;
+  onDelete(event) {
+    if (window.confirm('你确定要删除吗?')) {
+      this.userService.delete(event.data.id).then((data) => {
+        this.toastOptions.msg = "删除成功。";
+        this.toastyService.success(this.toastOptions);
+        this.getUserList();
+      }, (err) => {
+        this.toastOptions.msg = err;
+        this.toastyService.error(this.toastOptions);
       });
-    } else {
-      this.selectVal.push(id);
     }
-  }
-
-  onKey(event: any) { // without type info
-    this.users = _.filter(this.usersfilter, function (o) {
-      return o['userName'] && o['userName'].indexOf(event.target.value) > -1
-        || o['userId'] && o['userId'].indexOf(event.target.value) > -1
-        || o['mobile'] && o['mobile'].indexOf(event.target.value) > -1
-        || o['weixin'] && o['weixin'].indexOf(event.target.value) > -1;
-    });
   }
 }

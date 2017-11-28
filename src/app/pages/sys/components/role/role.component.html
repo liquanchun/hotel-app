@@ -1,20 +1,9 @@
 <div class="row">
     <div class="card">
         <div class="btn-group margin8" role="group" aria-label="Basic example">
-            <button (click)="onSaveRole()" type="button" class="btn btn-info" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample"><i class="fa fa-plus" aria-hidden="true"></i> {{isNewRole?'新增角色':'保存'}}</button>
+            <button (click)="onNewRole()" type="button" class="btn btn-info"><i class="fa fa-plus" aria-hidden="true"></i>新增角色</button>
             <button (click)="onDeleteRole(content)" [disabled]="selectedRole==null" type="button" class="btn btn-info"><i class="fa fa-times" aria-hidden="true"></i> 删除</button>
         </div>
-        <div class="collapse" id="collapseExample">
-            <div class="card card-block">
-                <form>
-                    <div class="form-group">
-                        <label class="form-control-label" for="formRoleName">角色名称：</label>
-                        <input required [(ngModel)]="newRoleName" name="newRoleName" type="text" class="form-control" id="formRoleName" placeholder="输入角色名称">
-                    </div>
-                </form>
-            </div>
-        </div>
-
         <div class="list-group" id="myList" role="tablist">
             <a *ngFor="let role of roles" [class.active]="selectedRole && role['roleName'] === selectedRole['roleName']" (click)="onSelectedRole(role)" class="list-group-item list-group-item-action" href="javascript:void(0);">{{role.roleName}}</a>
         </div>

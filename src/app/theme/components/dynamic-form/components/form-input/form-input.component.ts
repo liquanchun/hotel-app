@@ -14,7 +14,7 @@ import { FieldConfig } from '../../models/field-config.interface';
       <label for="config.name" class="col-md-3 col-form-label">{{ config.label }}</label>
       <div class="col-md-8">
       <input class="form-control" 
-        type="text"
+        [type]="config.password ? 'password':'text'"
         [attr.placeholder]="config.placeholder"
         [formControlName]="config.name">
       </div>  

@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-
+import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 import { StatelogService } from './statelog.services';
 import { GlobalState } from '../../../global.state';
 import { Common } from '../../../providers/common';
@@ -20,7 +20,7 @@ export class StatelogComponent implements OnInit, AfterViewInit {
 
   title = '房态日志';
   query: string = '';
-
+  loading = false;
   settings = {
     mode: 'external',
     actions: false,
@@ -72,11 +72,21 @@ export class StatelogComponent implements OnInit, AfterViewInit {
   };
 
   source: LocalDataSource = new LocalDataSource();
+  private toastOptions: ToastOptions = {
+    title: "提示信息",
+    msg: "The message",
+    showClose: true,
+    timeout: 2000,
+    theme: "bootstrap",
+  };
 
   constructor(
     private statelogService: StatelogService,
     private _common: Common,
+    private toastyService: ToastyService,
+    private toastyConfig: ToastyConfig,
     private _state: GlobalState) {
+    this.toastyConfig.position = 'top-center';
     this.getDataList();
   }
   ngOnInit() {
@@ -100,8 +110,14 @@ export class StatelogComponent implements OnInit, AfterViewInit {
   }
 
   getDataList(): void {
+    this.loading = true;
     this.statelogService.getStatelogs().then((data) => {
+      this.loading = false;
       this.source.load(data);
+    }, (err) => {
+      this.loading = false;
+      this.toastOptions.msg = err;
+      this.toastyService.error(this.toastOptions);
     });
   }
 }
