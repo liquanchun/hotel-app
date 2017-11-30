@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { GlobalState } from '../global.state';
 import * as _ from 'lodash';
+import { retry } from 'rxjs/operator/retry';
 
 @Injectable()
 export class Common {
@@ -16,13 +17,20 @@ export class Common {
     getDateDay(date: string): number {
         return Number.parseInt(date.split('-')[2]);
     }
+    //获取日期对象
+    getDateObject(date: string): any {
+        const year = Number.parseInt(date.split('-')[0]);
+        const month = Number.parseInt(date.split('-')[1]);
+        const day = Number.parseInt(date.split('-')[2]);
+        return { "year": year, "month": month, "day": day };
+    }
     // 根据日期对象获取日期字符串
     getDateString(date: any): string {
-        return `${date.year}-${date.month}-${date.day}`
+        return `${date.year}-${_.padStart(date.month, 2, '0')}-${_.padStart(date.day, 2, '0')}`
     }
     // 根据日期对象获取日期字符串(标准格式)
     getDateString2(date: any): string {
         const time = date.time ? ' ' + date.time : '';
-        return `${date.year}-${_.padStart(date.month,2,'0')}-${_.padStart(date.day,2,'0')}${time}`
+        return `${date.year}-${_.padStart(date.month, 2, '0')}-${_.padStart(date.day, 2, '0')}${time}`
     }
 }

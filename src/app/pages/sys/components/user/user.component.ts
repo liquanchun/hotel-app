@@ -153,6 +153,7 @@ export class UserComponent implements OnInit, AfterViewInit {
     private toastyConfig: ToastyConfig,
     private userService: UserService) {
 
+    this.toastyConfig.position = 'top-center';
     const that = this;
     this._state.subscribe('role.dataChanged', (roles) => {
       _.each(roles, r => {

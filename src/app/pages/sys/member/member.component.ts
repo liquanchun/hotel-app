@@ -5,7 +5,7 @@ import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/fo
 import { LocalDataSource } from 'ng2-smart-table';
 import { NgbdModalContent } from '../../../modal-content.component'
 import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
-
+import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 import { MemberService } from './member.services';
 import { HouseTypeService } from '../house-type//house-type.services';
 import { GlobalState } from '../../../global.state';
@@ -20,7 +20,7 @@ import * as _ from 'lodash';
   providers: [MemberService, HouseTypeService],
 })
 export class MemberComponent implements OnInit, AfterViewInit {
-
+  loading = false;
   query: string = '';
 
   settingsCard = {
@@ -558,11 +558,21 @@ export class MemberComponent implements OnInit, AfterViewInit {
   sourceInteHouse: LocalDataSource = new LocalDataSource();
   modalConfig: any = {};
 
+  private toastOptions: ToastOptions = {
+    title: "提示信息",
+    msg: "The message",
+    showClose: true,
+    timeout: 2000,
+    theme: "bootstrap",
+  };
   constructor(
     private modalService: NgbModal,
     private memberService: MemberService,
     private houseTypeService: HouseTypeService,
+    private toastyService: ToastyService,
+    private toastyConfig: ToastyConfig,
     private _state: GlobalState) {
+    this.toastyConfig.position = 'top-center';
     this.getDataList('');
   }
   ngOnInit() {
@@ -578,15 +588,17 @@ export class MemberComponent implements OnInit, AfterViewInit {
 
   getDataList(modalname): void {
     if (!modalname || modalname == 'SetCard') {
+      this.loading = true;
       this.memberService.getMembers('SetCard').then((data) => {
         this.sourceCard.load(data);
+        this.loading = false;
         const that = this;
         let cardT1 = _.find(this.configIntegral, function (f) { return f.name == 'cardType'; });
         let cardT2 = _.find(this.configCardUpgrade, function (f) { return f.name == 'oldCard'; });
         let cardT3 = _.find(this.configCardUpgrade, function (f) { return f.name == 'newCard'; });
         let cardT4 = _.find(this.configInteExchange, function (f) { return f.name == 'cardType'; });
         let cardT5 = _.find(this.configInteHouse, function (f) { return f.name == 'cardType'; });
-        
+
         _.each(data, function (d) {
           cardT1.options.push({ id: d.id, name: d.name });
           cardT2.options.push({ id: d.id, name: d.name });
@@ -594,6 +606,10 @@ export class MemberComponent implements OnInit, AfterViewInit {
           cardT4.options.push({ id: d.id, name: d.name });
           cardT5.options.push({ id: d.id, name: d.name });
         });
+      }, (err) => {
+        this.loading = false;
+        this.toastOptions.msg = err;
+        this.toastyService.error(this.toastOptions);
       });
     }
 
@@ -644,20 +660,19 @@ export class MemberComponent implements OnInit, AfterViewInit {
     const modalRef = this.modalService.open(NgbdModalContent);
     modalRef.componentInstance.title = title;
     modalRef.componentInstance.config = this.modalConfig[modalname];
-    modalRef.result.then((result) => {
-      if (result !== 'no') {
-        console.log(result);
-        that.memberService.create(modalname, JSON.parse(result)).then(
-          function (v) {
-            that.getDataList(modalname);
-          },
-          (err) => {
-            alert(err);
-          }
-        )
-      }
-    }, (reason) => {
-    });
+    modalRef.componentInstance.saveFun = (result, closeBack) => {
+      that.memberService.create(modalname, JSON.parse(result)).then((data) => {
+        closeBack();
+        that.toastOptions.msg = "新增成功。";
+        that.toastyService.success(that.toastOptions);
+        that.getDataList(modalname);
+      },
+        (err) => {
+          that.toastOptions.msg = err;
+          that.toastyService.error(that.toastOptions);
+        }
+      )
+    };
   }
 
   onEdit(modalname, title, event) {
@@ -667,25 +682,31 @@ export class MemberComponent implements OnInit, AfterViewInit {
     modalRef.componentInstance.title = title;
     modalRef.componentInstance.config = this.modalConfig[modalname];
     modalRef.componentInstance.formValue = event.data;
-    modalRef.result.then((result) => {
-      if (result !== 'no') {
-        console.log(result);
-        that.memberService.update(modalname, event.data.id, JSON.parse(result)).then(
-          function (v) {
-            that.getDataList(modalname);
-          },
-          (err) => { }
-        )
-      }
-    }, (reason) => {
-    });
+    modalRef.componentInstance.saveFun = (result, closeBack) => {
+      that.memberService.update(modalname, event.data.id, JSON.parse(result)).then((data) => {
+        closeBack();
+        that.toastOptions.msg = "新增成功。";
+        that.toastyService.success(that.toastOptions);
+        that.getDataList(modalname);
+      },
+        (err) => {
+          that.toastOptions.msg = err;
+          that.toastyService.error(that.toastOptions);
+        }
+      )
+    };
   }
 
   //删除
   onDelete(modalname, event) {
     if (window.confirm('你确定要删除吗?')) {
       this.memberService.delete(modalname, event.data.id).then((data) => {
+        this.toastOptions.msg = "删除成功。";
+        this.toastyService.success(this.toastOptions);
         this.getDataList(modalname);
+      }, (err) => {
+        this.toastOptions.msg = err;
+        this.toastyService.error(this.toastOptions);
       });
     }
   }

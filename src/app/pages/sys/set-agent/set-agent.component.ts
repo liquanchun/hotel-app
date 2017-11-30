@@ -3,7 +3,7 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { NgbdModalContent } from '../../../modal-content.component'
-
+import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 import { SetAgentService } from './set-agent.services';
 import { GlobalState } from '../../../global.state';
 import { Common } from '../../../providers/common';
@@ -22,6 +22,7 @@ import * as _ from 'lodash';
 })
 export class SetAgentComponent implements OnInit, AfterViewInit {
 
+  loading = false;
   title = '中介平台';
   query: string = '';
 
@@ -192,12 +193,21 @@ export class SetAgentComponent implements OnInit, AfterViewInit {
   ];
 
   source: LocalDataSource = new LocalDataSource();
-
+  private toastOptions: ToastOptions = {
+    title: "提示信息",
+    msg: "The message",
+    showClose: true,
+    timeout: 2000,
+    theme: "bootstrap",
+  };
   constructor(
     private modalService: NgbModal,
     private setAgentService: SetAgentService,
     private _common: Common,
+    private toastyService: ToastyService,
+    private toastyConfig: ToastyConfig,
     private _state: GlobalState) {
+    this.toastyConfig.position = 'top-center';
     this.getDataList();
   }
   ngOnInit() {
@@ -217,8 +227,14 @@ export class SetAgentComponent implements OnInit, AfterViewInit {
     ], false);
   }
   getDataList(): void {
+    this.loading = true;
     this.setAgentService.getSetAgents().then((data) => {
       this.source.load(data);
+      this.loading = false;
+    }, (err) => {
+      this.loading = false;
+      this.toastOptions.msg = err;
+      this.toastyService.error(this.toastOptions);
     });
   }
 
@@ -227,20 +243,22 @@ export class SetAgentComponent implements OnInit, AfterViewInit {
     const modalRef = this.modalService.open(NgbdModalContent);
     modalRef.componentInstance.title = '新增协议单位';
     modalRef.componentInstance.config = this.config;
-    modalRef.result.then((result) => {
-      if (result !== 'no') {
-        console.log(result);
-        that.setAgentService.create(JSON.parse(result)).then(
-          function (v) {
-            that.getDataList();
-          },
-          (err) => {
-            alert(err);
-          }
-        )
-      }
-    }, (reason) => {
-    });
+    modalRef.componentInstance.saveFun = (result, closeBack) => {
+      let grp = JSON.parse(result);
+      grp.contractDate1 = this._common.getDateString(grp.contractDate1);
+      grp.contractDate2 = this._common.getDateString(grp.contractDate2);
+      that.setAgentService.create(grp).then((data) => {
+        closeBack();
+        that.toastOptions.msg = "新增成功。";
+        that.toastyService.success(that.toastOptions);
+        that.getDataList();
+      },
+        (err) => {
+          that.toastOptions.msg = err;
+          that.toastyService.error(that.toastOptions);
+        }
+      )
+    };
   }
 
   onEdit(event) {
@@ -249,25 +267,36 @@ export class SetAgentComponent implements OnInit, AfterViewInit {
     const modalRef = this.modalService.open(NgbdModalContent);
     modalRef.componentInstance.title = '修改协议单位';
     modalRef.componentInstance.config = this.config;
+    event.data.contractDate1 = this._common.getDateObject(event.data.contractDate1);
+    event.data.contractDate2 = this._common.getDateObject(event.data.contractDate2);
     modalRef.componentInstance.formValue = event.data;
-    modalRef.result.then((result) => {
-      if (result !== 'no') {
-        console.log(result);
-        that.setAgentService.update(event.data.id, JSON.parse(result)).then(
-          function (v) {
-            that.getDataList();
-          },
-          (err) => { }
-        )
-      }
-    }, (reason) => {
-    });
+    modalRef.componentInstance.saveFun = (result, closeBack) => {
+      let grp = JSON.parse(result);
+      grp.contractDate1 = this._common.getDateString(grp.contractDate1);
+      grp.contractDate2 = this._common.getDateString(grp.contractDate2);
+      that.setAgentService.update(event.data.id, grp).then((data) => {
+        closeBack();
+        that.toastOptions.msg = "修改成功。";
+        that.toastyService.success(that.toastOptions);
+        that.getDataList();
+      },
+        (err) => {
+          that.toastOptions.msg = err;
+          that.toastyService.error(that.toastOptions);
+        }
+      )
+    };
   }
   //删除
   onDelete(event) {
     if (window.confirm('你确定要删除吗?')) {
       this.setAgentService.delete(event.data.id).then((data) => {
+        this.toastOptions.msg = "删除成功。";
+        this.toastyService.success(this.toastOptions);
         this.getDataList();
+      }, (err) => {
+        this.toastOptions.msg = err;
+        this.toastyService.error(this.toastOptions);
       });
     }
   }

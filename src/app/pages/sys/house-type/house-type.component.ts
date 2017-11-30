@@ -4,7 +4,7 @@ import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/fo
 import { LocalDataSource } from 'ng2-smart-table';
 import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
 import { NgbdModalContent } from '../../../modal-content.component'
-
+import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 import { HouseTypeService } from './house-type.services';
 import { GlobalState } from '../../../global.state';
 
@@ -19,6 +19,7 @@ import * as _ from 'lodash';
 })
 export class HouseTypeComponent implements OnInit, AfterViewInit {
 
+  loading = false;
   query: string = '';
 
   settings = {
@@ -131,11 +132,20 @@ export class HouseTypeComponent implements OnInit, AfterViewInit {
   ];
 
   source: LocalDataSource = new LocalDataSource();
-
+  private toastOptions: ToastOptions = {
+    title: "提示信息",
+    msg: "The message",
+    showClose: true,
+    timeout: 2000,
+    theme: "bootstrap",
+  };
   constructor(
     private modalService: NgbModal,
     private houseTypeService: HouseTypeService,
+    private toastyService: ToastyService,
+    private toastyConfig: ToastyConfig,
     private _state: GlobalState) {
+    this.toastyConfig.position = 'top-center';
     this.getDataList();
   }
   ngOnInit() {
@@ -146,30 +156,35 @@ export class HouseTypeComponent implements OnInit, AfterViewInit {
   }
 
   getDataList(): void {
+    this.loading = true;
     this.houseTypeService.getHouseTypes().then((data) => {
       this.source.load(data);
+      this.loading = false;
+    }, (err) => {
+      this.loading = false;
+      this.toastOptions.msg = err;
+      this.toastyService.error(this.toastOptions);
     });
   }
-  
+
   newHouse() {
     const that = this;
     const modalRef = this.modalService.open(NgbdModalContent);
     modalRef.componentInstance.title = '新增房型设置';
     modalRef.componentInstance.config = this.config;
-    modalRef.result.then((result) => {
-      if (result !== 'no') {
-        console.log(result);
-        that.houseTypeService.create(JSON.parse(result)).then(
-          function (v) {
-            that.getDataList();
-          },
-          (err) => {
-            alert(err);
-          }
-        )
-      }
-    }, (reason) => {
-    });
+    modalRef.componentInstance.saveFun = (result, closeBack) => {
+      that.houseTypeService.create(JSON.parse(result)).then((data) => {
+        closeBack();
+        that.toastOptions.msg = "新增成功。";
+        that.toastyService.success(that.toastOptions);
+        that.getDataList();
+      },
+        (err) => {
+          that.toastOptions.msg = err;
+          that.toastyService.error(that.toastOptions);
+        }
+      )
+    };
   }
 
   onEdit(event) {
@@ -179,24 +194,30 @@ export class HouseTypeComponent implements OnInit, AfterViewInit {
     modalRef.componentInstance.title = '修改房型设置';
     modalRef.componentInstance.config = this.config;
     modalRef.componentInstance.formValue = event.data;
-    modalRef.result.then((result) => {
-      if (result !== 'no') {
-        console.log(result);
-        that.houseTypeService.update(event.data.id, JSON.parse(result)).then(
-          function (v) {
-            that.getDataList();
-          },
-          (err) => { }
-        )
-      }
-    }, (reason) => {
-    });
+    modalRef.componentInstance.saveFun = (result, closeBack) => {
+      that.houseTypeService.update(event.data.id, JSON.parse(result)).then((data) => {
+        closeBack();
+        that.toastOptions.msg = "修改成功。";
+        that.toastyService.success(that.toastOptions);
+        that.getDataList();
+      },
+        (err) => {
+          that.toastOptions.msg = err;
+          that.toastyService.error(that.toastOptions);
+        }
+      )
+    };
   }
   //删除
   onDelete(event) {
     if (window.confirm('你确定要删除吗?')) {
       this.houseTypeService.delete(event.data.id).then((data) => {
+        this.toastOptions.msg = "删除成功。";
+        this.toastyService.success(this.toastOptions);
         this.getDataList();
+      }, (err) => {
+        this.toastOptions.msg = err;
+        this.toastyService.error(this.toastOptions);
       });
     }
   }
