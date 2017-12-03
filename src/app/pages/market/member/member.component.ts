@@ -16,7 +16,7 @@ import * as _ from 'lodash';
   styleUrls: ['./member.component.scss'],
   providers: [MemberService],
 })
-export class MemberComponent implements OnInit, AfterViewInit {
+export class MemberComponent implements OnInit {
 
   title = '会员信息管理';
   query: string = '';
@@ -94,20 +94,11 @@ export class MemberComponent implements OnInit, AfterViewInit {
     private memberService: MemberService,
     private _common: Common,
     private _state: GlobalState) {
-    this.getDataList();
   }
   ngOnInit() {
+    this.getDataList();
+  }
 
-  }
-  ngAfterViewInit() {
-
-  }
-  onPageChange(p) {
-    console.log("page:" + p);
-  }
-  onCreate() {
-
-  }
   onSearch(query: string = '') {
     this.source.setFilter([
       { field: 'memberMan', search: query },

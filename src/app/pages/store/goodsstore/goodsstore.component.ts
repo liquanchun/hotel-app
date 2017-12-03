@@ -16,7 +16,7 @@ import * as _ from 'lodash';
   styleUrls: ['./goodsstore.component.scss'],
   providers: [GoodsstoreService],
 })
-export class GoodsstoreComponent implements OnInit, AfterViewInit {
+export class GoodsstoreComponent implements OnInit {
 
   title = '货品库存';
   query: string = '';
@@ -88,20 +88,11 @@ export class GoodsstoreComponent implements OnInit, AfterViewInit {
     private goodsstoreService: GoodsstoreService,
     private _common: Common,
     private _state: GlobalState) {
-    this.getDataList();
   }
   ngOnInit() {
+    this.getDataList();
+  }
 
-  }
-  ngAfterViewInit() {
-
-  }
-  onPageChange(p) {
-    console.log("page:" + p);
-  }
-  onCreate() {
-
-  }
   onSearch(query: string = '') {
     this.source.setFilter([
       { field: 'goodsstoreMan', search: query },

@@ -16,7 +16,7 @@ import * as _ from 'lodash';
   styleUrls: ['./cusaccount.component.scss'],
   providers: [CusaccountService],
 })
-export class CusaccountComponent implements OnInit, AfterViewInit {
+export class CusaccountComponent implements OnInit {
 
   title = '客账查询';
   query: string = '';
@@ -84,19 +84,9 @@ export class CusaccountComponent implements OnInit, AfterViewInit {
     private cusaccountService: CusaccountService,
     private _common: Common,
     private _state: GlobalState) {
-    this.getDataList();
   }
   ngOnInit() {
-
-  }
-  ngAfterViewInit() {
-
-  }
-  onPageChange(p) {
-    console.log("page:" + p);
-  }
-  onCreate() {
-
+    this.getDataList();
   }
   onSearch(query: string = '') {
     this.source.setFilter([

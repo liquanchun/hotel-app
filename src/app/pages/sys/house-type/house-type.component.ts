@@ -30,8 +30,6 @@ export class HouseTypeComponent implements OnInit, AfterViewInit {
     },
     edit: {
       editButtonContent: '<i class="ion-edit"></i>',
-      saveButtonContent: '<i class="ion-checkmark"></i>',
-      cancelButtonContent: '<i class="ion-close"></i>',
       confirmSave: true,
     },
     delete: {
@@ -146,10 +144,9 @@ export class HouseTypeComponent implements OnInit, AfterViewInit {
     private toastyConfig: ToastyConfig,
     private _state: GlobalState) {
     this.toastyConfig.position = 'top-center';
-    this.getDataList();
   }
   ngOnInit() {
-
+    this.getDataList();
   }
   ngAfterViewInit() {
 

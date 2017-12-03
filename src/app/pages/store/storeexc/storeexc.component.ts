@@ -16,7 +16,7 @@ import * as _ from 'lodash';
   styleUrls: ['./storeexc.component.scss'],
   providers: [StoreexcService],
 })
-export class StoreexcComponent implements OnInit, AfterViewInit {
+export class StoreexcComponent implements OnInit {
 
   title = '调拨查询';
   query: string = '';
@@ -78,19 +78,9 @@ export class StoreexcComponent implements OnInit, AfterViewInit {
     private storeexcService: StoreexcService,
     private _common: Common,
     private _state: GlobalState) {
-    this.getDataList();
   }
   ngOnInit() {
-
-  }
-  ngAfterViewInit() {
-
-  }
-  onPageChange(p) {
-    console.log("page:" + p);
-  }
-  onCreate() {
-
+    this.getDataList();
   }
   onSearch(query: string = '') {
     this.source.setFilter([

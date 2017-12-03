@@ -4,7 +4,7 @@ import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/fo
 import { LocalDataSource } from 'ng2-smart-table';
 import { HouseinfoService } from '../../house/houseinfo/houseinfo.services';
 import { HouseTypeService } from '../../sys/house-type/house-type.services';
-
+import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 import { NgbdModalContent } from '../../../modal-content.component'
 import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
 import { BookService } from './book.services';
@@ -21,8 +21,9 @@ import { retry } from 'rxjs/operator/retry';
   styleUrls: ['./book.component.scss'],
   providers: [BookService, HouseinfoService, HouseTypeService],
 })
-export class BookComponent implements OnInit, AfterViewInit {
+export class BookComponent implements OnInit {
 
+  loading = false;
   title = '预定管理';
   query: string = '';
 
@@ -45,6 +46,11 @@ export class BookComponent implements OnInit, AfterViewInit {
         title: '单号',
         type: 'string',
         editable: false,
+        filter: false,
+      },
+      status: {
+        title: '状态',
+        type: 'string',
         filter: false,
       },
       cusName: {
@@ -178,56 +184,57 @@ export class BookComponent implements OnInit, AfterViewInit {
   ];
 
   source: LocalDataSource = new LocalDataSource();
-
+  private toastOptions: ToastOptions = {
+    title: "提示信息",
+    msg: "The message",
+    showClose: true,
+    timeout: 2000,
+    theme: "bootstrap",
+  };
   constructor(
     private modalService: NgbModal,
     private bookService: BookService,
     private houseinfoService: HouseinfoService,
     private _houseTypeService: HouseTypeService,
+    private toastyService: ToastyService,
+    private toastyConfig: ToastyConfig,
     private _common: Common,
     private _state: GlobalState) {
-    this.getDataList();
+    this.toastyConfig.position = 'top-center';
   }
   ngOnInit() {
+    this.getDataList();
     this.getHouseType();
   }
-  ngAfterViewInit() {
 
-  }
-  onPageChange(p) {
-    console.log("page:" + p);
-  }
   onCreate() {
     const that = this;
     const modalRef = this.modalService.open(NgbdModalContent);
     modalRef.componentInstance.title = '新增预定';
     modalRef.componentInstance.config = this.config;
-    modalRef.componentInstance.saveFun = (result,closeBack) => {
-      if (result !== 'no') {
-        const book = JSON.parse(result);
-        if (book.reachTime) {
-          book.reachTime = that._common.getDateString2(book.reachTime);
-        }
-        if (book.leaveTime) {
-          book.leaveTime = that._common.getDateString2(book.leaveTime);
-        }
-        if (book.retainTime) {
-          book.retainTime = that._common.getDateString2(book.retainTime);
-        }
-        console.log(book);
-
-        that.bookService.create(book).then(
-          function (v) {
-            that.getDataList();
-            closeBack();
-          },
-          (err) => {
-            alert(err);
-          }
-        )
+    modalRef.componentInstance.saveFun = (result, closeBack) => {
+      const book = JSON.parse(result);
+      if (book.reachTime) {
+        book.reachTime = that._common.getDateString2(book.reachTime);
       }
+      if (book.leaveTime) {
+        book.leaveTime = that._common.getDateString2(book.leaveTime);
+      }
+      if (book.retainTime) {
+        book.retainTime = that._common.getDateString2(book.retainTime);
+      }
+      that.bookService.create(book).then((data) => {
+        closeBack();
+        that.toastOptions.msg = "新增成功。";
+        that.toastyService.success(that.toastOptions);
+        that.getDataList();
+      },
+        (err) => {
+          that.toastOptions.msg = err;
+          that.toastyService.error(that.toastOptions);
+        }
+      )
     };
-
   }
   onSearch(query: string = '') {
     this.source.setFilter([
@@ -247,12 +254,18 @@ export class BookComponent implements OnInit, AfterViewInit {
     });
   }
   getDataList(): void {
+    this.loading = true;
     this.bookService.getBooks().then((data) => {
+      this.loading = false;
       this.source.load(data);
+    }, (err) => {
+      this.loading = false;
+      this.toastOptions.msg = err;
+      this.toastyService.error(this.toastOptions);
     });
   }
 
-  onDelete(event){
+  onDelete(event) {
     if (window.confirm('你确定要取消吗?')) {
       this.bookService.delete(event.data.id).then((data) => {
         this.getDataList();
@@ -260,7 +273,7 @@ export class BookComponent implements OnInit, AfterViewInit {
     }
   }
 
-  onEdit(event){
+  onEdit(event) {
 
   }
 }

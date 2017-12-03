@@ -10,7 +10,9 @@ export class UserService {
   getUsers() {
     return this._httpService.getModelList(this.modelName);
   }
-
+  getUsersById(userId:any) {
+    return this._httpService.getModelList(this.modelName + '/' + userId);
+  }
   delete(id: any) {
     return this._httpService.delete(this.modelName , id);
   }

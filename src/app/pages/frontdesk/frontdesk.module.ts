@@ -26,7 +26,7 @@ import { CheckoutComponent } from './checkout/checkout.component';
 import { CouponComponent } from './coupon/coupon.component';
 import { ScheduleComponent } from './schedule/schedule.component';
 import { ButtonViewComponent } from './checkin/buttonview.component';
-
+import {ToastyModule} from 'ng2-toasty';
 @NgModule({
   imports: [
     CommonModule,
@@ -41,6 +41,7 @@ import { ButtonViewComponent } from './checkin/buttonview.component';
     NgbModule,
     LoadingModule,
     Ng2SmartTableModule,
+    ToastyModule.forRoot()
   ],
   declarations: [
     FrontdeskComponent,

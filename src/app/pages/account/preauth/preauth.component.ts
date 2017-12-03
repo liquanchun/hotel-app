@@ -16,7 +16,7 @@ import * as _ from 'lodash';
   styleUrls: ['./preauth.component.scss'],
   providers: [PreauthService],
 })
-export class PreauthComponent implements OnInit, AfterViewInit {
+export class PreauthComponent implements OnInit {
 
   title = '预授权查询';
   query: string = '';
@@ -93,19 +93,9 @@ export class PreauthComponent implements OnInit, AfterViewInit {
     private preauthService: PreauthService,
     private _common: Common,
     private _state: GlobalState) {
-    this.getDataList();
   }
   ngOnInit() {
-
-  }
-  ngAfterViewInit() {
-
-  }
-  onPageChange(p) {
-    console.log("page:" + p);
-  }
-  onCreate() {
-
+    this.getDataList();
   }
   onSearch(query: string = '') {
     this.source.setFilter([

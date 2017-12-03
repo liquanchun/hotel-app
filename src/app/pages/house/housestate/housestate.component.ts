@@ -51,10 +51,9 @@ export class HousestateComponent implements OnInit, AfterViewInit {
     private _dicService: DicService,
     private _common: Common,
     private _state: GlobalState) {
-    this.getDataList();
   }
   ngOnInit() {
-
+    this.getDataList();
   }
   ngAfterViewInit() {
 

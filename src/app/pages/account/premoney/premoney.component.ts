@@ -16,7 +16,7 @@ import * as _ from 'lodash';
   styleUrls: ['./premoney.component.scss'],
   providers: [PremoneyService],
 })
-export class PremoneyComponent implements OnInit, AfterViewInit {
+export class PremoneyComponent implements OnInit {
 
   title = '预定金查询';
   query: string = '';
@@ -88,19 +88,9 @@ export class PremoneyComponent implements OnInit, AfterViewInit {
     private premoneyService: PremoneyService,
     private _common: Common,
     private _state: GlobalState) {
-    this.getDataList();
   }
   ngOnInit() {
-
-  }
-  ngAfterViewInit() {
-
-  }
-  onPageChange(p) {
-    console.log("page:" + p);
-  }
-  onCreate() {
-
+    this.getDataList();
   }
   onSearch(query: string = '') {
     this.source.setFilter([

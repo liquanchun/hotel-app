@@ -16,7 +16,7 @@ import * as _ from 'lodash';
   styleUrls: ['./supplier.component.scss'],
   providers: [SupplierService],
 })
-export class SupplierComponent implements OnInit, AfterViewInit {
+export class SupplierComponent implements OnInit {
 
   title = '房扫查询';
   query: string = '';
@@ -78,20 +78,11 @@ export class SupplierComponent implements OnInit, AfterViewInit {
     private supplierService: SupplierService,
     private _common: Common,
     private _state: GlobalState) {
-    this.getDataList();
   }
   ngOnInit() {
+    this.getDataList();
+  }
 
-  }
-  ngAfterViewInit() {
-
-  }
-  onPageChange(p) {
-    console.log("page:" + p);
-  }
-  onCreate() {
-
-  }
   onSearch(query: string = '') {
     this.source.setFilter([
       { field: 'supplierMan', search: query },

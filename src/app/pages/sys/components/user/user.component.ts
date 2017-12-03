@@ -77,12 +77,6 @@ export class UserComponent implements OnInit, AfterViewInit {
         filter: false,
         width: '80px',
       },
-      pwd: {
-        title: '密码',
-        type: 'string',
-        filter: false,
-        width: '80px',
-      },
       isValid: {
         title: '是否启用',
         type: 'bool',
@@ -94,6 +88,13 @@ export class UserComponent implements OnInit, AfterViewInit {
   config: FieldConfig[] = [
     {
       type: 'input',
+      label: '用户名',
+      name: 'userName',
+      placeholder: '输入用户名',
+      validation: [Validators.required],
+    },
+    {
+      type: 'input',
       label: '用户Id',
       name: 'userId',
       placeholder: '输入用户Id',
@@ -101,16 +102,10 @@ export class UserComponent implements OnInit, AfterViewInit {
     },
     {
       type: 'input',
-      label: '用户名',
-      name: 'userName',
-      placeholder: '输入用户名',
-    },
-    {
-      type: 'input',
       label: '密码',
       name: 'pwd',
       placeholder: '输入密码',
-      password:true,      
+      password: true,
     },
     {
       type: 'input',
@@ -172,6 +167,7 @@ export class UserComponent implements OnInit, AfterViewInit {
   getUserList() {
     this.loading = true;
     this.userService.getUsers().then((data) => {
+      this.source.reset();
       this.source.load(data);
       this.loading = false;
     }, (err) => {
@@ -185,7 +181,7 @@ export class UserComponent implements OnInit, AfterViewInit {
   }
   onSearch(query: string = '') {
     this.source.setFilter([
-      { field: 'roleName', search: query },
+      { field: 'roleNames', search: query },
     ], false);
   }
   onNewUser() {
@@ -194,7 +190,9 @@ export class UserComponent implements OnInit, AfterViewInit {
     modalRef.componentInstance.title = '新增用户';
     modalRef.componentInstance.config = this.config;
     modalRef.componentInstance.saveFun = (result, closeBack) => {
-      that.userService.create(JSON.parse(result)).then((data) => {
+      let user = JSON.parse(result);
+      user.pwd = Md5.hashStr(user.pwd).toString();
+      that.userService.create(user).then((data) => {
         closeBack();
         that.toastOptions.msg = "新增成功。";
         that.toastyService.success(that.toastOptions);
@@ -213,10 +211,11 @@ export class UserComponent implements OnInit, AfterViewInit {
     const modalRef = this.modalService.open(NgbdModalContent);
     modalRef.componentInstance.title = '修改用户';
     let newConfig = this.config;
-    modalRef.componentInstance.config = this.config;
+    _.remove(newConfig, f => { return f.name == 'pwd'; });
+    modalRef.componentInstance.config = newConfig;
     modalRef.componentInstance.formValue = event.data;
     modalRef.componentInstance.saveFun = (result, closeBack) => {
-      that.userService.update(event.data.id,JSON.parse(result)).then((data) => {
+      that.userService.update(event.data.id, JSON.parse(result)).then((data) => {
         closeBack();
         that.toastOptions.msg = "修改成功。";
         that.toastyService.success(that.toastOptions);

@@ -8,6 +8,7 @@ import { FormCheckComponent } from '../form-check/form-check.component';
 import { FormTrueFalseComponent } from '../form-truefalse/form-truefalse.component';
 import { FormDatepickerComponent } from '../form-datepicker/form-datepicker.component';
 import { FormMultiSelectComponent } from '../form-multiselect/form-multiselect.component';
+import { FormTextareaComponent } from '../form-textarea/form-textarea.component';
 
 import { Field } from '../../models/field.interface';
 import { FieldConfig } from '../../models/field-config.interface';
@@ -17,9 +18,10 @@ const components: { [type: string]: Type<Field> } = {
   input: FormInputComponent,
   select: FormSelectComponent,
   check: FormCheckComponent,
-  truefalse:FormTrueFalseComponent,
+  truefalse: FormTrueFalseComponent,
   datepicker: FormDatepickerComponent,
   multiselect: FormMultiSelectComponent,
+  textarea: FormTextareaComponent
 };
 
 @Directive({

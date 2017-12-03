@@ -20,7 +20,7 @@ import * as _ from 'lodash';
   styleUrls: ['./set-agent.component.scss'],
   providers: [SetAgentService],
 })
-export class SetAgentComponent implements OnInit, AfterViewInit {
+export class SetAgentComponent implements OnInit {
 
   loading = false;
   title = '中介平台';
@@ -34,8 +34,6 @@ export class SetAgentComponent implements OnInit, AfterViewInit {
     hideSubHeader: true,
     edit: {
       editButtonContent: '<i class="ion-edit"></i>',
-      saveButtonContent: '<i class="ion-checkmark"></i>',
-      cancelButtonContent: '<i class="ion-close"></i>',
       confirmSave: true,
     },
     delete: {
@@ -208,15 +206,9 @@ export class SetAgentComponent implements OnInit, AfterViewInit {
     private toastyConfig: ToastyConfig,
     private _state: GlobalState) {
     this.toastyConfig.position = 'top-center';
-    this.getDataList();
   }
   ngOnInit() {
-
-  }
-  ngAfterViewInit() {
-  }
-  onPageChange(p) {
-    console.log("page:" + p);
+    this.getDataList();
   }
 
   onSearch(query: string = '') {

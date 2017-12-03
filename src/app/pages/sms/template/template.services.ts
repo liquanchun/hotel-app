@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 
 @Injectable()
 export class TemplateService {
-  private modelName = 'fwtemplate';  // URL to web api
+  private modelName = 'smstemplate';  // URL to web api
   constructor(private _httpService: HttpService) {
   }
 

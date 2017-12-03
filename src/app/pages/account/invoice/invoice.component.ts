@@ -16,7 +16,7 @@ import * as _ from 'lodash';
   styleUrls: ['./invoice.component.scss'],
   providers: [InvoiceService],
 })
-export class InvoiceComponent implements OnInit, AfterViewInit {
+export class InvoiceComponent implements OnInit {
 
   title = '发票管理';
   query: string = '';
@@ -93,19 +93,9 @@ export class InvoiceComponent implements OnInit, AfterViewInit {
     private invoiceService: InvoiceService,
     private _common: Common,
     private _state: GlobalState) {
-    this.getDataList();
   }
   ngOnInit() {
-
-  }
-  ngAfterViewInit() {
-
-  }
-  onPageChange(p) {
-    console.log("page:" + p);
-  }
-  onCreate() {
-
+    this.getDataList();
   }
   onSearch(query: string = '') {
     this.source.setFilter([

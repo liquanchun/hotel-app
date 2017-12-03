@@ -1,6 +1,6 @@
 import { Component, ViewContainerRef, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import * as $ from 'jquery';
-
+import { Router } from '@angular/router';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { GlobalState } from './global.state';
 import { HttpService } from './providers/httpClient';
@@ -26,6 +26,7 @@ export class App implements AfterViewInit {
   isMenuCollapsed: boolean = false;
 
   constructor(
+    private _router: Router,
     private modalService: NgbModal,
     private _httpService: HttpService,
     private _state: GlobalState,
@@ -33,7 +34,9 @@ export class App implements AfterViewInit {
     private _spinner: BaThemeSpinner,
     private viewContainerRef: ViewContainerRef,
     private themeConfig: BaThemeConfig) {
-
+    if(!sessionStorage.getItem('userId')){
+      this._router.navigate(['login']);
+    }
     themeConfig.config();
 
     this._loadImages();

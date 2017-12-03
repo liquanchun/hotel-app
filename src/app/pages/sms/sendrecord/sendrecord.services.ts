@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 
 @Injectable()
 export class SendrecordService {
-  private modelName = 'fwsendrecord';  // URL to web api
+  private modelName = 'smssendrecord';  // URL to web api
   constructor(private _httpService: HttpService) {
   }
 

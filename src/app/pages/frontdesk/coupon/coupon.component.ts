@@ -16,7 +16,7 @@ import * as _ from 'lodash';
   styleUrls: ['./coupon.component.scss'],
   providers: [CouponService],
 })
-export class CouponComponent implements OnInit, AfterViewInit {
+export class CouponComponent implements OnInit {
 
   title = '早餐券管理';
   query: string = '';
@@ -78,19 +78,9 @@ export class CouponComponent implements OnInit, AfterViewInit {
     private couponService: CouponService,
     private _common: Common,
     private _state: GlobalState) {
-    this.getDataList();
   }
   ngOnInit() {
-
-  }
-  ngAfterViewInit() {
-
-  }
-  onPageChange(p) {
-    console.log("page:" + p);
-  }
-  onCreate() {
-
+    this.getDataList();
   }
   onSearch(query: string = '') {
     this.source.setFilter([

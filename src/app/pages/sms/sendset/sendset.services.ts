@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 
 @Injectable()
 export class SendsetService {
-  private modelName = 'fwsendset';  // URL to web api
+  private modelName = 'smssetting';  // URL to web api
   constructor(private _httpService: HttpService) {
   }
 

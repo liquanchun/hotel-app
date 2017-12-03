@@ -22,7 +22,7 @@ import * as _ from 'lodash';
   styleUrls: ['./houseinfo.component.scss'],
   providers: [HouseinfoService, HouseTypeService],
 })
-export class HouseinfoComponent implements OnInit, AfterViewInit {
+export class HouseinfoComponent implements OnInit {
 
   loading = false;
   title = '房间管理';
@@ -36,8 +36,6 @@ export class HouseinfoComponent implements OnInit, AfterViewInit {
     },
     edit: {
       editButtonContent: '<i class="ion-edit"></i>',
-      saveButtonContent: '<i class="ion-checkmark"></i>',
-      cancelButtonContent: '<i class="ion-close"></i>',
       confirmSave: true,
     },
     delete: {
@@ -150,15 +148,6 @@ export class HouseinfoComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.getDataList();
     this.getHouseType();
-  }
-  ngAfterViewInit() {
-
-  }
-  onPageChange(p) {
-    console.log("page:" + p);
-  }
-  onCreate() {
-
   }
 
   newHouse() {

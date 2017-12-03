@@ -31,8 +31,6 @@ export class MemberComponent implements OnInit, AfterViewInit {
     hideSubHeader: true,
     edit: {
       editButtonContent: '<i class="ion-edit"></i>',
-      saveButtonContent: '<i class="ion-checkmark"></i>',
-      cancelButtonContent: '<i class="ion-close"></i>',
       confirmSave: true,
     },
     delete: {
@@ -78,8 +76,6 @@ export class MemberComponent implements OnInit, AfterViewInit {
     hideSubHeader: true,
     edit: {
       editButtonContent: '<i class="ion-edit"></i>',
-      saveButtonContent: '<i class="ion-checkmark"></i>',
-      cancelButtonContent: '<i class="ion-close"></i>',
       confirmSave: true,
     },
     delete: {
@@ -130,8 +126,6 @@ export class MemberComponent implements OnInit, AfterViewInit {
     hideSubHeader: true,
     edit: {
       editButtonContent: '<i class="ion-edit"></i>',
-      saveButtonContent: '<i class="ion-checkmark"></i>',
-      cancelButtonContent: '<i class="ion-close"></i>',
       confirmSave: true,
     },
     delete: {
@@ -197,8 +191,6 @@ export class MemberComponent implements OnInit, AfterViewInit {
     hideSubHeader: true,
     edit: {
       editButtonContent: '<i class="ion-edit"></i>',
-      saveButtonContent: '<i class="ion-checkmark"></i>',
-      cancelButtonContent: '<i class="ion-close"></i>',
       confirmSave: true,
     },
     delete: {
@@ -264,8 +256,6 @@ export class MemberComponent implements OnInit, AfterViewInit {
     hideSubHeader: true,
     edit: {
       editButtonContent: '<i class="ion-edit"></i>',
-      saveButtonContent: '<i class="ion-checkmark"></i>',
-      cancelButtonContent: '<i class="ion-close"></i>',
       confirmSave: true,
     },
     delete: {

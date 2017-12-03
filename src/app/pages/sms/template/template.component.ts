@@ -4,8 +4,9 @@ import { NgbModal, ModalDismissReasons, NgbActiveModal } from '@ng-bootstrap/ng-
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
-import {NgbdModalContent} from '../../../modal-content.component'
-  
+import { NgbdModalContent } from '../../../modal-content.component'
+import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
+
 import { TemplateService } from './template.services';
 import { GlobalState } from '../../../global.state';
 import { Common } from '../../../providers/common';
@@ -19,21 +20,19 @@ import * as _ from 'lodash';
   styleUrls: ['./template.component.scss'],
   providers: [TemplateService],
 })
-export class TemplateComponent implements OnInit, AfterViewInit {
+export class TemplateComponent implements OnInit {
 
+  loading = false;
   title = '短信模板';
   query: string = '';
 
   settings = {
     mode: 'external',
-    selectMode: 'multi',
     actions: {
       columnTitle: '操作'
     },
     edit: {
       editButtonContent: '<i class="ion-edit"></i>',
-      saveButtonContent: '<i class="ion-checkmark"></i>',
-      cancelButtonContent: '<i class="ion-close"></i>',
       confirmSave: true,
     },
     delete: {
@@ -49,50 +48,32 @@ export class TemplateComponent implements OnInit, AfterViewInit {
         filter: false,
         width: '30px',
       },
-      code: {
+      tmp_name: {
         title: '模板名称',
         type: 'string',
         filter: false,
         width: '80px',
       },
-      mbbh: {
-        title: '模板编号',
-        type: 'string',
-        filter: false,
-        width: '80px',
-      },
-      floor: {
+      to_business: {
         title: '所属业务',
         type: 'string',
         filter: false,
         width: '80px',
       },
-      houseType: {
+      tmp_content: {
         title: '模板内容',
         type: 'string',
         filter: false,
         width: '80px',
       },
-      fssj: {
-        title: '发送时间',
+      createdAt: {
+        title: '操作时间',
         type: 'string',
         filter: false,
         width: '80px',
       },
-      sfqy: {
-        title: '是否启用',
-        type: 'string',
-        filter: false,
-        width: '80px',
-      },
-      state: {
+      createdBy: {
         title: '操作人',
-        type: 'string',
-        filter: false,
-        width: '80px',
-      },
-      remark: {
-        title: '备注',
         type: 'string',
         filter: false
       },
@@ -101,89 +82,66 @@ export class TemplateComponent implements OnInit, AfterViewInit {
 
   config: FieldConfig[] = [
     {
-      type: 'select',
-      label: '楼层',
-      name: 'floor',
-      options: ['6楼', '7楼', '8楼'],
-      placeholder: '选择楼层',
+      type: 'input',
+      label: '模板名称',
+      name: 'tmp_name',
+      placeholder: '输入模板名称',
       validation: [Validators.required],
     },
     {
       type: 'input',
-      label: '房间编号',
-      name: 'code',
-      placeholder: '输入房间编号',
-      validation: [Validators.required],
+      label: '所属业务',
+      name: 'to_business',
+      placeholder: '输入所属业务',
     },
     {
-      type: 'check',
-      label: '房间类型',
-      name: 'houseType',
-      check: 'radio',
-      options: [
-        { id: '标准房', name: '标准房' },
-        { id: '豪华单间', name: '豪华单间' },
-      ]
-    },
-    {
-      type: 'input',
-      label: '房间特征',
-      name: 'tags',
-      placeholder: '输入房间特征',
-    },
-    {
-      type: 'input',
-      label: '备注',
-      name: 'remark',
-      placeholder: '输入备注',
+      type: 'textarea',
+      label: '模板内容',
+      name: 'tmp_content',
+      placeholder: '输入模板内容',
     }
-  ];  
+  ];
 
   source: LocalDataSource = new LocalDataSource();
+
+  private toastOptions: ToastOptions = {
+    title: "提示信息",
+    msg: "The message",
+    showClose: true,
+    timeout: 2000,
+    theme: "bootstrap",
+  };
 
   constructor(
     private modalService: NgbModal,
     private templateService: TemplateService,
     private _common: Common,
+    private toastyService: ToastyService,
+    private toastyConfig: ToastyConfig,
     private _state: GlobalState) {
-    this.getDataList();
+    this.toastyConfig.position = 'top-center';
   }
   ngOnInit() {
-
+    this.getDataList();
   }
-  ngAfterViewInit() {
-
-  }
-  onPageChange(p) {
-    console.log("page:" + p);
-  }
-  onCreate() {
-
-  }
-  openModal(id: string){
-    this.modalService.open(id);
-  }
-
   newHouse() {
     const that = this;
     const modalRef = this.modalService.open(NgbdModalContent);
-    modalRef.componentInstance.title = '新增房间信息';
+    modalRef.componentInstance.title = '新增模板信息';
     modalRef.componentInstance.config = this.config;
-    modalRef.result.then((result) => {
-        if (result !== 'no') {
-          console.log(result);
-          result.state = '空净';
-          that.templateService.create(JSON.parse(result)).then(
-            function (v) {
-              that.getDataList();
-            },
-            (err) => { 
-               alert(err);
-            }
-          )
+    modalRef.componentInstance.saveFun = (result, closeBack) => {
+      that.templateService.create(JSON.parse(result)).then((data) => {
+        closeBack();
+        that.toastOptions.msg = "新增成功。";
+        that.toastyService.success(that.toastOptions);
+        that.getDataList();
+      },
+        (err) => {
+          that.toastOptions.msg = err;
+          that.toastyService.error(that.toastOptions);
         }
-      }, (reason) => {
-      });
+      )
+    };
   }
 
   onSearch(query: string = '') {
@@ -198,27 +156,33 @@ export class TemplateComponent implements OnInit, AfterViewInit {
     console.log(event);
     const that = this;
     const modalRef = this.modalService.open(NgbdModalContent);
-    modalRef.componentInstance.title = '修改房间信息';
+    modalRef.componentInstance.title = '修改模板信息';
     modalRef.componentInstance.config = this.config;
     modalRef.componentInstance.formValue = event.data;
-    modalRef.result.then((result) => {
-        if (result !== 'no') {
-          console.log(result);
-          that.templateService.update(event.data.id,JSON.parse(result)).then(
-            function (v) {
-              that.getDataList();
-            },
-            (err) => { }
-          )
+    modalRef.componentInstance.saveFun = (result, closeBack) => {
+      that.templateService.update(event.data.id, JSON.parse(result)).then((data) => {
+        closeBack();
+        that.toastOptions.msg = "修改成功。";
+        that.toastyService.success(that.toastOptions);
+        that.getDataList();
+      },
+        (err) => {
+          that.toastOptions.msg = err;
+          that.toastyService.error(that.toastOptions);
         }
-      }, (reason) => {
-      });
+      )
+    };
   }
   //删除
-  onDelete(event){
+  onDelete(event) {
     if (window.confirm('你确定要删除吗?')) {
       this.templateService.delete(event.data.id).then((data) => {
+        this.toastOptions.msg = "删除成功。";
+        this.toastyService.success(this.toastOptions);
         this.getDataList();
+      }, (err) => {
+        this.toastOptions.msg = err;
+        this.toastyService.error(this.toastOptions);
       });
     }
   }

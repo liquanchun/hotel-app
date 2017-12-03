@@ -11,6 +11,7 @@ import { FormCheckComponent } from './components/form-check/form-check.component
 import { FormTrueFalseComponent } from './components/form-truefalse/form-truefalse.component';
 import { FormDatepickerComponent } from './components/form-datepicker/form-datepicker.component';
 import { FormMultiSelectComponent } from './components/form-multiselect/form-multiselect.component';
+import { FormTextareaComponent } from './components/form-textarea/form-textarea.component';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MultiselectDropdownModule } from 'angular-2-dropdown-multiselect';
@@ -32,7 +33,8 @@ import { GlobalState } from '../../../global.state';
     FormCheckComponent,
     FormTrueFalseComponent,
     FormDatepickerComponent,
-    FormMultiSelectComponent
+    FormMultiSelectComponent,
+    FormTextareaComponent
   ],
   exports: [
     DynamicFormComponent
@@ -44,7 +46,8 @@ import { GlobalState } from '../../../global.state';
     FormCheckComponent,
     FormTrueFalseComponent,
     FormDatepickerComponent,
-    FormMultiSelectComponent
+    FormMultiSelectComponent,
+    FormTextareaComponent
   ],
   providers: [GlobalState]
 })

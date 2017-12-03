@@ -16,7 +16,7 @@ import * as _ from 'lodash';
   styleUrls: ['./schedule.component.scss'],
   providers: [ScheduleService],
 })
-export class ScheduleComponent implements OnInit, AfterViewInit {
+export class ScheduleComponent implements OnInit {
 
   title = '排房查询';
   query: string = '';
@@ -93,19 +93,9 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
     private scheduleService: ScheduleService,
     private _common: Common,
     private _state: GlobalState) {
-    this.getDataList();
   }
   ngOnInit() {
-
-  }
-  ngAfterViewInit() {
-
-  }
-  onPageChange(p) {
-    console.log("page:" + p);
-  }
-  onCreate() {
-
+    this.getDataList();
   }
   onSearch(query: string = '') {
     this.source.setFilter([

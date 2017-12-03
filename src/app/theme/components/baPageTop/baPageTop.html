@@ -37,7 +37,7 @@
     </span>
     系统管理</a>
   </div> -->
-  
+  <ng2-toasty></ng2-toasty>
   <div class="search">
     <i class="ion-ios-search-strong" ng-click="startSearch()"></i>
     <input id="searchInput" type="text" placeholder="Search for...">
@@ -50,7 +50,7 @@
       </a>
       <ul class="dropdown-menu top-dropdown-menu profile-dropdown" aria-labelledby="user-profile-dd">
         <li class="dropdown-item"><a href><i class="fa fa-user"></i>个人中心</a></li>
-        <li class="dropdown-item"><a href><i class="fa fa-cog"></i>修改密码</a></li>
+        <li class="dropdown-item"><a href="javascript:void(0)" (click)="changpwd()"><i class="fa fa-cog"></i>修改密码</a></li>
         <li class="dropdown-item"><a href="javascript:void(0)" (click)="signout()" class="signout"><i class="fa fa-power-off"></i>退出登录</a></li>
       </ul>
     </div>

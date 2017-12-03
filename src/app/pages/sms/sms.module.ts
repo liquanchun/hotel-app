@@ -23,6 +23,8 @@ import { SmsComponent } from './sms.component';
 import { SendrecordComponent } from './sendrecord/sendrecord.component';
 import { SendsetComponent } from './sendset/sendset.component';
 import { TemplateComponent } from './template/template.component';
+
+import {ToastyModule} from 'ng2-toasty';
 @NgModule({
   imports: [
     CommonModule,
@@ -37,6 +39,7 @@ import { TemplateComponent } from './template/template.component';
     NgbModule,
     LoadingModule,
     Ng2SmartTableModule,
+    ToastyModule.forRoot()
   ],
   declarations: [
     SmsComponent,

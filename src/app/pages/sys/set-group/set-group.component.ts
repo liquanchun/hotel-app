@@ -21,7 +21,7 @@ import * as _ from 'lodash';
   styleUrls: ['./set-group.component.scss'],
   providers: [SetGroupService],
 })
-export class SetGroupComponent implements OnInit, AfterViewInit {
+export class SetGroupComponent implements OnInit {
 
   loading = false;
   title = '协议单位';
@@ -35,8 +35,6 @@ export class SetGroupComponent implements OnInit, AfterViewInit {
     hideSubHeader: true,
     edit: {
       editButtonContent: '<i class="ion-edit"></i>',
-      saveButtonContent: '<i class="ion-checkmark"></i>',
-      cancelButtonContent: '<i class="ion-close"></i>',
       confirmSave: true,
     },
     delete: {
@@ -184,16 +182,10 @@ export class SetGroupComponent implements OnInit, AfterViewInit {
     private _common: Common,
     private _state: GlobalState) {
     this.toastyConfig.position = 'top-center';
-    this.getDataList();
   }
   ngOnInit() {
+    this.getDataList();
   }
-  ngAfterViewInit() {
-  }
-  onPageChange(p) {
-    console.log("page:" + p);
-  }
-
   onSearch(query: string = '') {
     this.source.setFilter([
       { field: 'name', search: query },

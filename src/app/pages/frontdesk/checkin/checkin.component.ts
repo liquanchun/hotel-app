@@ -3,6 +3,7 @@ import { NgbModal, ModalDismissReasons, NgbAlert } from '@ng-bootstrap/ng-bootst
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import {ActivatedRoute,Params} from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
+import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 
 import * as $ from 'jquery';
 import * as _ from 'lodash';
@@ -26,7 +27,7 @@ import { ReturnStatement } from '@angular/compiler/src/output/output_ast';
   styleUrls: ['./checkin.component.scss'],
   providers: [CheckinService, HouseinfoService, ReadIdCardService, HouseTypeService, SetPaytypeService, DicService],
 })
-export class CheckinComponent implements OnInit, AfterViewInit {
+export class CheckinComponent implements OnInit {
   @Input() showEditButton: boolean = true;
   title = '客人入住';
   private isSaved: boolean = false;
@@ -57,14 +58,10 @@ export class CheckinComponent implements OnInit, AfterViewInit {
     noDataMessage: '',
     add: {
       addButtonContent: '<i class="ion-ios-plus-outline"></i>',
-      createButtonContent: '<i class="ion-checkmark"></i>',
-      cancelButtonContent: '<i class="ion-close"></i>',
       confirmCreate: true,
     },
     edit: {
       editButtonContent: '<i class="ion-edit"></i>',
-      saveButtonContent: '<i class="ion-checkmark"></i>',
-      cancelButtonContent: '<i class="ion-close"></i>',
       confirmSave: true,
     },
     delete: {
@@ -177,6 +174,14 @@ export class CheckinComponent implements OnInit, AfterViewInit {
   //链接过来的房间号
   private checkInCode:string;
 
+  private toastOptions: ToastOptions = {
+    title: "提示信息",
+    msg: "The message",
+    showClose: true,
+    timeout: 2000,
+    theme: "bootstrap",
+  };
+
   constructor(
     private _state: GlobalState,
     private _checkinService: CheckinService,
@@ -185,9 +190,12 @@ export class CheckinComponent implements OnInit, AfterViewInit {
     private _readIdCardService: ReadIdCardService,
     private _setPaytypeService: SetPaytypeService,
     private _dicService: DicService,
+    private toastyService: ToastyService,
+    private toastyConfig: ToastyConfig,
     private route: ActivatedRoute,
     fb: FormBuilder) {
 
+    this.toastyConfig.position = 'top-center';
     this._state.subscribe('read.idcard', (data) => {
       let newrowdata = _.find(this.selectedHouse, function (o) { return o['code'] == data.code; });
       if (newrowdata) {
@@ -196,17 +204,11 @@ export class CheckinComponent implements OnInit, AfterViewInit {
       }
       this.selectedGrid.refresh();
     });
-
-    this.getDataList();
   }
-
   ngOnInit() {
+    this.getDataList();
     this.checkInCode = this.route.snapshot.params['code'];
   }
-
-  ngAfterViewInit() {
-  }
-
   onSubmit(values: Object): void {
   }
 
@@ -349,11 +351,13 @@ export class CheckinComponent implements OnInit, AfterViewInit {
   //确认入住
   onConfirm(): void {
     if (!this.checkIn.cusname || !this.checkIn.cusphone || !this.checkIn.idCard || !this.checkIn.inType || !this.checkIn.payType) {
-      alert('请填写完整。');
+      this.toastOptions.msg = "请填写完整。";
+      this.toastyService.warning(this.toastOptions);
       return;
     }
     if (this.selectedHouse.length == 0) {
-      alert('请选择房间。');
+      this.toastOptions.msg = "请选择房间。";
+      this.toastyService.warning(this.toastOptions);
       return;
     }
     this.isSaved = true;
@@ -365,7 +369,8 @@ export class CheckinComponent implements OnInit, AfterViewInit {
       }
     ).then(
       function (v) {
-        alert('保存成功。');
+        this.toastOptions.msg = "保存成功。";
+        this.toastyService.success(this.toastOptions);
         that.isSaved = false;
         that.checkIn.cusname = '';
         that.checkIn.cusphone = '';
@@ -380,7 +385,9 @@ export class CheckinComponent implements OnInit, AfterViewInit {
         that.selectedGrid.load(that.selectedHouse);
       },
       (err) => {
-        alert('保存失败，' + err);
+        this.toastOptions.title = "保存失败";
+        this.toastOptions.msg = err;
+        this.toastyService.error(this.toastOptions);
         that.isSaved = false;
       }
       )

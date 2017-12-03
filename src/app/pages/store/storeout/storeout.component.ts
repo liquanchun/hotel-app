@@ -16,7 +16,7 @@ import * as _ from 'lodash';
   styleUrls: ['./storeout.component.scss'],
   providers: [StoreoutService],
 })
-export class StoreoutComponent implements OnInit, AfterViewInit {
+export class StoreoutComponent implements OnInit {
 
   title = '出库查询';
   query: string = '';
@@ -83,19 +83,9 @@ export class StoreoutComponent implements OnInit, AfterViewInit {
     private storeoutService: StoreoutService,
     private _common: Common,
     private _state: GlobalState) {
-    this.getDataList();
   }
   ngOnInit() {
-
-  }
-  ngAfterViewInit() {
-
-  }
-  onPageChange(p) {
-    console.log("page:" + p);
-  }
-  onCreate() {
-
+    this.getDataList();
   }
   onSearch(query: string = '') {
     this.source.setFilter([

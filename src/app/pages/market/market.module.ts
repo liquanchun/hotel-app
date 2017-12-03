@@ -14,6 +14,7 @@ import { HttpService } from '../../providers/httpClient';
 import { Common } from '../../providers/common';
 import { MultiselectDropdownModule } from 'angular-2-dropdown-multiselect';
 
+import {ToastyModule} from 'ng2-toasty';
 import { TreeModule } from 'angular-tree-component';
 import { LoadingModule } from 'ngx-loading';
 import { ComponentsModule } from '../components/components.module';
@@ -38,6 +39,7 @@ import { CustomerComponent } from './customer/customer.component';
     NgbModule,
     LoadingModule,
     Ng2SmartTableModule,
+    ToastyModule.forRoot()
   ],
   declarations: [
     MarketComponent,

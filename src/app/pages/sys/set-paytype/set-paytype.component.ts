@@ -3,6 +3,7 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
+import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 import { NgbdModalContent } from '../../../modal-content.component'
 import { SetPaytypeService } from './set-paytype.services';
 import { GlobalState } from '../../../global.state';
@@ -18,6 +19,7 @@ import * as _ from 'lodash';
 })
 export class SetPaytypeComponent implements OnInit, AfterViewInit {
 
+  loading = false;
   query: string = '';
 
   settings = {
@@ -28,8 +30,6 @@ export class SetPaytypeComponent implements OnInit, AfterViewInit {
     },
     edit: {
       editButtonContent: '<i class="ion-edit"></i>',
-      saveButtonContent: '<i class="ion-checkmark"></i>',
-      cancelButtonContent: '<i class="ion-close"></i>',
       confirmSave: true,
     },
     delete: {
@@ -145,23 +145,38 @@ export class SetPaytypeComponent implements OnInit, AfterViewInit {
   ];
 
   source: LocalDataSource = new LocalDataSource();
+  private toastOptions: ToastOptions = {
+    title: "提示信息",
+    msg: "The message",
+    showClose: true,
+    timeout: 2000,
+    theme: "bootstrap",
+  };
 
   constructor(
     private modalService: NgbModal,
     private setPaytypeService: SetPaytypeService,
+    private toastyService: ToastyService,
+    private toastyConfig: ToastyConfig,
     private _state: GlobalState) {
-    this.getDataList();
+    this.toastyConfig.position = 'top-center';
   }
   ngOnInit() {
-
+    this.getDataList();
   }
   ngAfterViewInit() {
 
   }
 
   getDataList(): void {
+    this.loading = true;
     this.setPaytypeService.getSetPaytypes().then((data) => {
       this.source.load(data);
+      this.loading = false;
+    }, (err) => {
+      this.loading = false;
+      this.toastOptions.msg = err;
+      this.toastyService.error(this.toastOptions);
     });
   }
   newHouse() {
@@ -169,20 +184,19 @@ export class SetPaytypeComponent implements OnInit, AfterViewInit {
     const modalRef = this.modalService.open(NgbdModalContent);
     modalRef.componentInstance.title = '新增支付方式';
     modalRef.componentInstance.config = this.config;
-    modalRef.result.then((result) => {
-      if (result !== 'no') {
-        console.log(result);
-        that.setPaytypeService.create(JSON.parse(result)).then(
-          function (v) {
-            that.getDataList();
-          },
-          (err) => {
-            alert(err);
-          }
-        )
-      }
-    }, (reason) => {
-    });
+    modalRef.componentInstance.saveFun = (result, closeBack) => {
+      that.setPaytypeService.create(JSON.parse(result)).then((data) => {
+        closeBack();
+        that.toastOptions.msg = "新增成功。";
+        that.toastyService.success(that.toastOptions);
+        that.getDataList();
+      },
+        (err) => {
+          that.toastOptions.msg = err;
+          that.toastyService.error(that.toastOptions);
+        }
+      )
+    };
   }
 
   onEdit(event) {
@@ -192,26 +206,31 @@ export class SetPaytypeComponent implements OnInit, AfterViewInit {
     modalRef.componentInstance.title = '修改支付方式';
     modalRef.componentInstance.config = this.config;
     modalRef.componentInstance.formValue = event.data;
-    modalRef.result.then((result) => {
-      if (result !== 'no') {
-        console.log(result);
-        that.setPaytypeService.update(event.data.id, JSON.parse(result)).then(
-          function (v) {
-            that.getDataList();
-          },
-          (err) => { }
-        )
-      }
-    }, (reason) => {
-    });
+    modalRef.componentInstance.saveFun = (result, closeBack) => {
+      that.setPaytypeService.update(event.data.id, JSON.parse(result)).then((data) => {
+        closeBack();
+        that.toastOptions.msg = "新增成功。";
+        that.toastyService.success(that.toastOptions);
+        that.getDataList();
+      },
+        (err) => {
+          that.toastOptions.msg = err;
+          that.toastyService.error(that.toastOptions);
+        }
+      )
+    };
   }
   //删除
   onDelete(event) {
     if (window.confirm('你确定要删除吗?')) {
       this.setPaytypeService.delete(event.data.id).then((data) => {
+        this.toastOptions.msg = "删除成功。";
+        this.toastyService.success(this.toastOptions);
         this.getDataList();
+      }, (err) => {
+        this.toastOptions.msg = err;
+        this.toastyService.error(this.toastOptions);
       });
     }
   }
-
 }

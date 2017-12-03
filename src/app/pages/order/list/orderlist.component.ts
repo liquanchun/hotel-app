@@ -21,7 +21,7 @@ import { fail } from 'assert';
   styleUrls: ['./orderlist.component.scss'],
   providers: [OrderlistService],
 })
-export class OrderlistComponent implements OnInit, AfterViewInit {
+export class OrderlistComponent implements OnInit {
 
   loading = false;
   greeting = {};
@@ -177,14 +177,7 @@ export class OrderlistComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.getDataList();
   }
-  ngAfterViewInit() {
-  }
-  onPageChange(p) {
-    console.log("page:" + p);
-  }
-  onCreate() {
 
-  }
   onSearch(query: string = '') {
     this.source.setFilter([
       { field: 'cusName', search: query },

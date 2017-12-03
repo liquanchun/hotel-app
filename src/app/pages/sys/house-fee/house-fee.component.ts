@@ -30,8 +30,6 @@ export class HouseFeeComponent implements OnInit, AfterViewInit {
     },
     edit: {
       editButtonContent: '<i class="ion-edit"></i>',
-      saveButtonContent: '<i class="ion-checkmark"></i>',
-      cancelButtonContent: '<i class="ion-close"></i>',
       confirmSave: true,
     },
     delete: {
@@ -103,8 +101,6 @@ export class HouseFeeComponent implements OnInit, AfterViewInit {
     },
     edit: {
       editButtonContent: '<i class="ion-edit"></i>',
-      saveButtonContent: '<i class="ion-checkmark"></i>',
-      cancelButtonContent: '<i class="ion-close"></i>',
       confirmSave: true,
     },
     delete: {
@@ -171,8 +167,6 @@ export class HouseFeeComponent implements OnInit, AfterViewInit {
     },
     edit: {
       editButtonContent: '<i class="ion-edit"></i>',
-      saveButtonContent: '<i class="ion-checkmark"></i>',
-      cancelButtonContent: '<i class="ion-close"></i>',
       confirmSave: true,
     },
     delete: {
@@ -427,10 +421,9 @@ export class HouseFeeComponent implements OnInit, AfterViewInit {
     private toastyConfig: ToastyConfig,
     private _state: GlobalState) {
     this.toastyConfig.position = 'top-center';
-    this.getDataList();
-    //this.getHouseType();
   }
   ngOnInit() {
+    this.getDataList();
     this.modalConfig.SetAllhousePrice = this.configAll;
     this.modalConfig.SetHourhousePrice = this.configHours;
     this.modalConfig.SetOtherhousePrice = this.configOther;

@@ -394,10 +394,6 @@ export class Dashboard implements OnInit {
   };
 
   constructor(private _router: Router) {
-    //Check user is login
-    if (!sessionStorage.getItem('userId')) {
-      this._router.navigate(['login']);
-    }
     this.dataNew = this.data.map(function (item) {
         return [item[1], item[0], item[2] || '-'];
     });

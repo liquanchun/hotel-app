@@ -1,10 +1,11 @@
-import { NgModule, ModuleWithProviders }      from '@angular/core';
-import { CommonModule }  from '@angular/common';
+import { NgModule, ModuleWithProviders } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NgUploaderModule } from 'ngx-uploader';
 import { AppTranslationModule } from '../app.translation.module';
 import { MultiselectDropdownModule } from 'angular-2-dropdown-multiselect';
+import { ToastyModule } from 'ng2-toasty';
 import {
   BaThemeConfig
 } from './theme.config';
@@ -29,6 +30,7 @@ import {
   BaPictureUploader,
   BaSidebar,
   BaFileUploader,
+
 } from './components';
 
 import { BaCardBlur } from './components/baCard/baCardBlur.directive';
@@ -113,7 +115,8 @@ const NGA_VALIDATORS = [
     ReactiveFormsModule,
     AppTranslationModule,
     NgUploaderModule,
-    MultiselectDropdownModule
+    MultiselectDropdownModule,
+    ToastyModule.forRoot()
   ],
   exports: [
     ...NGA_PIPES,
@@ -123,7 +126,7 @@ const NGA_VALIDATORS = [
 })
 export class NgaModule {
   static forRoot(): ModuleWithProviders {
-    return <ModuleWithProviders> {
+    return <ModuleWithProviders>{
       ngModule: NgaModule,
       providers: [
         BaThemeConfigProvider,

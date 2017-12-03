@@ -16,7 +16,7 @@ import * as _ from 'lodash';
   styleUrls: ['./repair.component.scss'],
   providers: [RepairService],
 })
-export class RepairComponent implements OnInit, AfterViewInit {
+export class RepairComponent implements OnInit {
 
   title = '维修记录';
   query: string = '';
@@ -90,20 +90,11 @@ export class RepairComponent implements OnInit, AfterViewInit {
     private repairService: RepairService,
     private _common: Common,
     private _state: GlobalState) {
-    this.getDataList();
   }
   ngOnInit() {
+    this.getDataList();
+  }
 
-  }
-  ngAfterViewInit() {
-
-  }
-  onPageChange(p) {
-    console.log("page:" + p);
-  }
-  onCreate() {
-
-  }
   onSearch(query: string = '') {
     this.source.setFilter([
       { field: 'repairMan', search: query },

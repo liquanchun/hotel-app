@@ -16,7 +16,7 @@ import * as _ from 'lodash';
   styleUrls: ['./statelog.component.scss'],
   providers: [StatelogService],
 })
-export class StatelogComponent implements OnInit, AfterViewInit {
+export class StatelogComponent implements OnInit {
 
   title = '房态日志';
   query: string = '';
@@ -87,20 +87,11 @@ export class StatelogComponent implements OnInit, AfterViewInit {
     private toastyConfig: ToastyConfig,
     private _state: GlobalState) {
     this.toastyConfig.position = 'top-center';
-    this.getDataList();
   }
   ngOnInit() {
+    this.getDataList();
+  }
 
-  }
-  ngAfterViewInit() {
-
-  }
-  onPageChange(p) {
-    console.log("page:" + p);
-  }
-  onCreate() {
-
-  }
   onSearch(query: string = '') {
     this.source.setFilter([
       { field: 'oldState', search: query },

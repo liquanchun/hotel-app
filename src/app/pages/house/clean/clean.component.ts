@@ -16,7 +16,7 @@ import * as _ from 'lodash';
   styleUrls: ['./clean.component.scss'],
   providers: [CleanService],
 })
-export class CleanComponent implements OnInit, AfterViewInit {
+export class CleanComponent implements OnInit {
 
   title = '房扫查询';
   query: string = '';
@@ -78,19 +78,9 @@ export class CleanComponent implements OnInit, AfterViewInit {
     private cleanService: CleanService,
     private _common: Common,
     private _state: GlobalState) {
-    this.getDataList();
   }
   ngOnInit() {
-
-  }
-  ngAfterViewInit() {
-
-  }
-  onPageChange(p) {
-    console.log("page:" + p);
-  }
-  onCreate() {
-
+    this.getDataList();
   }
   onSearch(query: string = '') {
     this.source.setFilter([

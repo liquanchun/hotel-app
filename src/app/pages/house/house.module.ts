@@ -26,7 +26,7 @@ import { HouseinfoComponent } from './houseinfo/houseinfo.component';
 import { HousestateComponent } from './housestate/housestate.component';
 import { RepairComponent } from './repair/repair.component';
 import { StatelogComponent } from './statelog/statelog.component';
-
+import { ButtonViewComponent } from './cusgoods/buttonview.component';
 import {ToastyModule} from 'ng2-toasty';
 
 @NgModule({
@@ -53,7 +53,9 @@ import {ToastyModule} from 'ng2-toasty';
     HousestateComponent,
     RepairComponent,
     StatelogComponent,
+    ButtonViewComponent,
   ],
+  entryComponents: [ButtonViewComponent],
   providers: [GlobalState, Config, HttpService, AppState,Common]
 })
 export class HouseModule {}

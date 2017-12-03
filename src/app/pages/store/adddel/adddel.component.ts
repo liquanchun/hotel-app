@@ -16,7 +16,7 @@ import * as _ from 'lodash';
   styleUrls: ['./adddel.component.scss'],
   providers: [AdddelService],
 })
-export class AdddelComponent implements OnInit, AfterViewInit {
+export class AdddelComponent implements OnInit {
 
   title = '报损报溢';
   query: string = '';
@@ -88,15 +88,7 @@ export class AdddelComponent implements OnInit, AfterViewInit {
   ngOnInit() {
 
   }
-  ngAfterViewInit() {
 
-  }
-  onPageChange(p) {
-    console.log("page:" + p);
-  }
-  onCreate() {
-
-  }
   onSearch(query: string = '') {
     this.source.setFilter([
       { field: 'adddelMan', search: query },

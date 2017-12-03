@@ -1,5 +1,6 @@
 <div class="row">
     <div class="col-md-12">
+        <ng2-toasty></ng2-toasty>
         <ba-card [title]="title" class="card-primary" baCardClass="with-scroll">
             <div class="row">
                 <div class="col-md-5">
@@ -57,7 +58,7 @@
                     <i class="fa fa-refresh" aria-hidden="true"></i> 选择房间</button>
                                 </div>
 
-                                <ng2-smart-table [settings]="settingsHouse" [source]="selectedGrid" (deleteConfirm)="onDeleteConfirm($event)" (editConfirm)="onSaveConfirm($event)" (userRowSelect)="onUserRowSelect($event)" (createConfirm)="onCreateConfirm($event)">
+                                <ng2-smart-table [settings]="settingsHouse" [source]="selectedGrid" (editConfirm)="onSaveConfirm($event)" (userRowSelect)="onUserRowSelect($event)" (createConfirm)="onCreateConfirm($event)">
                                 </ng2-smart-table>
                             </div>
                         </div>
