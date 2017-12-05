@@ -4,6 +4,10 @@ $mainBgUrl: $assets-root+$images-root+'blur-bg.jpg';
     background: url($mainBgUrl) no-repeat center center;
 }
 
+h1 {
+    font-family: "楷体";
+}
+
 button.btn.btn-default {
     background-color: #285eb8;
     width: 150px;

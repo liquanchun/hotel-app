@@ -20,7 +20,7 @@ export class BaPageTop {
   public isScrolled: boolean = false;
   public isMenuCollapsed: boolean = false;
   public userId: string = '';
-
+  public userName:string = '';
   config: FieldConfig[] = [
     {
       type: 'input',
@@ -68,6 +68,7 @@ export class BaPageTop {
       this.isMenuCollapsed = isCollapsed;
     });
     this.userId = sessionStorage.getItem("userId");
+    this.userName = sessionStorage.getItem('userName');
   }
 
   public toggleMenu() {
@@ -103,6 +104,10 @@ export class BaPageTop {
         )
       }
     };
+  }
+
+  public userInfo(){
+    this._router.navigate(['/pages/sys/userinfo']);
   }
   public signout() {
     //Clear userid and rediction to login page
