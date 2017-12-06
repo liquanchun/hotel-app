@@ -27,7 +27,7 @@ import { StoreexcComponent } from './storeexc/Storeexc.component';
 import { StoreinComponent } from './storein/Storein.component';
 import { StoreoutComponent } from './storeout/Storeout.component';
 import { SupplierComponent } from './supplier/Supplier.component';
-
+import {ToastyModule} from 'ng2-toasty';
 @NgModule({
   imports: [
     CommonModule,
@@ -42,6 +42,7 @@ import { SupplierComponent } from './supplier/Supplier.component';
     NgbModule,
     LoadingModule,
     Ng2SmartTableModule,
+    ToastyModule.forRoot()
   ],
   declarations: [
     StoreComponent,

@@ -188,8 +188,14 @@ export class TemplateComponent implements OnInit {
   }
 
   getDataList(): void {
+    this.loading = true;
     this.templateService.getTemplates().then((data) => {
       this.source.load(data);
+      this.loading = false;
+    }, (err) => {
+      this.loading = false;
+      this.toastOptions.msg = err;
+      this.toastyService.error(this.toastOptions);
     });
   }
 }
