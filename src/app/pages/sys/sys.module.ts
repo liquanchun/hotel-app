@@ -12,6 +12,7 @@ import { DashboardModule } from '../../pages/dashboard/dashboard.module';
 
 import { routing } from './sys.routing';
 
+import { UserInfoComponent } from './userinfo/userinfo.component';
 import { SysComponent } from './sys.component';
 import { UserRoleComponent } from './user-role/user-role.component';
 import { RoleMenuComponent } from './role-menu/role-menu.component';
@@ -77,6 +78,7 @@ import {ToastyModule} from 'ng2-toasty';
     SetGroupComponent,
     SetAgentComponent,
     SetPaytypeComponent,
+    UserInfoComponent
   ],
   providers: [GlobalState, Config, HttpService, AppState,Common]
 })

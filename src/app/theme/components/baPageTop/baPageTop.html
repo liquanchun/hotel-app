@@ -1,7 +1,7 @@
 <div class="page-top clearfix" baScrollPosition maxHeight="50" (scrollChange)="scrolledChanged($event)" [ngClass]="{scrolled: isScrolled}">
-  <a routerLink="/pages/dashboard" class="al-logo clearfix"><span>酒店管理</span>  </a>
-  <a href (click)="toggleMenu()" class="collapse-menu-link ion-navicon"></a>
-  <!-- <div class="menudiv">
+    <a routerLink="/pages/dashboard" class="al-logo clearfix"><span>格慢酒店管理</span>  </a>
+    <a href (click)="toggleMenu()" class="collapse-menu-link ion-navicon"></a>
+    <!-- <div class="menudiv">
     <a href (click)="openMenu($event)" class="menulink"><span class="fa-stack fa-lg">
       <i class="fa fa-desktop fa-stack-1x"></i>
     </span>
@@ -37,23 +37,25 @@
     </span>
     系统管理</a>
   </div> -->
-  <ng2-toasty></ng2-toasty>
-  <div class="search">
-    <i class="ion-ios-search-strong" ng-click="startSearch()"></i>
-    <input id="searchInput" type="text" placeholder="Search for...">
-  </div>
- 
-  <div class="user-profile clearfix">
-    <div class="dropdown al-user-profile">
-      <a class="profile-toggle-link dropdown-toggle" id="user-profile-dd" data-toggle="dropdown" aria-expanded="false">
-        <img src="{{ ( 'liquanchun' | baProfilePicture ) }}">
-      </a>
-      <ul class="dropdown-menu top-dropdown-menu profile-dropdown" aria-labelledby="user-profile-dd">
-        <li class="dropdown-item"><a href><i class="fa fa-user"></i>个人中心</a></li>
-        <li class="dropdown-item"><a href="javascript:void(0)" (click)="changpwd()"><i class="fa fa-cog"></i>修改密码</a></li>
-        <li class="dropdown-item"><a href="javascript:void(0)" (click)="signout()" class="signout"><i class="fa fa-power-off"></i>退出登录</a></li>
-      </ul>
+    <ng2-toasty></ng2-toasty>
+    <div class="search">
+        <i class="ion-ios-search-strong" ng-click="startSearch()"></i>
+        <input id="searchInput" type="text" placeholder="Search for...">
     </div>
-    <ba-msg-center></ba-msg-center>
-  </div>
+
+    <div class="user-profile clearfix">
+        <div class="al-user-profile">
+            <a href="javascript:void(0)" (click)="signout()"> <i class="fa fa-sign-out" aria-hidden="true"></i> 注销 </a>
+        </div>
+        <div class="dropdown al-user-profile">
+            <a class="profile-toggle-link dropdown-toggle" id="user-profile-dd" data-toggle="dropdown" aria-expanded="false">
+                <i class="fa fa-user-o" aria-hidden="true"></i> {{userName}}
+            </a>
+            <ul class="dropdown-menu top-dropdown-menu profile-dropdown" aria-labelledby="user-profile-dd">
+                <li class="dropdown-item"><a href="javascript:void(0)" (click)="userInfo()"><i class="fa fa-user"></i>个人中心</a></li>
+                <li class="dropdown-item"><a href="javascript:void(0)" (click)="changpwd()"><i class="fa fa-cog"></i>修改密码</a></li>
+            </ul>
+        </div>
+        <ba-msg-center></ba-msg-center>
+    </div>
 </div>

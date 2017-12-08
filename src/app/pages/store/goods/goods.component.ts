@@ -1,12 +1,14 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
+import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 import { LocalDataSource } from 'ng2-smart-table';
-
 import { GoodsService } from './goods.services';
+import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
+import { NgbdModalContent } from '../../../modal-content.component'
 import { GlobalState } from '../../../global.state';
 import { Common } from '../../../providers/common';
-
+import { DicService } from '../../sys/dic/dic.services';
 import * as $ from 'jquery';
 import * as _ from 'lodash';
 
@@ -14,17 +16,26 @@ import * as _ from 'lodash';
   selector: 'app-goods',
   templateUrl: './goods.component.html',
   styleUrls: ['./goods.component.scss'],
-  providers: [GoodsService],
+  providers: [GoodsService, DicService]
 })
 export class GoodsComponent implements OnInit {
 
-  title = '房扫查询';
+  loading = false;
+  title = '货品信息';
   query: string = '';
 
   settings = {
     mode: 'external',
     actions: {
       columnTitle: '操作'
+    },
+    edit: {
+      editButtonContent: '<i class="ion-edit"></i>',
+      confirmSave: true,
+    },
+    delete: {
+      deleteButtonContent: '<i class="ion-trash-a"></i>',
+      confirmDelete: true
     },
     hideSubHeader: true,
     columns: {
@@ -35,33 +46,39 @@ export class GoodsComponent implements OnInit {
         filter: false,
         width: '30px',
       },
-      goodsTime: {
-        title: '房扫时间',
-        type: 'string',
-        width: '100px',
-        filter: false,
-      },
-      goodsMan: {
-        title: '房扫人员',
+      name: {
+        title: '名称',
         type: 'string',
         filter: false,
-        width: '80px',
       },
-      houseCode: {
-        title: '房号',
+      typeName: {
+        title: '类别',
         type: 'string',
         filter: false,
-        width: '80px',
       },
-      address: {
-        title: '房型',
+      unit: {
+        title: '单位',
         type: 'string',
         filter: false,
-        width: '80px',
       },
-      isOverStay: {
-        title: '是否续住',
+      price: {
+        title: '单价',
         type: 'number',
+        filter: false,
+      },
+      maxAmount: {
+        title: '最大库存',
+        type: 'number',
+        filter: false
+      },
+      minAmount: {
+        title: '最小库存',
+        type: 'number',
+        filter: false
+      },
+      remark: {
+        title: '备注',
+        type: 'string',
         filter: false
       },
       createdBy: {
@@ -72,27 +89,138 @@ export class GoodsComponent implements OnInit {
     }
   };
 
+  config: FieldConfig[] = [
+    {
+      type: 'input',
+      label: '名称',
+      name: 'name',
+      placeholder: '输入名称',
+      validation: [Validators.required],
+    },
+    {
+      type: 'select',
+      label: '类别',
+      name: 'typeName',
+      options: [],
+    },
+    {
+      type: 'input',
+      label: '单位',
+      name: 'unit',
+      placeholder: '输入单位',
+    },
+    {
+      type: 'input',
+      label: '最大库存',
+      name: 'maxAmount',
+      placeholder: '输入最大库存',
+    },
+    {
+      type: 'input',
+      label: '最小库存',
+      name: 'minAmount',
+      placeholder: '输入最小库存',
+    },
+    {
+      type: 'input',
+      label: '备注',
+      name: 'remark',
+      placeholder: '输入备注',
+    }
+  ];
+
   source: LocalDataSource = new LocalDataSource();
 
+  private toastOptions: ToastOptions = {
+    title: "提示信息",
+    msg: "The message",
+    showClose: true,
+    timeout: 2000,
+    theme: "bootstrap",
+  };
+
   constructor(
+    private modalService: NgbModal,
     private goodsService: GoodsService,
     private _common: Common,
+    private toastyService: ToastyService,
+    private toastyConfig: ToastyConfig,
+    private _dicService: DicService,
     private _state: GlobalState) {
+    this.toastyConfig.position = 'top-center';
   }
   ngOnInit() {
     this.getDataList();
   }
+
   onSearch(query: string = '') {
     this.source.setFilter([
-      { field: 'goodsMan', search: query },
+      { field: 'goodsstoreMan', search: query },
       { field: 'houseCode', search: query },
       { field: 'createdBy', search: query },
     ], false);
   }
 
   getDataList(): void {
+    this.loading = true;
     this.goodsService.getGoodss().then((data) => {
       this.source.load(data);
+      this.loading = false;
+    }, (err) => {
+      this.loading = false;
+      this.toastOptions.msg = err;
+      this.toastyService.error(this.toastOptions);
+    });
+  }
+
+  onCreate(): void {
+    const that = this;
+    const modalRef = this.modalService.open(NgbdModalContent);
+    modalRef.componentInstance.title = '新增货品信息';
+    modalRef.componentInstance.config = this.config;
+    modalRef.componentInstance.saveFun = (result, closeBack) => {
+      that.goodsService.create(JSON.parse(result)).then((data) => {
+        closeBack();
+        that.toastOptions.msg = "新增成功。";
+        that.toastyService.success(that.toastOptions);
+        that.getDataList();
+      },
+        (err) => {
+          that.toastOptions.msg = err;
+          that
+            .toastyService.error(that.toastOptions);
+        }
+      )
+    }
+  }
+
+  onEdit(event){
+    const that = this;
+    const modalRef =this.modalService.open(NgbdModalContent);
+    modalRef.componentInstance.title = '修改货品信息';
+    modalRef.componentInstance.config = this.config;
+    modalRef.componentInstance.formValue = event.data;
+    modalRef.componentInstance.saveFun = (result, closeBack) => {
+      that.goodsService.update(event.data.id, JSON.parse(result)).then((data) => {
+        closeBack();
+        that.toastOptions.msg = "修改成功。";
+        that.toastyService.success(that.toastOptions);
+        that.getDataList();
+      },
+        (err) => {
+          that.toastOptions.msg = err;
+          that.toastyService.error(that.toastOptions);
+        }
+      )
+    };
+  }
+
+  onGetGoodsType() {
+    this._dicService.getDicByName('商品类别', (data) => {
+      let cfg = _.find(this.config, f => { return f['name'] == 'typeName'; });
+      if (cfg) {
+        cfg.options = data;
+      }
     });
   }
 }

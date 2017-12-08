@@ -41,9 +41,8 @@ export class Login {
   }
 
   public onSubmit(values: Object): void {
-    console.log(Md5.hashStr(this.loginPassword.value).toString());
-    this.submitted = true;
     if (this.form.valid) {
+      this.submitted = true;
 
       this._userService.getUsersById(this.loginUserId.value).then((data) => {
         if (!data) {
@@ -62,8 +61,11 @@ export class Login {
             this.toastyService.error(this.toastOptions);
           }
         }
+        this.submitted = false;
+
       },
         (err) => {
+          this.submitted = false;
           this.toastOptions.msg = err;
           this.toastyService.error(this.toastOptions);
         });
