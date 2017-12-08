@@ -100,7 +100,7 @@ export class GoodsComponent implements OnInit {
     {
       type: 'select',
       label: '类别',
-      name: 'typeName',
+      name: 'typeId',
       options: [],
     },
     {
@@ -150,6 +150,7 @@ export class GoodsComponent implements OnInit {
     this.toastyConfig.position = 'top-center';
   }
   ngOnInit() {
+    this.onGetGoodsType();
     this.getDataList();
   }
 
@@ -215,9 +216,22 @@ export class GoodsComponent implements OnInit {
     };
   }
 
+  onDelete(event){
+    if (window.confirm('你确定要删除吗?')) {
+      this.goodsService.delete(event.data.id).then((data) => {
+        this.toastOptions.msg = "删除成功。";
+        this.toastyService.success(this.toastOptions);
+        this.getDataList();
+      }, (err) => {
+        this.toastOptions.msg = err;
+        this.toastyService.error(this.toastOptions);
+      });
+    }
+  }
+
   onGetGoodsType() {
     this._dicService.getDicByName('商品类别', (data) => {
-      let cfg = _.find(this.config, f => { return f['name'] == 'typeName'; });
+      let cfg = _.find(this.config, f => { return f['name'] == 'typeId'; });
       if (cfg) {
         cfg.options = data;
       }

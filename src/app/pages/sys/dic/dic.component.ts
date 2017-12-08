@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
-
+import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 import { TreeNode, TreeModel, TREE_ACTIONS, KEYS, IActionMapping, ITreeOptions } from 'angular-tree-component';
 import { DicService } from './dic.services';
 import { GlobalState } from '../../../global.state';
@@ -81,10 +81,21 @@ export class DicComponent implements OnInit, AfterViewInit {
     animateAcceleration: 1.2,
   };
 
+  private toastOptions: ToastOptions = {
+    title: "提示信息",
+    msg: "The message",
+    showClose: true,
+    timeout: 2000,
+    theme: "bootstrap",
+  };
+
   constructor(private modalService: NgbModal,
     fb: FormBuilder,
     private dicService: DicService,
+    private toastyService: ToastyService,
+    private toastyConfig: ToastyConfig, 
     private _state: GlobalState) {
+      this.toastyConfig.position = 'top-center';
   }
   ngOnInit() {
     this.isNewDic = true;
@@ -125,11 +136,15 @@ export class DicComponent implements OnInit, AfterViewInit {
           .then(function (role) {
             that.getNodes();
             that.newDicName = '';
+            that.toastOptions.msg = "新增成功。";
+            that.toastyService.success(that.toastOptions);
           }, (err) => {
-            alert(`保存失败。${err}`);
+            that.toastOptions.msg = err;
+            that.toastyService.error(that.toastOptions);
           });
       } else {
-        alert('子节点名称不能为空。');
+        that.toastOptions.msg = '子节点名称不能为空。';
+        that.toastyService.error(that.toastOptions);
       }
     }
   }
@@ -138,22 +153,23 @@ export class DicComponent implements OnInit, AfterViewInit {
     const focusNode = tree.treeModel.getFocusedNode();
     if (focusNode) {
       if (focusNode.data.children.length > 0) {
-        alert('选择的节点有子节点，不能删除。');
+        this.toastOptions.msg = "选择的节点有子节点，不能删除。";
+        this.toastyService.warning(this.toastOptions);
       } else {
-        const that = this;
-        const confirm = {
-          message: `${focusNode.data.name}节点`,
-          callback: () => {
-            that.dicService.delete(focusNode.data.id).then(() => {
-              that.getNodes();
-              that.selectedDic = null;
-            });
-          },
-        };
-        that._state.notifyDataChanged('delete.confirm', confirm);
+        if (window.confirm('你确定要删除吗?')) {
+          this.dicService.delete(focusNode.data.id).then((data) => {
+            this.toastOptions.msg = "删除成功。";
+            this.toastyService.success(this.toastOptions);
+            this.getNodes();
+          }, (err) => {
+            this.toastOptions.msg = err;
+            this.toastyService.error(this.toastOptions);
+          });
+        }
       }
     } else {
-      alert('请选择你要删除的子节点。');
+      this.toastOptions.msg = "请选择你要删除的子节点。";
+      this.toastyService.warning(this.toastOptions);
     }
   }
 }
