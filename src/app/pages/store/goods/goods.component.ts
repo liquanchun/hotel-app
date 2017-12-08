@@ -125,7 +125,7 @@ export class GoodsComponent implements OnInit {
       type: 'input',
       label: '备注',
       name: 'remark',
-      placeholder: '输入最小库存',
+      placeholder: '输入备注',
     }
   ];
 
