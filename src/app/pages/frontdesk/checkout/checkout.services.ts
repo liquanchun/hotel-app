@@ -7,8 +7,8 @@ export class CheckoutService {
   constructor(private _httpService: HttpService) {
   }
 
-  getCheckouts() {
-    return this._httpService.getModelList(this.modelName);
+  getCheckouts(code) {
+    return this._httpService.getModelList(this.modelName + '/' + code);
   }
 
   delete(id: any) {

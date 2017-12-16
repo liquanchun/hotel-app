@@ -39,6 +39,9 @@
 }
 
 :host /deep/ {
+    .card-body {
+        padding-left: 20px;
+    }
     ng2-smart-table {
         th,
         td {
