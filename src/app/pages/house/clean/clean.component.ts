@@ -24,7 +24,10 @@ export class CleanComponent implements OnInit {
   settings = {
     mode: 'external',
     actions: {
-      columnTitle: '操作'
+      columnTitle: '操作',
+      add: false,
+      edit: false,
+      delete: false,
     },
     hideSubHeader: true,
     columns: {

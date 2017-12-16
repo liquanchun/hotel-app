@@ -24,7 +24,10 @@ export class PremoneyComponent implements OnInit {
   settings = {
     mode: 'external',
     actions: {
-      columnTitle: '操作'
+      columnTitle: '操作',
+      add: false,
+      edit: false,
+      delete: false,
     },
     hideSubHeader: true,
     columns: {
@@ -41,30 +44,25 @@ export class PremoneyComponent implements OnInit {
         width: '100px',
         filter: false,
       },
-      typeName: {
-        title: '预定人',
+      cusName: {
+        title: '客户姓名',
         type: 'string',
         filter: false,
         width: '80px',
       },
-      goodsName: {
+      payTypeTxt: {
         title: '支付类型',
         type: 'string',
         filter: false,
         width: '80px',
       },
-      goodsPrice: {
+      amount: {
         title: '金额',
         type: 'string',
         filter: false,
         width: '80px',
       },
-      cusName: {
-        title: '批次号',
-        type: 'string',
-        filter: false
-      },
-      mobile: {
+      orderNo: {
         title: '单据号',
         type: 'string',
         filter: false
@@ -94,7 +92,7 @@ export class PremoneyComponent implements OnInit {
   }
   onSearch(query: string = '') {
     this.source.setFilter([
-      { field: 'premoneyMan', search: query },
+      { field: 'cusName', search: query },
       { field: 'houseCode', search: query },
       { field: 'createdBy', search: query },
     ], false);

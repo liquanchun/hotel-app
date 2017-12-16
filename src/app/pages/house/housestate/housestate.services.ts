@@ -17,6 +17,16 @@ export class HousestateService {
     return this._httpService.create(this.modelName, model);
   }
 
+  clear(model: any) {
+    delete model.id;
+    return this._httpService.create(this.modelName + '/clear' , model);
+  }
+
+  repair(model: any) {
+    delete model.id;
+    return this._httpService.create(this.modelName +'/repair', model);
+  }
+
   update(modelId: number, model: any) {
     return this._httpService.update(this.modelName, modelId, model);
   }

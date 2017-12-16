@@ -3,7 +3,7 @@ import { HttpService } from '../../../providers/httpClient';
 
 @Injectable()
 export class CheckoutService {
-  private modelName = 'fwhouseinfo';  // URL to web api
+  private modelName = 'YxCheckOut';  // URL to web api
   constructor(private _httpService: HttpService) {
   }
 

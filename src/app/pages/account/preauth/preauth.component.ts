@@ -24,7 +24,10 @@ export class PreauthComponent implements OnInit {
   settings = {
     mode: 'external',
     actions: {
-      columnTitle: '操作'
+      columnTitle: '操作',
+      add: false,
+      edit: false,
+      delete: false,
     },
     hideSubHeader: true,
     columns: {
@@ -51,26 +54,26 @@ export class PreauthComponent implements OnInit {
         type: 'string',
         filter: false
       },
-      typeName: {
+      amount: {
         title: '金额',
         type: 'string',
         filter: false,
         width: '80px',
       },
-      goodsName: {
+      authNo: {
         title: '预授权号',
         type: 'string',
         filter: false,
         width: '80px',
       },
-      goodsPrice: {
+      expDate: {
         title: '有效日期',
         type: 'string',
         filter: false,
         width: '80px',
       },
-      billno: {
-        title: '单据号',
+      orderNo: {
+        title: '订单号',
         type: 'string',
         filter: false
       },

@@ -3,6 +3,9 @@ import { NgbModal, ModalDismissReasons, NgbActiveModal } from '@ng-bootstrap/ng-
 
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { NgbdModalContent } from '../../../modal-content.component'
+import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
+import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
+import { UserService } from './../../sys/components/user/user.services';
 
 import { HousestateService } from './housestate.services';
 import { GlobalState } from '../../../global.state';
@@ -15,10 +18,11 @@ import * as _ from 'lodash';
   selector: 'app-housestate',
   templateUrl: './housestate.component.html',
   styleUrls: ['./housestate.component.scss'],
-  providers: [HousestateService, DicService],
+  providers: [HousestateService, DicService, UserService],
 })
 export class HousestateComponent implements OnInit, AfterViewInit {
 
+  loading = false;
   title = '房态管理';
   query: string = '';
   source: any;
@@ -45,12 +49,67 @@ export class HousestateComponent implements OnInit, AfterViewInit {
   //客源
   custData = [];
 
+  configClear: FieldConfig[] = [
+    {
+      type: 'input',
+      label: '房间号',
+      name: 'houseCode',
+      placeholder: '',
+      validation: [Validators.required],
+    },
+    {
+      type: 'select',
+      label: '打扫工人',
+      name: 'cleanMan',
+      options: [],
+      placeholder: '选择打扫工人',
+      validation: [Validators.required],
+    }
+  ];
+
+  configRepair: FieldConfig[] = [
+    {
+      type: 'input',
+      label: '房间号',
+      name: 'houseCode',
+      placeholder: '',
+      validation: [Validators.required],
+    },
+    {
+      type: 'input',
+      label: '维修原因',
+      name: 'reason',
+      placeholder: '输入维修原因',
+    },
+    {
+      type: 'select',
+      label: '维修工人',
+      name: 'repairMan',
+      options: [],
+      placeholder: '选择维修工人',
+      validation: [Validators.required],
+    }
+  ];
+
+  private toastOptions: ToastOptions = {
+    title: "提示信息",
+    msg: "The message",
+    showClose: true,
+    timeout: 2000,
+    theme: "bootstrap",
+  };
+
   constructor(
     private modalService: NgbModal,
     private housestateService: HousestateService,
     private _dicService: DicService,
     private _common: Common,
+    private toastyService: ToastyService,
+    private toastyConfig: ToastyConfig,
+    private _userService: UserService,
     private _state: GlobalState) {
+    this.toastyConfig.position = 'top-center';
+    this.onGetUsers();
   }
   ngOnInit() {
     this.getDataList();
@@ -65,6 +124,71 @@ export class HousestateComponent implements OnInit, AfterViewInit {
         || o['houseTypeTxt'] && o['houseTypeTxt'].indexOf(query) > -1
         || o['tags'] && o['tags'].indexOf(query) > -1;
     });
+  }
+  //获取用户信息
+  onGetUsers(): void {
+    this._userService.getUsers().then((data) => {
+      let usrList = [];
+      _.each(data, d => {
+        usrList.push({ id: d.userId, name: d.userName });
+      });
+      let clr = _.find(this.configClear, f => { return f.name == 'cleanMan' });
+      if (clr) {
+        clr.options = usrList;
+      }
+      let rpi = _.find(this.configRepair, f => { return f.name == 'repairMan' });
+      if (rpi) {
+        rpi.options = usrList;
+      }
+    });
+  }
+  //房扫
+  onClear(code: string, state: string): void {
+    console.log(code);
+    const that = this;
+    const modalRef = this.modalService.open(NgbdModalContent);
+    modalRef.componentInstance.title = '房扫信息';
+    modalRef.componentInstance.config = this.configClear;
+    modalRef.componentInstance.formValue = { houseCode: code };
+    modalRef.componentInstance.saveFun = (result, closeBack) => {
+      let clr = JSON.parse(result);
+      clr.createdBy = state;
+      that.housestateService.clear(clr).then((data) => {
+        closeBack();
+        that.toastOptions.msg = "新增成功。";
+        that.toastyService.success(that.toastOptions);
+        that.getDataList();
+      },
+        (err) => {
+          that.toastOptions.msg = err;
+          that.toastyService.error(that.toastOptions);
+        }
+      )
+    };
+  }
+  //维修
+  onRepair(code: string, state: string): void {
+    console.log(code);
+    const that = this;
+    const modalRef = this.modalService.open(NgbdModalContent);
+    modalRef.componentInstance.title = '维修信息';
+    modalRef.componentInstance.config = this.configRepair;
+    modalRef.componentInstance.formValue = { houseCode: code };
+    modalRef.componentInstance.saveFun = (result, closeBack) => {
+      let rpi = JSON.parse(result);
+      rpi.createdBy = state;
+      that.housestateService.repair(rpi).then((data) => {
+        closeBack();
+        that.toastOptions.msg = "新增成功。";
+        that.toastyService.success(that.toastOptions);
+        that.getDataList();
+      },
+        (err) => {
+          that.toastOptions.msg = err;
+          that.toastyService.error(that.toastOptions);
+        }
+      )
+    };
   }
 
   getDataListById(id: number): void {
@@ -85,7 +209,7 @@ export class HousestateComponent implements OnInit, AfterViewInit {
         _.each(this.stateData, (e) => {
           if (that.houseState[e.id]) {
             e.count = that.houseState[e.id];
-          }else{
+          } else {
             e.count = 0;
           }
         });

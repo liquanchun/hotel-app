@@ -24,7 +24,10 @@ export class CusaccountComponent implements OnInit {
   settings = {
     mode: 'external',
     actions: {
-      columnTitle: '操作'
+      columnTitle: '操作',
+      edit: false,
+      delete: false,
+      add: false
     },
     hideSubHeader: true,
     columns: {
@@ -33,14 +36,13 @@ export class CusaccountComponent implements OnInit {
         type: 'number',
         editable: false,
         filter: false,
-        width: '30px',
       },
       houseCode: {
         title: '房间号',
         type: 'string',
         filter: false
       },
-      customer: {
+      cusName: {
         title: '客户姓名',
         type: 'string',
         filter: false
@@ -48,33 +50,43 @@ export class CusaccountComponent implements OnInit {
       createdAt: {
         title: '消费时间',
         type: 'string',
-        width: '100px',
         filter: false,
       },
-      typeName: {
+      itemName: {
         title: '项目',
         type: 'string',
         filter: false,
-        width: '80px',
       },
-      goodsName: {
+      number: {
         title: '数量',
         type: 'string',
         filter: false,
-        width: '80px',
       },
-      goodsPrice: {
+      amount: {
         title: '金额',
         type: 'string',
         filter: false,
-        width: '80px',
       },
-      cusName: {
-        title: '班次',
+      orderNo: {
+        title: '订单号',
         type: 'string',
         filter: false
       },
-      
+      payTypeTxt: {
+        title: '支付方式',
+        type: 'string',
+        filter: false
+      },
+      remark: {
+        title: '备注',
+        type: 'string',
+        filter: false
+      },
+      createdBy: {
+        title: '操作人',
+        type: 'string',
+        filter: false
+      }
     }
   };
 
@@ -90,7 +102,7 @@ export class CusaccountComponent implements OnInit {
   }
   onSearch(query: string = '') {
     this.source.setFilter([
-      { field: 'cusaccountMan', search: query },
+      { field: 'cusName', search: query },
       { field: 'houseCode', search: query },
       { field: 'createdBy', search: query },
     ], false);

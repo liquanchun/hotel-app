@@ -1,5 +1,7 @@
 <div class="row">
     <div class="col-md-12">
+        <ng2-toasty></ng2-toasty>
+        <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '4px' }"></ngx-loading>
         <ba-card [title]="title" class="card-primary" baCardClass="with-scroll">
             <div>
                 <div class="row">
@@ -12,39 +14,39 @@
                             <div class="col-7">
                                 <div class="btn-group margin8 pull-right" role="group" aria-label="Basic example">
                                     <button *ngFor="let hs of stateData;" (click)="getDataListById(hs.id)" type="button" class="btn {{hs.color}} btn-sm">
-                    <i class="fa fa-refresh" aria-hidden="true"></i> {{hs.name}}
-                    <span class="badge badge-danger">{{ hs.count }}</span>
-                  </button>
+                                        <i class="fa fa-refresh" aria-hidden="true"></i> {{hs.name}}
+                                        <span class="badge badge-danger">{{ hs.count }}</span>
+                                    </button>
                                 </div>
                             </div>
                             <div class="col-5">
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    入住标准
-                  </button>
+                                        入住标准
+                                    </button>
                                     <div class="dropdown-menu dropdown-menu-right">
                                         <button *ngFor="let hs of checkInData;" class="dropdown-item" type="button">{{hs.state}}
-                      <span class="badge badge-danger">{{hs.count}}</span>
-                    </button>
+                                        <span class="badge badge-danger">{{hs.count}}</span>
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    入住渠道
-                  </button>
+                                        入住渠道
+                                    </button>
                                     <div class="dropdown-menu dropdown-menu-right">
                                         <button *ngFor="let hs of channelData;" class="dropdown-item" type="button">{{hs.state}}
-                      <span class="badge badge-danger">{{hs.count}}</span>
-                    </button>
+                                        <span class="badge badge-danger">{{hs.count}}</span>
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    客源
-                  </button>
+                                        客源
+                                    </button>
                                     <div class="dropdown-menu dropdown-menu-right">
                                         <button *ngFor="let hs of custData;" class="dropdown-item" type="button">{{hs.name}}
-                    </button>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -65,42 +67,47 @@
 
                             <p *ngIf="house.stateTxt == '空净'">
                                 <span class="text-info">
-                  <i class="fa fa-square-o fa-2x" aria-hidden="true"></i>
-                </span>
+                                <i class="fa fa-square fa-2x" aria-hidden="true"></i>
+                                </span>
                             </p>
                             <p *ngIf="house.stateTxt == '空脏'">
                                 <span class="text-secondary">
-                  <i class="fa fa-minus-square-o fa-2x" aria-hidden="true"></i>
-                </span>
+                                <i class="fa fa-minus-square fa-2x" aria-hidden="true"></i>
+                                </span>
                             </p>
                             <p *ngIf="house.stateTxt == '住人净'">
                                 <span class="text-success">
-                  <i class="fa fa-user-o fa-2x" aria-hidden="true"></i>
-                </span>
+                                <i class="fa fa-user fa-2x" aria-hidden="true"></i>
+                                </span>
                             </p>
                             <p *ngIf="house.stateTxt == '住人脏'">
                                 <span class="text-danger">
-                  <i class="fa fa-user-circle fa-2x" aria-hidden="true"></i>
-                </span>
+                                <i class="fa fa-user fa-2x" aria-hidden="true"></i>
+                                </span>
                             </p>
                             <p *ngIf="house.stateTxt == '维修'">
                                 <span class="text-warning">
-                  <i class="fa fa-wrench fa-2x" aria-hidden="true"></i>
-                </span>
+                                <i class="fa fa-wrench fa-2x" aria-hidden="true"></i>
+                                </span>
                             </p>
                             <p *ngIf="house.stateTxt == '预约'">
                                 <span class="text-primary">
-                  <i class="fa fa-phone fa-2x" aria-hidden="true"></i>
-                </span>
+                                <i class="fa fa-phone fa-2x" aria-hidden="true"></i>
+                                </span>
                             </p>
                             <p *ngIf="house.stateTxt == '预离'">
                                 <span class="text-dark">
-                  <i class="fa fa-sign-out fa-2x" aria-hidden="true"></i>
-                </span>
+                                <i class="fa fa-sign-out fa-2x" aria-hidden="true"></i>
+                                </span>
                             </p>
 
                             <a *ngIf="house.stateTxt == '空净'" [routerLink]="['/pages/frontdesk/checkin', house.code ]" class="card-link">入住</a>
-                            <a *ngIf="house.stateTxt == '住人净' || house.stateTxt == '住人脏'" href="#" class="card-link">退房</a>
+                            <a *ngIf="house.stateTxt == '空净'" href="javascript:void(0)" (click)="onRepair(house.code,house.state)" class="card-link">维修</a>
+
+                            <a *ngIf="house.stateTxt == '空脏'" href="javascript:void(0)" (click)="onClear(house.code,house.state)" class="card-link">打扫</a>
+                            <a *ngIf="house.stateTxt == '空脏'" href="javascript:void(0)" (click)="onRepair(house.code,house.state)" class="card-link">维修</a>
+
+                            <a *ngIf="house.stateTxt == '住人净' || house.stateTxt == '住人脏'" [routerLink]="['/pages/frontdesk/checkout', house.code ]"  class="card-link">退房</a>
                         </div>
                     </div>
                 </div>

@@ -1,7 +1,7 @@
 import { Component, ViewChild, OnInit, AfterViewInit, Input } from '@angular/core';
 import { NgbModal, ModalDismissReasons, NgbAlert } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
-import {ActivatedRoute,Params} from '@angular/router';
+import { ActivatedRoute,Params} from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 
@@ -197,10 +197,10 @@ export class CheckinComponent implements OnInit {
 
     this.toastyConfig.position = 'top-center';
     this._state.subscribe('read.idcard', (data) => {
-      let newrowdata = _.find(this.selectedHouse, function (o) { return o['code'] == data.code; });
+      let newrowdata = _.find(this.selectedHouse, function (o) { return o['houseCode'] == data.code; });
       if (newrowdata) {
         newrowdata['cusname'] = data.name;
-        newrowdata['cusid'] = data.idcard;
+        newrowdata['idcard'] = data.idcard;
       }
       this.selectedGrid.refresh();
     });
@@ -369,8 +369,8 @@ export class CheckinComponent implements OnInit {
       }
     ).then(
       function (v) {
-        this.toastOptions.msg = "保存成功。";
-        this.toastyService.success(this.toastOptions);
+        that.toastOptions.msg = "保存成功。";
+        that.toastyService.success(that.toastOptions);
         that.isSaved = false;
         that.checkIn.cusname = '';
         that.checkIn.cusphone = '';
@@ -385,9 +385,9 @@ export class CheckinComponent implements OnInit {
         that.selectedGrid.load(that.selectedHouse);
       },
       (err) => {
-        this.toastOptions.title = "保存失败";
-        this.toastOptions.msg = err;
-        this.toastyService.error(this.toastOptions);
+        that.toastOptions.title = "保存失败";
+        that.toastOptions.msg = err;
+        that.toastyService.error(that.toastOptions);
         that.isSaved = false;
       }
       )

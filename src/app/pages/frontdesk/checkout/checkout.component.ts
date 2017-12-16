@@ -33,16 +33,18 @@ export class CheckoutComponent implements OnInit {
 
   private checkIn: any = {
     houseCode: '',
-    cusname: '',
-    cusphone: '',
+    cusName: '',
+    cusPhone: '',
     idCard: '',
     inType: '',
-    comeType: '',
+    comeTypeTxt: '',
     payType: '',
+    payTypeTxt:'',
     billNo: '',
     remark: '',
     houseFee: 0,
-    prereceivefee: 0
+    preReceivefee: 0,
+    orderNo:''
   };
   private paytype: any = [];
   private comeType: any = [];
@@ -56,7 +58,7 @@ export class CheckoutComponent implements OnInit {
     hideSubHeader: true,
     noDataMessage: '',
     columns: {
-      houseType: {
+      houseTypeTxt: {
         title: '房型',
         type: 'string',
         filter: false,
@@ -79,12 +81,12 @@ export class CheckoutComponent implements OnInit {
         type: 'number',
         filter: false
       },
-      cusname: {
+      cusName: {
         title: '客人姓名',
         type: 'string',
         filter: false
       },
-      idcard: {
+      idCard: {
         title: '客人身份证',
         type: 'string',
         filter: false
@@ -98,12 +100,8 @@ export class CheckoutComponent implements OnInit {
   };
 
   houseType = [];
-  houseInfoSelect = [];
   //选择房间表格
   selectedGrid: LocalDataSource = new LocalDataSource();
-  //选择的房间
-  selectedHouse: any = [];
-
   //链接过来的房间号
   private checkInCode: string;
 
@@ -127,9 +125,13 @@ export class CheckoutComponent implements OnInit {
 
     this.toastyConfig.position = 'top-center';
   }
+
   ngOnInit() {
     this.getDataList();
     this.checkInCode = this.route.snapshot.params['code'];
+    if(this.checkInCode){
+      this.onSearch(this.checkInCode);
+    }
   }
 
   onSearch(code: string): void {
@@ -138,7 +140,10 @@ export class CheckoutComponent implements OnInit {
         this.toastOptions.msg = '房间不存在。';
         this.toastyService.error(this.toastOptions);
       } else {
-        this.checkIn = data;
+        this.checkIn = data['orderList'][0];
+        this.checkIn.houseCode = code;
+        this.checkIn.payType = 0;
+        this.selectedGrid.load(data['orderDetailList']);
       }
     },
       (err) => {
@@ -151,17 +156,13 @@ export class CheckoutComponent implements OnInit {
     this._setPaytypeService.getSetPaytypes().then((data) => {
       const that = this;
       _.each(data, function (d) {
-        that.paytype.push({ id: d.id, name: d.name });
+        if (d.name != '预授权') {
+          that.paytype.push({ id: d.id, name: d.name });
+        }
       });
     });
 
     this._dicService.getDicByName('客源', (data) => { this.comeType = data; });
-  }
-  //刷新表格数据
-  refreshTable() {
-    this.checkIn.prereceivefee = _.sumBy(this.selectedHouse, function (o) { return o['prereceivefee']; });
-    this.checkIn.houseFee = _.sumBy(this.selectedHouse, function (o) { return o['houseFee']; });
-    this.selectedGrid.load(this.selectedHouse);
   }
 
   onSaveConfirm(event): void {
@@ -170,39 +171,55 @@ export class CheckoutComponent implements OnInit {
 
   //确认入住
   onConfirm(): void {
-    if (this.selectedHouse.length == 0) {
-      this.toastOptions.msg = "请选择房间。";
-      this.toastyService.warning(this.toastOptions);
+    const that = this;
+    if(!this.checkIn.orderNo){
+      that.toastOptions.msg = "无订单号";
+      that.toastyService.warning(that.toastOptions);
       return;
     }
+    if(!this.checkIn.payType){
+      that.toastOptions.msg = "请选择支付方式";
+      that.toastyService.warning(that.toastOptions);
+      return;
+    }
+
     this.isSaved = true;
-    const that = this;
-    this._checkinService.create(
-      {
-        YxOrder: this.checkIn,
-        YxOrderList: this.selectedHouse
-      }
-    ).then(
+    let cusaccount = {
+      houseCode:this.checkIn.houseCode,
+      cusName:this.checkIn.cusName,
+      itemName:this.checkIn.inType,
+      orderNo:this.checkIn.orderNo,
+      number:1,
+      amount:this.checkIn.houseFee,
+      payType:this.checkIn.payType,
+      workNum:1,
+      remark:this.checkIn.remark
+    }
+    this._checkoutService.create(cusaccount).then(
       function (v) {
-        this.toastOptions.msg = "保存成功。";
-        this.toastyService.success(this.toastOptions);
+        that.toastOptions.msg = "保存成功。";
+        that.toastyService.success(that.toastOptions);
         that.isSaved = false;
-        that.checkIn.cusname = '';
-        that.checkIn.cusphone = '';
+        that.checkIn.cusName = '';
+        that.checkIn.cusPhone = '';
         that.checkIn.idCard = '';
         that.checkIn.inType = '';
         that.checkIn.remark = '';
         that.checkIn.houseFee = '';
-        that.checkIn.prereceivefee = '';
+        that.checkIn.preReceivefee = '';
         that.checkIn.payType = '';
         that.checkIn.billNo = '';
-        that.selectedHouse = [];
-        that.selectedGrid.load(that.selectedHouse);
+        that.checkIn.houseCode = '';
+        that.checkIn.orderNo = '';
+        that.checkIn.comeTypeTxt = '';
+        that.checkIn.payTypeTxt ='';
+        that.selectedGrid.empty();
+        that.selectedGrid.reset();
       },
       (err) => {
-        this.toastOptions.title = "保存失败";
-        this.toastOptions.msg = err;
-        this.toastyService.error(this.toastOptions);
+        that.toastOptions.title = "保存失败";
+        that.toastOptions.msg = err;
+        that.toastyService.error(that.toastOptions);
         that.isSaved = false;
       }
       )

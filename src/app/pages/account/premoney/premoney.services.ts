@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 
 @Injectable()
 export class PremoneyService {
-  private modelName = 'FwPremoney';  // URL to web api
+  private modelName = 'CwPrefee';  // URL to web api
   constructor(private _httpService: HttpService) {
   }
 

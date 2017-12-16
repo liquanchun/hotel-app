@@ -16,6 +16,7 @@ const routes: Routes = [
       { path: 'checkin/:code', component: CheckinComponent },
       { path: 'checkin', component: CheckinComponent },
       { path: 'checkout', component: CheckoutComponent },
+      { path: 'checkout/:code', component: CheckoutComponent },
       { path: 'coupon', component: CouponComponent },
       { path: 'schedule', component: ScheduleComponent },
     ]
