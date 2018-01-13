@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-
+import { Router } from '@angular/router';
 import { StoreinService } from './storein.services';
 import { GlobalState } from '../../../global.state';
 import { Common } from '../../../providers/common';
@@ -87,6 +87,7 @@ export class StoreinComponent implements OnInit {
   constructor(
     private storeinService: StoreinService,
     private _common: Common,
+    private _router: Router,
     private _state: GlobalState) {
   }
   ngOnInit() {
@@ -104,5 +105,9 @@ export class StoreinComponent implements OnInit {
     this.storeinService.getStoreins().then((data) => {
       this.source.load(data);
     });
+  }
+  //新增入库
+  newStorein():void{
+    this._router.navigate(['/pages/store/storeinnew']);
   }
 }

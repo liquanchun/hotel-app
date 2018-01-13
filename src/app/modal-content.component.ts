@@ -50,9 +50,13 @@ export class NgbdModalContent implements OnInit {
       const sf = that;
       _.each(that.config, (e) => {
         if (sf.formValue && sf.formValue[e.name]) {
-          sf.form.setValue(e.name, sf.formValue[e.name].toString());
+          if(_.isArray(sf.formValue[e.name])){
+            sf.form.setValue(e.name, sf.formValue[e.name]);
+          }else{
+            sf.form.setValue(e.name, sf.formValue[e.name].toString());
+          }
         }
       });
-    }, 100, this);
+    }, 50, this);
   }
 }

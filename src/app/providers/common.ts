@@ -5,6 +5,20 @@ import { retry } from 'rxjs/operator/retry';
 
 @Injectable()
 export class Common {
+    getTodayObj() {
+        let d = new Date()
+        let day = d.getDate();
+        let month = d.getMonth() + 1;
+        let year = d.getFullYear();
+        return { "year": year, "month": month, "day": day };
+    }
+    getTodayString() {
+        let d = new Date()
+        let day = _.toString(d.getDate());
+        let month = _.toString(d.getMonth() + 1);
+        let year = d.getFullYear();
+        return `${year}-${_.padStart(month, 2, '0')}-${_.padStart(day, 2, '0')}`
+    }
     // 获取日期格式的年份
     getDateYear(date: string): number {
         return Number.parseInt(date.split('-')[0]);
@@ -33,4 +47,5 @@ export class Common {
         const time = date.time ? ' ' + date.time : '';
         return `${date.year}-${_.padStart(date.month, 2, '0')}-${_.padStart(date.day, 2, '0')}${time}`
     }
+
 }

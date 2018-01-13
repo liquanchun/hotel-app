@@ -61,7 +61,7 @@
 }
 
 select{
-    padding: 5px 9px !important;
+    padding: 7px 9px !important;
 }
 
 select.form-control {
@@ -397,7 +397,7 @@ label.custom-input-danger {
 .form-control[readonly],
 fieldset[disabled] .form-control {
     background-color: $input-background;
-    color: $disabled;
+    // color: $disabled;
     border-color: $disabled-bg;
     @include placeholderStyle($default-text, 0.5);
 }

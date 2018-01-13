@@ -13,6 +13,9 @@ export class UserService {
   getUsersById(userId:any) {
     return this._httpService.getModelList(this.modelName + '/' + userId);
   }
+  getUsersByOrgId(orgId:any) {
+    return this._httpService.getModelList(this.modelName + '/org/' + orgId);
+  }
   delete(id: any) {
     return this._httpService.delete(this.modelName , id);
   }

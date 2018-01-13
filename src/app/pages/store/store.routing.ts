@@ -8,7 +8,7 @@ import { StoreexcComponent } from './storeexc/Storeexc.component';
 import { StoreinComponent } from './storein/Storein.component';
 import { StoreoutComponent } from './storeout/Storeout.component';
 import { SupplierComponent } from './supplier/Supplier.component';
-
+import { StoreinNewComponent } from './storein/storeinnew/storeinnew.component';
 const routes: Routes = [
   {
     path: '',
@@ -21,6 +21,7 @@ const routes: Routes = [
       { path: 'storein', component: StoreinComponent },
       { path: 'storeout', component: StoreoutComponent },
       { path: 'supplier', component: SupplierComponent },
+      { path: 'storeinnew', component: StoreinNewComponent },
     ]
   }
 ];

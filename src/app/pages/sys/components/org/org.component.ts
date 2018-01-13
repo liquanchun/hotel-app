@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit,Input,Output,EventEmitter } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 
@@ -36,6 +36,9 @@ const actionMapping: IActionMapping = {
   providers: [OrgService],
 })
 export class OrgComponent implements OnInit, AfterViewInit {
+
+  @Input() editable: boolean = true;
+  @Output() selected = new EventEmitter();
 
   private isNewOrg: boolean;
 
@@ -85,6 +88,8 @@ export class OrgComponent implements OnInit, AfterViewInit {
     fb: FormBuilder,
     private orgService: OrgService,
     private _state: GlobalState) {
+
+
   }
   ngOnInit() {
     this.isNewOrg = true;
@@ -108,6 +113,7 @@ export class OrgComponent implements OnInit, AfterViewInit {
   onEvent(event) {
     if (event.eventName === 'focus') {
       this.selectedOrg = event.node;
+      this.selected.emit(event.node.data);
       this._state.notifyDataChanged('org.selectedChanged', this.selectedOrg);
     }
   }

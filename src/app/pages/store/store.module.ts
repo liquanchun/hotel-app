@@ -27,6 +27,8 @@ import { StoreexcComponent } from './storeexc/Storeexc.component';
 import { StoreinComponent } from './storein/Storein.component';
 import { StoreoutComponent } from './storeout/Storeout.component';
 import { SupplierComponent } from './supplier/Supplier.component';
+import { StoreinNewComponent } from './storein/storeinnew/storeinnew.component';
+import { SysModule } from './../sys/sys.module';
 import {ToastyModule} from 'ng2-toasty';
 @NgModule({
   imports: [
@@ -42,6 +44,7 @@ import {ToastyModule} from 'ng2-toasty';
     NgbModule,
     LoadingModule,
     Ng2SmartTableModule,
+    SysModule,
     ToastyModule.forRoot()
   ],
   declarations: [
@@ -53,6 +56,7 @@ import {ToastyModule} from 'ng2-toasty';
     StoreinComponent,
     StoreoutComponent,
     SupplierComponent,
+    StoreinNewComponent
   ],
   providers: [GlobalState, Config, HttpService, AppState,Common]
 })
