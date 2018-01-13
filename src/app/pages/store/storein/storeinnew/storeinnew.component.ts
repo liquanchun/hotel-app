@@ -1,7 +1,7 @@
 import { Component, ViewChild, OnInit, AfterViewInit, Input } from '@angular/core';
 import { NgbModal, ModalDismissReasons, NgbAlert } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute, Params } from '@angular/router';
+import { Router, ActivatedRoute, Params } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 import { Common } from '../../../../providers/common';
@@ -31,8 +31,8 @@ export class StoreinNewComponent implements OnInit {
 
   storeIn: any = {
     typeId: 0,
-    inDate: '',
-    supplier: 0,
+    inTime: '',
+    supplierId: 0,
     storeId: '',
     orgid: 0,
     orgtext: '',
@@ -168,13 +168,14 @@ export class StoreinNewComponent implements OnInit {
     private _dicService: DicService,
     private toastyService: ToastyService,
     private toastyConfig: ToastyConfig,
+    private _router: Router,
     private route: ActivatedRoute) {
 
     this.toastyConfig.position = 'top-center';
   }
   ngOnInit() {
     this.getDataList();
-    this.storeIn.inDate = this._common.getTodayObj();
+    this.storeIn.inTime = this._common.getTodayObj();
   }
 
   getDataList(): void {
@@ -202,6 +203,7 @@ export class StoreinNewComponent implements OnInit {
       if (!_.some(this.selectedGoods, ['id', event.data.id])) {
         this.selectedGoods.push(
           {
+            goodsTypeId: event.data.typeId,
             goodsId: event.data.id,
             price: event.data.price,
             name: event.data.name,
@@ -295,10 +297,13 @@ export class StoreinNewComponent implements OnInit {
       })
     }
   }
+  onBack(){
+    this._router.navigate(['/pages/store/storein']);
+  }
   //确认入住
   onConfirm(): void {
-    if (!this.storeIn.typeId || !this.storeIn.inDate || !this.storeIn.billNo
-      || !this.storeIn.supplier || !this.storeIn.storeId
+    if (!this.storeIn.typeId || !this.storeIn.inTime || !this.storeIn.billNo
+      || !this.storeIn.supplierId || !this.storeIn.storeId
       || !this.storeIn.orgid || !this.storeIn.operator) {
       this.toastOptions.msg = "请填写完整。";
       this.toastyService.warning(this.toastOptions);
@@ -311,7 +316,7 @@ export class StoreinNewComponent implements OnInit {
     }
     this.isSaved = true;
     const that = this;
-    this.storeIn.inDate = this._common.getDateString(this.storeIn.inDate);
+    this.storeIn.inTime = this._common.getDateString(this.storeIn.inTime);
     console.log(this.storeIn);
     console.log(this.selectedGoods);
     this._storeinNewService.create(
@@ -325,8 +330,8 @@ export class StoreinNewComponent implements OnInit {
         that.toastyService.success(that.toastOptions);
         that.isSaved = false;
         that.storeIn.inType = '';
-        that.storeIn.inDate = '';
-        that.storeIn.supplier = '';
+        that.storeIn.inTime = '';
+        that.storeIn.supplierId = '';
         that.storeIn.storeCode = '';
         that.storeIn.orgid = 0;
         that.storeIn.orgtext = '';

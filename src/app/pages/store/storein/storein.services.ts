@@ -11,7 +11,9 @@ export class StoreinService {
   getStoreins() {
     return this._httpService.getModelList(this.modelName);
   }
-
+  cancel(id:any) {
+    return this._httpService.getModelList(this.modelName + '/cancel/' + id);
+  }
   create(model: any) {
     delete model.id;
     return this._httpService.create(this.modelName, model);

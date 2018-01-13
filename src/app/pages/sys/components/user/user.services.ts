@@ -19,10 +19,14 @@ export class UserService {
   delete(id: any) {
     return this._httpService.delete(this.modelName , id);
   }
+
   create(user: any) {
     return this._httpService.create(this.modelName, user);
   }
   update(id:any,user: any) {
     return this._httpService.update(this.modelName,id, user);
+  }
+  userAuth(modelName:any,user:any){
+    return this._httpService.create(modelName, user);
   }
 }

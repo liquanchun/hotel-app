@@ -48,4 +48,7 @@ export class Common {
         return `${date.year}-${_.padStart(date.month, 2, '0')}-${_.padStart(date.day, 2, '0')}${time}`
     }
 
+    getSplitDate(date:string){
+        return date.split(' ')[0];
+    }
 }
