@@ -12,6 +12,8 @@ import { GlobalState } from '../../global.state';
 import { AppState } from '../../app.service';
 import { HttpService } from '../../providers/httpClient';
 import { Common } from '../../providers/common';
+import { DicService } from '../sys/dic/dic.services';
+
 import { MultiselectDropdownModule } from 'angular-2-dropdown-multiselect';
 
 import {ToastyModule} from 'ng2-toasty';
@@ -24,7 +26,7 @@ import { MarketComponent } from './market.component';
 import { BookComponent } from './book/book.component';
 import { MemberComponent } from './member/member.component';
 import { CustomerComponent } from './customer/customer.component';
-
+import { ServiceItemComponent } from './serviceitem/serviceitem.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -46,7 +48,8 @@ import { CustomerComponent } from './customer/customer.component';
     BookComponent,
     MemberComponent,
     CustomerComponent,
+    ServiceItemComponent
   ],
-  providers: [GlobalState, Config, HttpService, AppState,Common]
+  providers: [GlobalState, Config, HttpService, AppState,Common,DicService]
 })
 export class MarketModule {}

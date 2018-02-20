@@ -33,12 +33,23 @@ export class OrgUserComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
 
   }
-
-  selectedUser(user) {
-    if (user.isChecked) {
-      this.orgService.createOrg(this.orgId, user.id);
-    } else {
-      this.orgService.deleteOrg(this.orgId, user.id);
+  onMessage(event) {
+    const msg = event.msg;
+    if (event.type == 'warning') {
+      this._state.notifyDataChanged("showMessage.open", { message: msg, type: "warning", time: new Date().getTime() });
     }
+    if (event.type == 'success') {
+      this._state.notifyDataChanged("showMessage.open", { message: msg, type: "success", time: new Date().getTime() });
+    }
+    if (event.type == 'error') {
+      
+    }
+  }
+  selectedUser(user) {
+    // if (user.isChecked) {
+    //   this.orgService.createOrg(this.orgId, user.id);
+    // } else {
+    //   this.orgService.deleteOrg(this.orgId, user.id);
+    // }
   }
 }

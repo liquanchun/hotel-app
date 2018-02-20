@@ -1,18 +1,25 @@
 import { NgModule, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
+import { ToastyModule } from 'ng2-toasty';
 import { routing } from './pages.routing';
 import { NgaModule } from '../theme/nga.module';
 import { AppTranslationModule } from '../app.translation.module';
 
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { Pages } from './pages.component';
 import { Router, Routes, RouterModule } from '@angular/router';
 import * as _ from 'lodash';
 
 @NgModule({
-  imports: [CommonModule, AppTranslationModule, NgaModule, routing,BrowserAnimationsModule],
+  imports: [
+    CommonModule,
+    AppTranslationModule,
+    NgaModule,
+    routing,
+    ToastyModule,
+    BrowserAnimationsModule
+  ],
   declarations: [Pages]
 })
 export class PagesModule implements OnInit {

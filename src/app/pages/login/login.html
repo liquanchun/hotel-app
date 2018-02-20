@@ -2,7 +2,7 @@
   <div class="auth-block">
     <ng2-toasty></ng2-toasty>
     <h1 translate>{{'login.title'}}</h1>
-    <a routerLink="/register" class="auth-link" translate>{{'login.signup_link'}}</a>
+    <!-- <a routerLink="/register" class="auth-link" translate>{{'login.signup_link'}}</a> -->
 
     <form [formGroup]="form" autocomplete="off" (ngSubmit)="onSubmit(form.value)" class="form-horizontal">
       <div class="form-group row" [ngClass]="{'has-error': (!loginUserId.valid && loginUserId.touched), 'has-success': (loginUserId.valid && loginUserId.touched)}">
@@ -37,4 +37,7 @@
       </ul>
     </div> -->
   </div>
+</div>
+<div style=" position:absolute; top:80%;margin-left:40%">
+  <p>&copy; 2018 格慢酒店管理有限公司</p>
 </div>

@@ -30,6 +30,9 @@ export class Pages implements OnInit {
   constructor(private _menuService: BaMenuService,
     private _state: GlobalState,
     private _menuItemService: MenuService) {
+    this._state.subscribe('showMessage.openPage', (data) => {
+      console.log('showMessage.open');
+    });
   }
 
   ngOnInit() {

@@ -3,7 +3,6 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 
 import { ButtonViewComponent } from './buttonview.component';
 import { OrderlistService } from './orderlist.services';
@@ -158,21 +157,11 @@ export class OrderlistComponent implements OnInit {
 
   orderDetail: any = [];
 
-  private toastOptions: ToastOptions = {
-    title: "提示信息",
-    msg: "The message",
-    showClose: true,
-    timeout: 2000,
-    theme: "bootstrap",
-  };
   constructor(
     private orderlistService: OrderlistService,
     private modalService: NgbModal,
     private _common: Common,
-    private toastyService: ToastyService,
-    private toastyConfig: ToastyConfig,
     private _state: GlobalState) {
-    this.toastyConfig.position = 'top-center';
   }
   ngOnInit() {
     this.getDataList();
@@ -195,20 +184,19 @@ export class OrderlistComponent implements OnInit {
       this.loading = false;
     }, (err) => {
       this.loading = false;
-      this.toastOptions.msg = err;
-      this.toastyService.error(this.toastOptions);
+      this._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
+      
     });
   }
   onDelete(event) {
     if (window.confirm('你确定要删除吗?')) {
       this.orderlistService.delete(event.data.id).then((data) => {
-        this.toastOptions.msg = "删除成功。";
-        this.toastyService.success(this.toastOptions);
+        const msg = "删除成功。";
+        this._state.notifyDataChanged("showMessage.open", { message: msg, type: "success", time: new Date().getTime() });
         this.getDataList();
       }, (err) => {
-        this.toastOptions.title = "删除失败。";
-        this.toastOptions.msg = err;
-        this.toastyService.error(this.toastOptions);
+        this._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
+        
       });
     }
   }

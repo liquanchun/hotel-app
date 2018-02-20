@@ -3,7 +3,6 @@ import { NgbModal, ModalDismissReasons, NgbAlert } from '@ng-bootstrap/ng-bootst
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute,Params} from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 
 import * as $ from 'jquery';
 import * as _ from 'lodash';
@@ -174,14 +173,6 @@ export class CheckinComponent implements OnInit {
   //链接过来的房间号
   private checkInCode:string;
 
-  private toastOptions: ToastOptions = {
-    title: "提示信息",
-    msg: "The message",
-    showClose: true,
-    timeout: 2000,
-    theme: "bootstrap",
-  };
-
   constructor(
     private _state: GlobalState,
     private _checkinService: CheckinService,
@@ -190,12 +181,9 @@ export class CheckinComponent implements OnInit {
     private _readIdCardService: ReadIdCardService,
     private _setPaytypeService: SetPaytypeService,
     private _dicService: DicService,
-    private toastyService: ToastyService,
-    private toastyConfig: ToastyConfig,
     private route: ActivatedRoute,
     fb: FormBuilder) {
 
-    this.toastyConfig.position = 'top-center';
     this._state.subscribe('read.idcard', (data) => {
       let newrowdata = _.find(this.selectedHouse, function (o) { return o['houseCode'] == data.code; });
       if (newrowdata) {
@@ -351,13 +339,13 @@ export class CheckinComponent implements OnInit {
   //确认入住
   onConfirm(): void {
     if (!this.checkIn.cusname || !this.checkIn.cusphone || !this.checkIn.idCard || !this.checkIn.inType || !this.checkIn.payType) {
-      this.toastOptions.msg = "请填写完整。";
-      this.toastyService.warning(this.toastOptions);
+      const msg = "请填写完整。";
+      this._state.notifyDataChanged("showMessage.open", { message: msg, type: "warning", time: new Date().getTime() });
       return;
     }
     if (this.selectedHouse.length == 0) {
-      this.toastOptions.msg = "请选择房间。";
-      this.toastyService.warning(this.toastOptions);
+      const msg = "请选择房间。";
+      this._state.notifyDataChanged("showMessage.open", { message: msg, type: "warning", time: new Date().getTime() });
       return;
     }
     this.isSaved = true;
@@ -369,8 +357,8 @@ export class CheckinComponent implements OnInit {
       }
     ).then(
       function (v) {
-        that.toastOptions.msg = "保存成功。";
-        that.toastyService.success(that.toastOptions);
+        const msg = "保存成功。";
+        that._state.notifyDataChanged("showMessage.open", { message: msg, type: "success", time: new Date().getTime() });
         that.isSaved = false;
         that.checkIn.cusname = '';
         that.checkIn.cusphone = '';
@@ -385,9 +373,7 @@ export class CheckinComponent implements OnInit {
         that.selectedGrid.load(that.selectedHouse);
       },
       (err) => {
-        that.toastOptions.title = "保存失败";
-        that.toastOptions.msg = err;
-        that.toastyService.error(that.toastOptions);
+        that._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
         that.isSaved = false;
       }
       )

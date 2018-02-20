@@ -33,7 +33,6 @@ import { UserComponent } from './components/user/user.component';
 import { SelectUserComponent } from './components/selectuser/selectuser.component';
 
 import { Config } from '../../providers/config';
-import { GlobalState } from '../../global.state';
 import { AppState } from '../../app.service';
 import { HttpService } from '../../providers/httpClient';
 import { Common } from '../../providers/common';
@@ -78,10 +77,10 @@ import { ToastyModule } from 'ng2-toasty';
     SetGroupComponent,
     SetAgentComponent,
     SetPaytypeComponent,
-    UserInfoComponent
+    UserInfoComponent,
   ],
   exports: [OrgComponent],
-  providers: [GlobalState, Config, HttpService, AppState, Common]
+  providers: [Config, HttpService, AppState, Common]
 })
 export class SysModule { }
 

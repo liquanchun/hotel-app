@@ -174,22 +174,25 @@ export class MenuComponent implements OnInit, AfterViewInit {
       Icon: value.Icon,
       MenuOrder: value.MenuOrder,
       ParentId: 0,
+      RoleIds:value.Roles
     };
     if (this.isNewMenu) {
       saveMenu.ParentId = this.selectedMenu && this.selectedMenu.data ? this.selectedMenu.data.id : 0;
       this.menuService.create(saveMenu).then(function (menu) {
         that.getNodes();
+        that._state.notifyDataChanged("showMessage.open", { message: "保存成功", type: "success", time: new Date().getTime() });
         that.form.setDisabled('submit', false);
       }, (err) => {
-
+        that._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
       });
     } else {
       saveMenu.ParentId = this.selectedMenu && this.selectedMenu.data ? this.selectedMenu.data.parentId : 0;
       this.menuService.update(this.selectedMenu.data.id, saveMenu).then(function (menu) {
         that.getNodes();
+        that._state.notifyDataChanged("showMessage.open", { message: "保存成功", type: "success", time: new Date().getTime() });
         that.form.setDisabled('submit', false);
       }, (err) => {
-
+        that._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
       });
     }
   }
@@ -201,7 +204,6 @@ export class MenuComponent implements OnInit, AfterViewInit {
   getNodes() {
     const that = this;
     this.menuService.getMenus(function (menus) {
-      console.log(menus);
       that.nodes = menus;
     });
   }
@@ -220,11 +222,12 @@ export class MenuComponent implements OnInit, AfterViewInit {
       this.form.setValue('Icon', this.selectedMenu.data.data.icon);
       if (this.selectedMenu.data.data.roleIds) {
         this.form.setValue('Roles', this.selectedMenu.data.data.roleIds);
+      }else{
+        this.form.setValue('Roles', '');
       }
       this.form.setValue('MenuOrder', this.selectedMenu.data.data.menuOrder);
       this.isNewMenu = false;
     }
-    console.log(event.node);
   }
 
   onNewMenu(tree) {

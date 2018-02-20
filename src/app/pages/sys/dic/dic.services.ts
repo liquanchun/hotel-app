@@ -11,7 +11,6 @@ export class DicService {
   getDics(fnCallBack) {
     const that = this;
     this._httpService.getModelList(this.modelName).then(function (dics) {
-      console.log(dics);
       fnCallBack(that.createTree(dics, 0));
     });
   }

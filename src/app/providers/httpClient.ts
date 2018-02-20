@@ -16,7 +16,11 @@ export class HttpService {
         const url = this.baseUrl + modelName;
         return this.http.get(this.newUrl(url), { headers: this.getHeaders() })
             .toPromise()
-            .then(response => response.json())
+            .then(response => {
+                if (response && response.url.indexOf('TokenAuth') == -1) {
+                    return response.json();
+                }
+            })
             .catch(this.handleError);
     }
 
@@ -57,7 +61,10 @@ export class HttpService {
 
     handleError(error: any): Promise<any> {
         console.error('An error occurred', error); // for demo purposes only
-        return Promise.reject(error.message || error._body || 'Server error');
+        //this._state.notifyDataChanged('http.error', error);
+        //const newError = { ok: error.ok, status: error.status, statusText: error.statusText, url: error.url};
+        //sessionStorage.setItem('http.error', JSON.stringify(newError));
+        return Promise.reject(error.message || error._body || 'Server error ' + error.status);
     }
 
 

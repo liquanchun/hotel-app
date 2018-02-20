@@ -1,5 +1,5 @@
-import { NgModule }      from '@angular/core';
-import { CommonModule }  from '@angular/common';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
@@ -17,6 +17,8 @@ import { MultiselectDropdownModule } from 'angular-2-dropdown-multiselect';
 import { TreeModule } from 'angular-tree-component';
 import { LoadingModule } from 'ngx-loading';
 import { ComponentsModule } from '../components/components.module';
+import { StoreinPrintComponent } from './storein/storeinprint.component';
+import { StoreoutPrintComponent } from './storeout/storeioutprint.component';
 
 import { routing } from './store.routing';
 import { StoreComponent } from './store.component';
@@ -28,8 +30,9 @@ import { StoreinComponent } from './storein/Storein.component';
 import { StoreoutComponent } from './storeout/Storeout.component';
 import { SupplierComponent } from './supplier/Supplier.component';
 import { StoreinNewComponent } from './storein/storeinnew/storeinnew.component';
+import { StoreoutNewComponent } from './storeout/storeoutnew/storeoutnew.component';
 import { SysModule } from './../sys/sys.module';
-import {ToastyModule} from 'ng2-toasty';
+import { ToastyModule } from 'ng2-toasty';
 @NgModule({
   imports: [
     CommonModule,
@@ -56,8 +59,12 @@ import {ToastyModule} from 'ng2-toasty';
     StoreinComponent,
     StoreoutComponent,
     SupplierComponent,
-    StoreinNewComponent
+    StoreinNewComponent,
+    StoreoutNewComponent,
+    StoreinPrintComponent,
+    StoreoutPrintComponent
   ],
-  providers: [GlobalState, Config, HttpService, AppState,Common]
+  entryComponents: [StoreinPrintComponent, StoreoutPrintComponent],
+  providers: [GlobalState, Config, HttpService, AppState, Common]
 })
-export class StoreModule {}
+export class StoreModule { }

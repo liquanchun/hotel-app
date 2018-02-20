@@ -1,0 +1,1 @@
+export * from './serviceitem.component';

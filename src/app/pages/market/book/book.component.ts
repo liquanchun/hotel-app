@@ -4,7 +4,6 @@ import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/fo
 import { LocalDataSource } from 'ng2-smart-table';
 import { HouseinfoService } from '../../house/houseinfo/houseinfo.services';
 import { HouseTypeService } from '../../sys/house-type/house-type.services';
-import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 import { NgbdModalContent } from '../../../modal-content.component'
 import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
 import { BookService } from './book.services';
@@ -184,23 +183,14 @@ export class BookComponent implements OnInit {
   ];
 
   source: LocalDataSource = new LocalDataSource();
-  private toastOptions: ToastOptions = {
-    title: "提示信息",
-    msg: "The message",
-    showClose: true,
-    timeout: 2000,
-    theme: "bootstrap",
-  };
+
   constructor(
     private modalService: NgbModal,
     private bookService: BookService,
     private houseinfoService: HouseinfoService,
     private _houseTypeService: HouseTypeService,
-    private toastyService: ToastyService,
-    private toastyConfig: ToastyConfig,
     private _common: Common,
     private _state: GlobalState) {
-    this.toastyConfig.position = 'top-center';
   }
   ngOnInit() {
     this.getDataList();
@@ -225,13 +215,13 @@ export class BookComponent implements OnInit {
       }
       that.bookService.create(book).then((data) => {
         closeBack();
-        that.toastOptions.msg = "新增成功。";
-        that.toastyService.success(that.toastOptions);
+        const msg = "新增成功。";
+        that._state.notifyDataChanged("showMessage.open", { message: msg, type: "success", time: new Date().getTime() });
         that.getDataList();
       },
         (err) => {
-          that.toastOptions.msg = err;
-          that.toastyService.error(that.toastOptions);
+          that._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
+          
         }
       )
     };
@@ -260,8 +250,8 @@ export class BookComponent implements OnInit {
       this.source.load(data);
     }, (err) => {
       this.loading = false;
-      this.toastOptions.msg = err;
-      this.toastyService.error(this.toastOptions);
+      this._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
+      
     });
   }
 

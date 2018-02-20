@@ -3,7 +3,6 @@ import { NgbModal, ModalDismissReasons, NgbAlert } from '@ng-bootstrap/ng-bootst
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 
 import * as $ from 'jquery';
 import * as _ from 'lodash';
@@ -105,25 +104,14 @@ export class CheckoutComponent implements OnInit {
   //链接过来的房间号
   private checkInCode: string;
 
-  private toastOptions: ToastOptions = {
-    title: "提示信息",
-    msg: "The message",
-    showClose: true,
-    timeout: 2000,
-    theme: "bootstrap",
-  };
-
   constructor(
     private _state: GlobalState,
     private _checkoutService: CheckoutService,
     private _checkinService: CheckinService,
     private _setPaytypeService: SetPaytypeService,
     private _dicService: DicService,
-    private toastyService: ToastyService,
-    private toastyConfig: ToastyConfig,
     private route: ActivatedRoute) {
 
-    this.toastyConfig.position = 'top-center';
   }
 
   ngOnInit() {
@@ -137,8 +125,8 @@ export class CheckoutComponent implements OnInit {
   onSearch(code: string): void {
     this._checkoutService.getCheckouts(code).then((data) => {
       if (!data) {
-        this.toastOptions.msg = '房间不存在。';
-        this.toastyService.error(this.toastOptions);
+        const msg = '房间不存在。';
+        
       } else {
         this.checkIn = data['orderList'][0];
         this.checkIn.houseCode = code;
@@ -147,8 +135,8 @@ export class CheckoutComponent implements OnInit {
       }
     },
       (err) => {
-        this.toastOptions.msg = err;
-        this.toastyService.error(this.toastOptions);
+        this._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
+        
       });
   }
 
@@ -173,13 +161,13 @@ export class CheckoutComponent implements OnInit {
   onConfirm(): void {
     const that = this;
     if(!this.checkIn.orderNo){
-      that.toastOptions.msg = "无订单号";
-      that.toastyService.warning(that.toastOptions);
+      const msg = "无订单号";
+      that._state.notifyDataChanged("showMessage.open", { message: msg, type: "warning", time: new Date().getTime() });
       return;
     }
     if(!this.checkIn.payType){
-      that.toastOptions.msg = "请选择支付方式";
-      that.toastyService.warning(that.toastOptions);
+      const msg = "请选择支付方式";
+      that._state.notifyDataChanged("showMessage.open", { message: msg, type: "warning", time: new Date().getTime() });
       return;
     }
 
@@ -197,8 +185,8 @@ export class CheckoutComponent implements OnInit {
     }
     this._checkoutService.create(cusaccount).then(
       function (v) {
-        that.toastOptions.msg = "保存成功。";
-        that.toastyService.success(that.toastOptions);
+        const msg = "保存成功。";
+        that._state.notifyDataChanged("showMessage.open", { message: msg, type: "success", time: new Date().getTime() });
         that.isSaved = false;
         that.checkIn.cusName = '';
         that.checkIn.cusPhone = '';
@@ -217,9 +205,8 @@ export class CheckoutComponent implements OnInit {
         that.selectedGrid.reset();
       },
       (err) => {
-        that.toastOptions.title = "保存失败";
-        that.toastOptions.msg = err;
-        that.toastyService.error(that.toastOptions);
+        that._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
+        
         that.isSaved = false;
       }
       )

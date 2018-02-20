@@ -1,9 +1,9 @@
 import { Component, ViewChild, OnInit, AfterViewInit, Input } from '@angular/core';
 import { NgbModal, ModalDismissReasons, NgbAlert } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
+import { IMultiSelectOption, IMultiSelectSettings, IMultiSelectTexts } from 'angular-2-dropdown-multiselect';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 import { Common } from '../../../../providers/common';
 import * as $ from 'jquery';
 import * as _ from 'lodash';
@@ -12,6 +12,7 @@ import { StoreinNewService } from './storeinnew.services';
 import { DicService } from '../../../sys/dic/dic.services';
 import { SupplierService } from '../../supplier/supplier.services';
 import { UserService } from '../../../sys/components/user/user.services';
+import { OrgService } from '../../../sys/components/org/org.services';
 
 import { GlobalState } from '../../../../global.state';
 import { GoodsService } from '../../goods/goods.services';
@@ -22,23 +23,26 @@ import { ReturnStatement } from '@angular/compiler/src/output/output_ast';
   selector: 'app-storeinnew',
   templateUrl: './storeinnew.component.html',
   styleUrls: ['./storeinnew.component.scss'],
-  providers: [StoreinNewService, DicService, GoodsService, SupplierService, UserService],
+  providers: [StoreinNewService, DicService, GoodsService, SupplierService, UserService, OrgService],
 })
 export class StoreinNewComponent implements OnInit {
   @Input() showEditButton: boolean = true;
   title = '新增商品入库';
   isSaved: boolean = false;
-
+  isEnable: boolean = true;
   storeIn: any = {
     typeId: 0,
     inTime: '',
-    supplierId: 0,
+    inTimeNg: {},
+    supplierId: '',
+    supplierIdNg: [],
     storeId: '',
-    orgid: 0,
+    orgid: '',
+    orgidNg: [],
     orgtext: '',
-    operator: '',
+    operator: 0,
     amount: 0,
-    billNo: '',
+    orderNo: '',
     remark: ''
   };
   //选择的行
@@ -49,12 +53,12 @@ export class StoreinNewComponent implements OnInit {
   inType: any = [];
   //供应商
   suppliers: any = [];
-  //操作人
-  operator: any = [];
   //用户
   users: any = [];
   //商品类别
   goodsType: any = [];
+  //采购人
+  operatorList = [];
   //商品信息
   goodsInfo: any = [];
   //选中的商品信息
@@ -92,13 +96,18 @@ export class StoreinNewComponent implements OnInit {
         editable: false
       },
       unit: {
-        title: '单位规格',
+        title: '商品型号',
         type: 'string',
         filter: false,
         editable: false
       },
+      goodssite: {
+        title: '货位',
+        type: 'string',
+        filter: false
+      },
       goodscode: {
-        title: '编码',
+        title: '商品编码',
         type: 'string',
         filter: false
       },
@@ -109,6 +118,11 @@ export class StoreinNewComponent implements OnInit {
       },
       number: {
         title: '数量',
+        type: 'number',
+        filter: false
+      },
+      remark: {
+        title: '备注',
         type: 'number',
         filter: false
       },
@@ -149,14 +163,27 @@ export class StoreinNewComponent implements OnInit {
     }
   };
 
-
-  private toastOptions: ToastOptions = {
-    title: "提示信息",
-    msg: "The message",
-    showClose: true,
-    timeout: 2000,
-    theme: "bootstrap",
+  myOptions: IMultiSelectOption[];
+  myOptionsOper: IMultiSelectOption[];
+  myOptionsSup: IMultiSelectOption[];
+  mySettings: IMultiSelectSettings = {
+    enableSearch: true,
+    checkedStyle: 'fontawesome',
+    buttonClasses: 'btn btn-default btn-block',
+    dynamicTitleMaxItems: 3,
+    selectionLimit: 1,
+    autoUnselect: true,
   };
+  mySettingsOper: IMultiSelectSettings = {
+    enableSearch: true,
+    checkedStyle: 'fontawesome',
+    buttonClasses: 'btn btn-default btn-block',
+    dynamicTitleMaxItems: 3,
+  };
+  myTexts: IMultiSelectTexts = {
+    defaultTitle: '--选择--',
+    searchPlaceholder: '查询...'
+  }
 
   constructor(
     private _common: Common,
@@ -166,18 +193,21 @@ export class StoreinNewComponent implements OnInit {
     private _supplierService: SupplierService,
     private _userService: UserService,
     private _dicService: DicService,
-    private toastyService: ToastyService,
-    private toastyConfig: ToastyConfig,
+    private _orgService: OrgService,
     private _router: Router,
     private route: ActivatedRoute) {
 
-    this.toastyConfig.position = 'top-center';
   }
   ngOnInit() {
     this.getDataList();
-    this.storeIn.inTime = this._common.getTodayObj();
+    this.getOrderNo();
+    this.storeIn.inTimeNg = this._common.getTodayObj();
   }
-
+  getOrderNo(): void {
+    this._storeinNewService.getOrderNo().then((data) => {
+      this.storeIn.orderNo = data['data'];
+    });
+  }
   getDataList(): void {
     this._goodsService.getGoodss().then((data) => {
       this.popGrid.load(data);
@@ -188,10 +218,21 @@ export class StoreinNewComponent implements OnInit {
       _.each(data, f => {
         that.suppliers.push({ id: f.id, name: f.name });
       })
+      this.myOptionsSup = this.suppliers;
     });
     this._userService.getUsers().then((data) => {
       this.users = data;
     });
+
+    this._orgService.getAll().then((data) => {
+      const that = this;
+      const optData = [];
+      _.each(data, f => {
+        optData.push({ id: f['id'], name: f['deptName'] });
+      });
+      this.myOptions = optData;
+    });
+
     this._dicService.getDicByName('仓库', (data) => { this.stores = data; });
     this._dicService.getDicByName('入库类型', (data) => { this.inType = data; });
     this._dicService.getDicByName('商品类别', (data) => { this.goodsType = data; });
@@ -200,7 +241,7 @@ export class StoreinNewComponent implements OnInit {
   //选择房间
   rowClicked(event): void {
     if (event.isSelected) {
-      if (!_.some(this.selectedGoods, ['id', event.data.id])) {
+      if (!_.some(this.selectedGoods, ['name', event.data.name])) {
         this.selectedGoods.push(
           {
             goodsTypeId: event.data.typeId,
@@ -215,22 +256,26 @@ export class StoreinNewComponent implements OnInit {
       }
     } else {
       _.remove(this.selectedGoods, function (n) {
-        return n['id'] == event.data.id;
+        return n['name'] == event.data.name;
       });
     }
-    this.refreshTable();
+    this.isEnable = this.selectedGoods.length == 0;
+    this.selectedGrid.load(this.selectedGoods);
+    this.storeIn.amount = _.sumBy(this.selectedGoods, function (o) { return o['amount']; });
   }
   //刷新表格数据
   refreshTable() {
-    this.storeIn.amount = _.sumBy(this.selectedGoods, function (o) { return o['amount']; });
-    this.selectedGrid.load(this.selectedGoods);
+    this.selectedGrid.refresh();
+    //this.storeIn.amount = _.sumBy(this.selectedGoods, function (o) { return o['amount']; });
+    //this.selectedGrid.load(this.selectedGoods);
   }
   // 删除
   onDeleteConfirm(event): void {
     if (window.confirm('你确定要删除吗?')) {
       _.remove(this.selectedGoods, function (n) {
-        return n['id'] == event.data.id;
+        return n['name'] == event.data.name;
       });
+      this.isEnable = this.selectedGoods.length == 0;
       this.refreshTable();
       event.confirm.resolve();
     } else {
@@ -238,13 +283,28 @@ export class StoreinNewComponent implements OnInit {
     }
   }
   onEditConfirm(event): void {
-    _.remove(this.selectedGoods, function (n) {
-      return n['id'] == event.data.id;
-    });
-    event.newData['amount'] = event.newData['price'] * event.newData['number'];
-    this.selectedGoods.push(event.newData);
-    this.refreshTable();
+    // _.remove(this.selectedGoods, function (n) {
+    //   return n['id'] == event.data.id;
+    // });
+    // event.newData['amount'] = event.newData['price'] * event.newData['number'];
+    // this.selectedGoods.push(event.newData);
+    // _.each(this.selectedGoods, f => {
+    //   if (f['id'] == event.data.id) {
+    //     f['amount'] = _.toNumber((_.toNumber(event.newData['price']) * _.toNumber(event.newData['number'])).toFixed(2));
+    //   }
+    // });
+    const dt = { that: this, data: event.newData };
     event.confirm.resolve();
+    _.delay(function (dt) {
+      const that = dt.that;
+      _.each(that.selectedGoods, f => {
+        if (f['name'] == event.data.name) {
+          f['amount'] = _.toNumber((_.toNumber(dt.data['price']) * _.toNumber(dt.data['number'])).toFixed(2));
+        }
+      });
+      that.selectedGrid.load(that.selectedGoods);
+      that.storeIn.amount = _.sumBy(that.selectedGoods, function (o) { return o['amount']; });
+    }, 50, dt);
   }
 
   onUserRowSelect(event) {
@@ -274,7 +334,7 @@ export class StoreinNewComponent implements OnInit {
   }
 
   onChange(event) {
-    this.onSearch(event.target.value);
+    this.onSelectGoodsType(event.target.value);
   }
   onKeyPress(event: any) {
     event.returnValue = false;
@@ -285,38 +345,45 @@ export class StoreinNewComponent implements OnInit {
     //   event.returnValue = false;
     // }
   }
-  onSelectedOrg(org) {
-    if (org) {
-      this.storeIn.orgid = org.id;
-      this.storeIn.orgtext = org.name;
+  onSelectedOrg(orgId) {
+    if (orgId) {
+      this.storeIn.orgid = orgId;
+      //this.storeIn.orgtext = org.name;
       const that = this;
-      const orguser = _.filter(this.users, f => { return f['orgId'] == org.id; });
-      that.operator = [];
+      const orguser = _.filter(this.users, f => { return f['orgId'] == orgId; });
+      this.operatorList = [];
       _.each(orguser, f => {
-        that.operator.push({ id: f['userId'], name: f['userName'] });
+        that.operatorList.push({ id: f['id'], name: f['userName'] });
       })
+      //that.myOptionsOper = operatorList;
     }
   }
-  onBack(){
+  //选择部门
+  onChangeOrg(event) {
+    this.onSelectedOrg(event[0]);
+  }
+  onBack() {
     this._router.navigate(['/pages/store/storein']);
   }
   //确认入住
   onConfirm(): void {
-    if (!this.storeIn.typeId || !this.storeIn.inTime || !this.storeIn.billNo
-      || !this.storeIn.supplierId || !this.storeIn.storeId
-      || !this.storeIn.orgid || !this.storeIn.operator) {
-      this.toastOptions.msg = "请填写完整。";
-      this.toastyService.warning(this.toastOptions);
+    if (!this.storeIn.typeId || !this.storeIn.inTimeNg || !this.storeIn.orderNo
+      || !this.storeIn.supplierIdNg || !this.storeIn.storeId
+      || !this.storeIn.orgidNg || !this.storeIn.operator) {
+      const msg = "请填写完整。";
+      this._state.notifyDataChanged("showMessage.open", { message: msg, type: "warning", time: new Date().getTime() });
       return;
     }
     if (this.selectedGoods.length == 0) {
-      this.toastOptions.msg = "请选择商品。";
-      this.toastyService.warning(this.toastOptions);
+      const msg = "请选择商品。";
+      this._state.notifyDataChanged("showMessage.open", { message: msg, type: "warning", time: new Date().getTime() });
       return;
     }
     this.isSaved = true;
     const that = this;
-    this.storeIn.inTime = this._common.getDateString(this.storeIn.inTime);
+    this.storeIn.inTime = this._common.getDateString(this.storeIn.inTimeNg);
+    this.storeIn.orgid = _.toString(this.storeIn.orgidNg);
+    this.storeIn.supplierId = _.toString(this.storeIn.supplierIdNg);
     console.log(this.storeIn);
     console.log(this.selectedGoods);
     this._storeinNewService.create(
@@ -326,25 +393,18 @@ export class StoreinNewComponent implements OnInit {
       }
     ).then(
       function (v) {
-        that.toastOptions.msg = "保存成功。";
-        that.toastyService.success(that.toastOptions);
+        const msg = "保存成功。";
+        that._state.notifyDataChanged("showMessage.open", { message: msg, type: "success", time: new Date().getTime() });
         that.isSaved = false;
-        that.storeIn.inType = '';
-        that.storeIn.inTime = '';
-        that.storeIn.supplierId = '';
-        that.storeIn.storeCode = '';
-        that.storeIn.orgid = 0;
-        that.storeIn.orgtext = '';
-        that.storeIn.operator = '';
         that.storeIn.amount = 0;
-        that.storeIn.billNo = '';
         that.selectedGoods = [];
+        that.isEnable = true;
         that.selectedGrid.load(that.selectedGoods);
+        that.getOrderNo();
       },
       (err) => {
-        that.toastOptions.title = "保存失败";
-        that.toastOptions.msg = err;
-        that.toastyService.error(that.toastOptions);
+        that._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
+        
         that.isSaved = false;
       }
       )

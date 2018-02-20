@@ -1,7 +1,8 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
-import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
+import { IMultiSelectOption, IMultiSelectSettings, IMultiSelectTexts } from 'angular-2-dropdown-multiselect';
+import { OrgService } from '../../sys/components/org/org.services';
 import { LocalDataSource } from 'ng2-smart-table';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { StoreinService } from './storein.services';
@@ -9,7 +10,7 @@ import { SupplierService } from '../supplier/supplier.services';
 import { DicService } from '../../sys/dic/dic.services';
 import { GlobalState } from '../../../global.state';
 import { Common } from '../../../providers/common';
-
+import { StoreinPrintComponent } from './storeinprint.component';
 import * as $ from 'jquery';
 import * as _ from 'lodash';
 
@@ -17,7 +18,7 @@ import * as _ from 'lodash';
   selector: 'app-storein',
   templateUrl: './storein.component.html',
   styleUrls: ['./storein.component.scss'],
-  providers: [StoreinService, DicService, SupplierService],
+  providers: [StoreinService, DicService, SupplierService, OrgService],
 })
 export class StoreinComponent implements OnInit {
 
@@ -26,6 +27,9 @@ export class StoreinComponent implements OnInit {
   query: string = '';
 
   settings = {
+    pager: {
+      perPage: 15
+    },
     mode: 'external',
     actions: {
       columnTitle: '操作'
@@ -52,11 +56,6 @@ export class StoreinComponent implements OnInit {
       },
       inTime: {
         title: '采购日期',
-        type: 'string',
-        filter: false,
-      },
-      billNo: {
-        title: '采购单号',
         type: 'string',
         filter: false,
       },
@@ -105,6 +104,16 @@ export class StoreinComponent implements OnInit {
         type: 'string',
         filter: false
       },
+      button: {
+        title: '打印',
+        type: 'custom',
+        renderComponent: StoreinPrintComponent,
+        onComponentInitFunction(instance) {
+          instance.save.subscribe(row => {
+            alert(`${row.orderNo} saved!`)
+          });
+        },
+      }
     }
   };
 
@@ -124,7 +133,12 @@ export class StoreinComponent implements OnInit {
         filter: false
       },
       goodscode: {
-        title: '编号',
+        title: '编码',
+        type: 'string',
+        filter: false,
+      },
+      goodssite: {
+        title: '货位',
         type: 'string',
         filter: false,
       },
@@ -142,7 +156,12 @@ export class StoreinComponent implements OnInit {
         title: '金额',
         type: 'number',
         filter: false
-      }
+      },
+      remark: {
+        title: '备注',
+        type: 'string',
+        filter: false,
+      },
     }
   };
 
@@ -161,25 +180,58 @@ export class StoreinComponent implements OnInit {
   //组织架构
   orgName: any = '';
 
-  private toastOptions: ToastOptions = {
-    title: "提示信息",
-    msg: "The message",
-    showClose: true,
-    timeout: 2000,
-    theme: "bootstrap",
+  selectedSup = [];
+  selectedOrg = [];
+
+  myOptionsSup: IMultiSelectOption[];
+  myOptions: IMultiSelectOption[];
+  mySettings: IMultiSelectSettings = {
+    enableSearch: true,
+    checkedStyle: 'fontawesome',
+    buttonClasses: 'btn btn-default btn-block',
+    dynamicTitleMaxItems: 3,
+    selectionLimit: 1,
+    autoUnselect: true,
   };
+  myTextsOrg: IMultiSelectTexts = {
+    defaultTitle: '--选择部门--',
+    searchPlaceholder: '查询...'
+  }
+  myTexts: IMultiSelectTexts = {
+    defaultTitle: '--选择供应商--',
+    searchPlaceholder: '查询...'
+  }
+
+  printOrder: any = {
+    orderNo: '',
+    typeIdTxt: '',
+    inTime: '',
+    orgIdTxt: '',
+    operatorTxt: '',
+    createdBy: '',
+    supplierIdTxt: '',
+    amount: 0
+  };
+  printOrderDetail = [];
 
   constructor(
     private storeinService: StoreinService,
     private _dicService: DicService,
     private _common: Common,
     private _router: Router,
-    private toastyService: ToastyService,
-    private toastyConfig: ToastyConfig,
     private _supplierService: SupplierService,
+    private _orgService: OrgService,
     private modalService: NgbModal,
     private _state: GlobalState) {
-    this.toastyConfig.position = 'top-center';
+
+    this._state.subscribe('print.storein', (data) => {
+      this.printOrder = _.find(this.storeInData, f => { return f['id'] == data.id; });
+      this.printOrderDetail = _.filter(this.storeInDetailData, f => { return f['orderno'] == this.printOrder.orderNo; });
+      _.delay(function (that) {
+        that.print();
+      }, 300, this);
+    });
+
   }
   ngOnInit() {
     this.getDataList();
@@ -195,8 +247,8 @@ export class StoreinComponent implements OnInit {
   }
   showPopOrg(event): void {
     _.delay(function (text) {
-      $(".popover").css("max-width", "320px");
-      $(".popover").css("min-width", "200px");
+      $(".popover").css("max-width", "380px");
+      $(".popover").css("min-width", "300px");
     }, 100, 'later');
   }
   //查看明细
@@ -207,17 +259,17 @@ export class StoreinComponent implements OnInit {
   onDelete(event) {
     if (window.confirm('你确定要作废吗?')) {
       if (event.data.status == '作废') {
-        this.toastOptions.msg = "该入库单已经作废，不能操作。";
-        this.toastyService.warning(this.toastOptions);
+        const msg = "该入库单已经作废，不能操作。";
+        this._state.notifyDataChanged("showMessage.open", { message: msg, type: "warning", time: new Date().getTime() });
         return;
       }
       this.storeinService.cancel(event.data.id).then((data) => {
-        this.toastOptions.msg = "作废成功。";
-        this.toastyService.success(this.toastOptions);
+        const msg = "作废成功。";
+        this._state.notifyDataChanged("showMessage.open", { message: msg, type: "success", time: new Date().getTime() });
         this.getDataList();
       }, (err) => {
-        this.toastOptions.msg = err;
-        this.toastyService.error(this.toastOptions);
+        this._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
+        
       });
     }
   }
@@ -241,6 +293,22 @@ export class StoreinComponent implements OnInit {
   onStoresChange(store) {
     if (store.target.value) {
       this.source.load(_.filter(this.storeInData, f => { return f['storeId'] == store.target.value }));
+    } else {
+      this.source.load(this.storeInData);
+    }
+  }
+
+  onChange(event) {
+    if (event && event.length > 0) {
+      this.source.load(_.filter(this.storeInData, f => { return f['supplierId'] == event[0] }));
+    } else {
+      this.source.load(this.storeInData);
+    }
+  }
+
+  onChangeOrg(event) {
+    if (event && event.length > 0) {
+      this.source.load(_.filter(this.storeInData, f => { return f['orgId'] == event[0] }));
     } else {
       this.source.load(this.storeInData);
     }
@@ -275,22 +343,34 @@ export class StoreinComponent implements OnInit {
       _.each(data, f => {
         that.suppliers.push({ id: f.id, name: f.name });
       })
+      this.myOptionsSup = this.suppliers;
+    });
+    this._orgService.getAll().then((data) => {
+      const that = this;
+      const optData = [];
+      _.each(data, f => {
+        optData.push({ id: f['id'], name: f['deptName'] });
+      });
+      this.myOptions = optData;
     });
 
     this.loading = true;
     this.storeinService.getStoreins().then((data) => {
-      if (data) {
+      this.loading = false;
+      if (data && data['storeInDetailList']) {
         const that = this;
         this.storeInDetailData = data['storeInDetailList'];
         this.storeInData = data['storeInList'];
-        _.each(this.storeInData, f => { f['inTime'] = that._common.getSplitDate(f['inTime']); });
+        _.each(this.storeInData, f => {
+          f['inTime'] = that._common.getSplitDate(f['inTime']);
+          f['button'] = f['id'];
+        });
         this.source.load(this.storeInData);
-        this.loading = false;
       }
     }, (err) => {
       this.loading = false;
-      this.toastOptions.msg = err;
-      this.toastyService.error(this.toastOptions);
+      this._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
+      
     });
   }
 
@@ -298,14 +378,48 @@ export class StoreinComponent implements OnInit {
 
     let printContents, popupWin;
     printContents = document.getElementById('printDiv').innerHTML;
-    popupWin = window.open('', '_blank', 'top=0,left=0,height=100%,width=auto');
+    popupWin = window.open('', '_blank', 'top=0,left=0,height=978px,width=1080px');
     popupWin.document.open();
     popupWin.document.write(`
       <html>
         <head>
-          <title>采购入库单</title>
+          <title style="font-size: 30px;"></title>
           <style>
-          //........Customized style.......
+          title{
+            
+          }
+          .firstTable td {
+            border: none;
+            padding: 8px;
+          }
+          
+          .firstTable {
+            width: 680px;
+            border-collapse: collapse;
+          }
+          
+          .secondtable {
+            width: 680px;
+            border-collapse: collapse;
+          }
+          
+          .secondtable td {
+            padding: 8px;
+            border: 1px solid black;
+          }
+          
+          .secondtable thead {
+            font-weight: bold;
+          }
+          
+          .secondtable .footer {
+            font-weight: bold;
+          }
+          p{
+            text-align: center;
+            font-size:30px;
+            width: 680px;
+          }
           </style>
         </head>
         <body onload="window.print();window.close()">${printContents}</body>

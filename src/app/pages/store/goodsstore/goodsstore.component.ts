@@ -1,7 +1,6 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
-import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 import { LocalDataSource } from 'ng2-smart-table';
 
 import { DicService } from '../../sys/dic/dic.services';
@@ -21,21 +20,17 @@ import * as _ from 'lodash';
 export class GoodsstoreComponent implements OnInit {
 
   loading = false;
-  title = '货品库存';
+  title = '商品库存';
   query: string = '';
 
   settings = {
+    pager: {
+      perPage: 15
+    },
     actions: false,
     mode: 'external',
     hideSubHeader: true,
     columns: {
-      id: {
-        title: 'ID',
-        type: 'number',
-        editable: false,
-        filter: false,
-        width: '30px',
-      },
       storeIdTxt: {
         title: '仓库',
         type: 'string',
@@ -49,11 +44,15 @@ export class GoodsstoreComponent implements OnInit {
       goodsIdTxt: {
         title: '商品',
         type: 'string',
-        width: '80px',
       },
       number: {
         title: '库存量',
         type: 'number',
+        filter: false,
+      },
+      goodsSite: {
+        title: '货位',
+        type: 'string',
         filter: false,
       },
       amount: {
@@ -74,14 +73,6 @@ export class GoodsstoreComponent implements OnInit {
     }
   };
 
-  private toastOptions: ToastOptions = {
-    title: "提示信息",
-    msg: "The message",
-    showClose: true,
-    timeout: 2000,
-    theme: "bootstrap",
-  };
-
   source: LocalDataSource = new LocalDataSource();
   //仓库
   stores: any = [];
@@ -91,8 +82,6 @@ export class GoodsstoreComponent implements OnInit {
   constructor(
     private goodsstoreService: GoodsstoreService,
     private _dicService: DicService,
-    private toastyService: ToastyService,
-    private toastyConfig: ToastyConfig,
     private _common: Common,
     private _state: GlobalState) {
   }
@@ -134,8 +123,8 @@ export class GoodsstoreComponent implements OnInit {
       this.loading = false;
     }, (err) => {
       this.loading = false;
-      this.toastOptions.msg = err;
-      this.toastyService.error(this.toastOptions);
+      this._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
+      
     });
   }
 }

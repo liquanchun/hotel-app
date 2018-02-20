@@ -4,7 +4,6 @@ import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/fo
 import { LocalDataSource } from 'ng2-smart-table';
 import { ViewCell } from 'ng2-smart-table';
 import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
-import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 
 import { NgbdModalContent } from '../../../modal-content.component'
 import { ButtonViewComponent } from './buttonview.component';
@@ -174,21 +173,11 @@ export class CusgoodsComponent implements OnInit {
   cusgoods: any;
   selectedEvent: any;
 
-  private toastOptions: ToastOptions = {
-    title: "提示信息",
-    msg: "The message",
-    showClose: true,
-    timeout: 2000,
-    theme: "bootstrap",
-  };
   constructor(
     private modalService: NgbModal,
     private cusgoodsService: CusgoodsService,
     private _common: Common,
-    private toastyService: ToastyService,
-    private toastyConfig: ToastyConfig,
     private _state: GlobalState) {
-    this.toastyConfig.position = 'top-center';
 
     this._state.subscribe('cusgoods.click', (data) => {
       this.onTake(_.find(this.cusgoods, f => { return f['id'] = data; }));
@@ -208,13 +197,12 @@ export class CusgoodsComponent implements OnInit {
     modalRef.componentInstance.saveFun = (result, closeBack) => {
       that.cusgoodsService.create(JSON.parse(result)).then((data) => {
         closeBack();
-        that.toastOptions.msg = "新增成功。";
-        that.toastyService.success(that.toastOptions);
+        const msg = "新增成功。";
+        that._state.notifyDataChanged("showMessage.open", { message: msg, type: "success", time: new Date().getTime() });
         that.getDataList();
       },
         (err) => {
-          that.toastOptions.msg = err;
-          that.toastyService.error(that.toastOptions);
+          that._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
         }
       )
     };
@@ -227,13 +215,12 @@ export class CusgoodsComponent implements OnInit {
     modalRef.componentInstance.saveFun = (result, closeBack) => {
       that.cusgoodsService.update(event.data.id, JSON.parse(result)).then((data) => {
         closeBack();
-        that.toastOptions.msg = "修改成功。";
-        that.toastyService.success(that.toastOptions);
+        const msg = "修改成功。";
+        that._state.notifyDataChanged("showMessage.open", { message: msg, type: "success", time: new Date().getTime() });
         that.getDataList();
       },
         (err) => {
-          that.toastOptions.msg = err;
-          that.toastyService.error(that.toastOptions);
+          that._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
         }
       )
     };
@@ -242,13 +229,13 @@ export class CusgoodsComponent implements OnInit {
     event.takeBy = 'admin';
     const that = this;
     that.cusgoodsService.update(event.id, event).then((data) => {
-      that.toastOptions.msg = "领取成功。";
-      that.toastyService.success(that.toastOptions);
+      const msg = "领取成功。";
+      that._state.notifyDataChanged("showMessage.open", { message: msg, type: "success", time: new Date().getTime() });
       that.getDataList();
     },
       (err) => {
-        that.toastOptions.msg = err;
-        that.toastyService.error(that.toastOptions);
+        that._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
+        
       }
     )
   }
@@ -256,12 +243,12 @@ export class CusgoodsComponent implements OnInit {
   onDelete(event) {
     if (window.confirm('你确定要删除吗?')) {
       this.cusgoodsService.delete(event.data.id).then((data) => {
-        this.toastOptions.msg = "删除成功。";
-        this.toastyService.success(this.toastOptions);
+        const msg = "删除成功。";
+        this._state.notifyDataChanged("showMessage.open", { message: msg, type: "success", time: new Date().getTime() });
         this.getDataList();
       }, (err) => {
-        this.toastOptions.msg = err;
-        this.toastyService.error(this.toastOptions);
+        this._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
+        
       });
     }
   }
@@ -286,8 +273,8 @@ export class CusgoodsComponent implements OnInit {
       this.source.load(data);
     }, (err) => {
       this.loading = false;
-      this.toastOptions.msg = err;
-      this.toastyService.error(this.toastOptions);
+      this._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
+      
     });
   }
 }

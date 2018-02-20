@@ -5,7 +5,6 @@ import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/fo
 import { LocalDataSource } from 'ng2-smart-table';
 import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
 import { NgbdModalContent } from '../../../modal-content.component'
-import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 import { SendsetService } from './sendset.services';
 import { GlobalState } from '../../../global.state';
 import { Common } from '../../../providers/common';
@@ -26,21 +25,12 @@ export class SendsetComponent implements OnInit, AfterViewInit {
   query: string = '';
   smsurl: string = '';
   account = 100;
-  private toastOptions: ToastOptions = {
-    title: "提示信息",
-    msg: "The message",
-    showClose: true,
-    timeout: 2000,
-    theme: "bootstrap",
-  };
+
   constructor(
     private modalService: NgbModal,
     private sendsetService: SendsetService,
     private _common: Common,
-    private toastyService: ToastyService,
-    private toastyConfig: ToastyConfig,
     private _state: GlobalState) {
-      this.toastyConfig.position = 'top-center';
   }
   ngOnInit() {
     this.getDataList();
@@ -55,20 +45,20 @@ export class SendsetComponent implements OnInit, AfterViewInit {
         this.smsurl = ss.ipAddress;
       }
     }, (err) => {
-      this.toastOptions.msg = err;
-      this.toastyService.error(this.toastOptions);
+      this._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
+      
     });
   }
 
   saveSet() {
     const that = this;
     that.sendsetService.create({ iPAddress: this.smsurl }).then((data) => {
-      that.toastOptions.msg = "保存成功。";
-      that.toastyService.success(that.toastOptions);
+      const msg = "保存成功。";
+      that._state.notifyDataChanged("showMessage.open", { message: msg, type: "success", time: new Date().getTime() });
     },
       (err) => {
-        that.toastOptions.msg = err;
-        that.toastyService.error(that.toastOptions);
+        that._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
+        
       }
     )
   }

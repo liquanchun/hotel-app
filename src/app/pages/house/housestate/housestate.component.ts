@@ -4,7 +4,6 @@ import { NgbModal, ModalDismissReasons, NgbActiveModal } from '@ng-bootstrap/ng-
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { NgbdModalContent } from '../../../modal-content.component'
 import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
-import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 import { UserService } from './../../sys/components/user/user.services';
 
 import { HousestateService } from './housestate.services';
@@ -91,24 +90,13 @@ export class HousestateComponent implements OnInit, AfterViewInit {
     }
   ];
 
-  private toastOptions: ToastOptions = {
-    title: "提示信息",
-    msg: "The message",
-    showClose: true,
-    timeout: 2000,
-    theme: "bootstrap",
-  };
-
   constructor(
     private modalService: NgbModal,
     private housestateService: HousestateService,
     private _dicService: DicService,
     private _common: Common,
-    private toastyService: ToastyService,
-    private toastyConfig: ToastyConfig,
     private _userService: UserService,
     private _state: GlobalState) {
-    this.toastyConfig.position = 'top-center';
     this.onGetUsers();
   }
   ngOnInit() {
@@ -155,13 +143,13 @@ export class HousestateComponent implements OnInit, AfterViewInit {
       clr.createdBy = state;
       that.housestateService.clear(clr).then((data) => {
         closeBack();
-        that.toastOptions.msg = "新增成功。";
-        that.toastyService.success(that.toastOptions);
+        const msg = "新增成功。";
+        that._state.notifyDataChanged("showMessage.open", { message: msg, type: "success", time: new Date().getTime() });
         that.getDataList();
       },
         (err) => {
-          that.toastOptions.msg = err;
-          that.toastyService.error(that.toastOptions);
+          that._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
+          
         }
       )
     };
@@ -179,13 +167,13 @@ export class HousestateComponent implements OnInit, AfterViewInit {
       rpi.createdBy = state;
       that.housestateService.repair(rpi).then((data) => {
         closeBack();
-        that.toastOptions.msg = "新增成功。";
-        that.toastyService.success(that.toastOptions);
+        const msg = "新增成功。";
+        that._state.notifyDataChanged("showMessage.open", { message: msg, type: "success", time: new Date().getTime() });
         that.getDataList();
       },
         (err) => {
-          that.toastOptions.msg = err;
-          that.toastyService.error(that.toastOptions);
+          that._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
+          
         }
       )
     };

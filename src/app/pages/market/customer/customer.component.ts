@@ -2,7 +2,6 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
 import { NgbdModalContent } from '../../../modal-content.component';
 import { CustomerService } from './customer.services';
@@ -148,22 +147,13 @@ export class CustomerComponent implements OnInit {
 
 
   source: LocalDataSource = new LocalDataSource();
-  private toastOptions: ToastOptions = {
-    title: "提示信息",
-    msg: "The message",
-    showClose: true,
-    timeout: 2000,
-    theme: "bootstrap",
-  };
-  
+
+
   constructor(
     private modalService: NgbModal,
     private customerService: CustomerService,
     private _common: Common,
-    private toastyService: ToastyService,
-    private toastyConfig: ToastyConfig,
     private _state: GlobalState) {
-    this.toastyConfig.position = 'top-center';
   }
   ngOnInit() {
     this.getDataList();
@@ -185,13 +175,13 @@ export class CustomerComponent implements OnInit {
     modalRef.componentInstance.saveFun = (result, closeBack) => {
       that.customerService.update(event.data.id, JSON.parse(result)).then((data) => {
           closeBack();
-          that.toastOptions.msg = "修改成功。";
-          that.toastyService.success(that.toastOptions);
+          const msg = "修改成功。";
+          that._state.notifyDataChanged("showMessage.open", { message: msg, type: "success", time: new Date().getTime() });
           that.getDataList();
         },
         (err) => {
-          that.toastOptions.msg = err;
-          that.toastyService.error(that.toastOptions);
+          that._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
+          
         }
       )
     };
@@ -203,8 +193,8 @@ export class CustomerComponent implements OnInit {
       this.source.load(data);
     }, (err) => {
       this.loading = false;
-      this.toastOptions.msg = err;
-      this.toastyService.error(this.toastOptions);
+      this._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
+      
     });
   }
 }

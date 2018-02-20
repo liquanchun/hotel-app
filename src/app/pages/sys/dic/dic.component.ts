@@ -1,7 +1,6 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
-import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 import { TreeNode, TreeModel, TREE_ACTIONS, KEYS, IActionMapping, ITreeOptions } from 'angular-tree-component';
 import { DicService } from './dic.services';
 import { GlobalState } from '../../../global.state';
@@ -81,21 +80,10 @@ export class DicComponent implements OnInit, AfterViewInit {
     animateAcceleration: 1.2,
   };
 
-  private toastOptions: ToastOptions = {
-    title: "提示信息",
-    msg: "The message",
-    showClose: true,
-    timeout: 2000,
-    theme: "bootstrap",
-  };
-
   constructor(private modalService: NgbModal,
     fb: FormBuilder,
     private dicService: DicService,
-    private toastyService: ToastyService,
-    private toastyConfig: ToastyConfig, 
     private _state: GlobalState) {
-      this.toastyConfig.position = 'top-center';
   }
   ngOnInit() {
     this.isNewDic = true;
@@ -108,7 +96,6 @@ export class DicComponent implements OnInit, AfterViewInit {
   getNodes() {
     const that = this;
     this.dicService.getDics(function (dics) {
-      console.log(dics);
       that.nodes = dics;
     });
   }
@@ -121,7 +108,6 @@ export class DicComponent implements OnInit, AfterViewInit {
     if (event.eventName === 'focus') {
       this.selectedDic = event.node;
     }
-    console.log(event);
   }
 
   onSaveDic(tree) {
@@ -135,16 +121,14 @@ export class DicComponent implements OnInit, AfterViewInit {
           .create(focusNode ? focusNode.data.id : 0, this.newDicName)
           .then(function (role) {
             that.getNodes();
-            that.newDicName = '';
-            that.toastOptions.msg = "新增成功。";
-            that.toastyService.success(that.toastOptions);
+            sessionStorage.setItem('message', 'session');
+            that._state.notifyDataChanged("showMessage.open", { message: "保存成功", type: "success", time: new Date().getTime() });
           }, (err) => {
-            that.toastOptions.msg = err;
-            that.toastyService.error(that.toastOptions);
+            that._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
           });
       } else {
-        that.toastOptions.msg = '子节点名称不能为空。';
-        that.toastyService.error(that.toastOptions);
+        const msg = '子节点名称不能为空。';
+        that._state.notifyDataChanged("showMessage.open", { message: msg, type: "error", time: new Date().getTime() });
       }
     }
   }
@@ -153,23 +137,22 @@ export class DicComponent implements OnInit, AfterViewInit {
     const focusNode = tree.treeModel.getFocusedNode();
     if (focusNode) {
       if (focusNode.data.children.length > 0) {
-        this.toastOptions.msg = "选择的节点有子节点，不能删除。";
-        this.toastyService.warning(this.toastOptions);
+        const msg = "选择的节点有子节点，不能删除。";
+        this._state.notifyDataChanged("showMessage.open", { message: msg, type: "warning", time: new Date().getTime() });
       } else {
         if (window.confirm('你确定要删除吗?')) {
           this.dicService.delete(focusNode.data.id).then((data) => {
-            this.toastOptions.msg = "删除成功。";
-            this.toastyService.success(this.toastOptions);
+            const msg = "删除成功。";
+            this._state.notifyDataChanged("showMessage.open", { message: msg, type: "success", time: new Date().getTime() });
             this.getNodes();
           }, (err) => {
-            this.toastOptions.msg = err;
-            this.toastyService.error(this.toastOptions);
+            this._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
           });
         }
       }
     } else {
-      this.toastOptions.msg = "请选择你要删除的子节点。";
-      this.toastyService.warning(this.toastOptions);
+      const msg = "请选择你要删除的子节点。";
+      this._state.notifyDataChanged("showMessage.open", { message: msg, type: "warning", time: new Date().getTime() });
     }
   }
 }

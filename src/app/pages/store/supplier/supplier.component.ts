@@ -4,7 +4,6 @@ import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/fo
 import { LocalDataSource } from 'ng2-smart-table';
 import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
 import { NgbdModalContent } from '../../../modal-content.component'
-import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 
 import { SupplierService } from './supplier.services';
 import { GlobalState } from '../../../global.state';
@@ -26,6 +25,9 @@ export class SupplierComponent implements OnInit {
   query: string = '';
 
   settings = {
+    pager: {
+      perPage: 15
+    },
     mode: 'external',
     actions: {
       columnTitle: '操作'
@@ -40,14 +42,13 @@ export class SupplierComponent implements OnInit {
     },
     hideSubHeader: true,
     columns: {
-      id: {
-        title: 'ID',
-        type: 'number',
-        editable: false,
-        filter: false,
-      },
       name: {
         title: '名称',
+        type: 'string',
+        filter: false,
+      },
+      city: {
+        title: '城市',
         type: 'string',
         filter: false,
       },
@@ -56,33 +57,38 @@ export class SupplierComponent implements OnInit {
         type: 'string',
         filter: false,
       },
-      linkMan: {
-        title: '联系人',
-        type: 'string',
-        filter: false,
-      },
       tel: {
         title: '联系电话',
         type: 'string',
         filter: false,
       },
-      bankName: {
-        title: '银行',
+      faxNo: {
+        title: '传真号码',
         type: 'string',
         filter: false,
       },
-      bankAcc: {
-        title: '账户名',
+      linkMan: {
+        title: '联系人',
         type: 'string',
         filter: false,
       },
-      bankAccNo: {
-        title: '账号',
+      linkManTitle: {
+        title: '联系人职位',
+        type: 'string',
+        filter: false,
+      },
+      linkManTel: {
+        title: '联系人电话',
+        type: 'string',
+        filter: false,
+      },
+      remark: {
+        title: '备注',
         type: 'string',
         filter: false,
       },
       createdBy: {
-        title: '操作员',
+        title: '录入人',
         type: 'string',
         filter: false
       },
@@ -99,15 +105,15 @@ export class SupplierComponent implements OnInit {
     },
     {
       type: 'input',
-      label: '地址',
-      name: 'address',
-      placeholder: '输入地址',
+      label: '城市',
+      name: 'city',
+      placeholder: '输入城市',
     },
     {
       type: 'input',
-      label: '联系人',
-      name: 'linkMan',
-      placeholder: '输入联系人',
+      label: '地址',
+      name: 'address',
+      placeholder: '输入地址',
     },
     {
       type: 'input',
@@ -117,21 +123,27 @@ export class SupplierComponent implements OnInit {
     },
     {
       type: 'input',
-      label: '银行',
-      name: 'bankName',
-      placeholder: '输入银行',
+      label: '传真号码',
+      name: 'faxNo',
+      placeholder: '输入传真号码',
     },
     {
       type: 'input',
-      label: '账户名',
-      name: 'bankAcc',
-      placeholder: '输入账户名',
+      label: '联系人',
+      name: 'linkMan',
+      placeholder: '输入联系人',
     },
     {
       type: 'input',
-      label: '账号',
-      name: 'bankAccNo',
-      placeholder: '输入账号',
+      label: '联系人职位',
+      name: 'linkManTitle',
+      placeholder: '输入联系人职位',
+    },
+    {
+      type: 'input',
+      label: '联系人电话',
+      name: 'linkManTel',
+      placeholder: '输入联系人电话',
     },
     {
       type: 'input',
@@ -142,22 +154,12 @@ export class SupplierComponent implements OnInit {
   ];
 
   source: LocalDataSource = new LocalDataSource();
-  private toastOptions: ToastOptions = {
-    title: "提示信息",
-    msg: "The message",
-    showClose: true,
-    timeout: 2000,
-    theme: "bootstrap",
-  };
 
   constructor(
     private modalService: NgbModal,
     private supplierService: SupplierService,
     private _common: Common,
-    private toastyService: ToastyService,
-    private toastyConfig: ToastyConfig,
     private _state: GlobalState) {
-      this.toastyConfig.position = 'top-center';
   }
   ngOnInit() {
     this.getDataList();
@@ -165,9 +167,10 @@ export class SupplierComponent implements OnInit {
 
   onSearch(query: string = '') {
     this.source.setFilter([
-      { field: 'supplierMan', search: query },
-      { field: 'houseCode', search: query },
-      { field: 'createdBy', search: query },
+      { field: 'name', search: query },
+      { field: 'address', search: query },
+      { field: 'linkManTitle', search: query },
+      { field: 'linkManTel', search: query },
     ], false);
   }
 
@@ -178,8 +181,8 @@ export class SupplierComponent implements OnInit {
       this.loading = false;
     }, (err) => {
       this.loading = false;
-      this.toastOptions.msg = err;
-      this.toastyService.error(this.toastOptions);
+      this._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
+      
     });
   }
 
@@ -191,14 +194,12 @@ export class SupplierComponent implements OnInit {
     modalRef.componentInstance.saveFun = (result, closeBack) => {
       that.supplierService.create(JSON.parse(result)).then((data) => {
         closeBack();
-        that.toastOptions.msg = "新增成功。";
-        that.toastyService.success(that.toastOptions);
+        const msg = "新增成功。";
+        that._state.notifyDataChanged("showMessage.open", { message: msg, type: "success", time: new Date().getTime() });
         that.getDataList();
       },
         (err) => {
-          that.toastOptions.msg = err;
-          that
-            .toastyService.error(that.toastOptions);
+          that._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
         }
       )
     }
@@ -213,13 +214,13 @@ export class SupplierComponent implements OnInit {
     modalRef.componentInstance.saveFun = (result, closeBack) => {
       that.supplierService.update(event.data.id, JSON.parse(result)).then((data) => {
         closeBack();
-        that.toastOptions.msg = "修改成功。";
-        that.toastyService.success(that.toastOptions);
+        const msg = "修改成功。";
+        that._state.notifyDataChanged("showMessage.open", { message: msg, type: "success", time: new Date().getTime() });
         that.getDataList();
       },
         (err) => {
-          that.toastOptions.msg = err;
-          that.toastyService.error(that.toastOptions);
+          that._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
+          
         }
       )
     };
@@ -228,12 +229,12 @@ export class SupplierComponent implements OnInit {
   onDelete(event){
     if (window.confirm('你确定要删除吗?')) {
       this.supplierService.delete(event.data.id).then((data) => {
-        this.toastOptions.msg = "删除成功。";
-        this.toastyService.success(this.toastOptions);
+        const msg = "删除成功。";
+        this._state.notifyDataChanged("showMessage.open", { message: msg, type: "success", time: new Date().getTime() });
         this.getDataList();
       }, (err) => {
-        this.toastOptions.msg = err;
-        this.toastyService.error(this.toastOptions);
+        this._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
+        
       });
     }
   }

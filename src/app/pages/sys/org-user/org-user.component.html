@@ -3,11 +3,11 @@
     <ba-card title="组织架构" baCardClass="with-scroll">
       <div class="row">
         <!--用户角色信息card  -->
-        <div class="col-3">
+        <div class="col-2">
           <app-sys-org></app-sys-org>
         </div>
-        <div class="col-9">
-          <app-sys-selectuser (foo)="selectedUser($event)"></app-sys-selectuser>
+        <div class="col-10">
+          <app-sys-user (message)="onMessage($event)" [editable]="false" [checkable]="true"></app-sys-user>
         </div>
       </div>
     </ba-card>

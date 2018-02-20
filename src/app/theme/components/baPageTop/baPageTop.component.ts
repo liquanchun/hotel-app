@@ -6,7 +6,6 @@ import { GlobalState } from '../../../global.state';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
 import { UserService } from '../../../pages/sys/components/user/user.services';
-import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
 import { Md5 } from 'ts-md5/dist/md5';
 import * as _ from 'lodash';
 @Component({
@@ -47,22 +46,11 @@ export class BaPageTop {
       password: true,
     },
   ];
-  private toastOptions: ToastOptions = {
-    title: "提示信息",
-    msg: "The message",
-    showClose: true,
-    timeout: 2000,
-    theme: "bootstrap",
-  };
 
   constructor(private _router: Router,
     private modalService: NgbModal,
     private _userService: UserService,
-    private toastyService: ToastyService,
-    private toastyConfig: ToastyConfig,
     private _state: GlobalState) {
-
-    this.toastyConfig.position = 'top-center';
 
     this._state.subscribe('menu.isCollapsed', (isCollapsed) => {
       this.isMenuCollapsed = isCollapsed;
@@ -88,18 +76,18 @@ export class BaPageTop {
       const oldPwd = sessionStorage.getItem('pwd');
 
       if (Md5.hashStr(user.oldpwd).toString() != oldPwd) {
-        that.toastOptions.msg = "原密码错误。";
-        that.toastyService.error(that.toastOptions);
+        const msg = "原密码错误。";
+        
       } else {
         user.userId = sessionStorage.getItem('userId');
         that._userService.update(0, user).then((data) => {
           closeBack();
-          that.toastOptions.msg = "修改密码成功。";
-          that.toastyService.success(that.toastOptions);
+          const msg = "修改密码成功。";
+          that._state.notifyDataChanged("showMessage.open", { message: msg, type: "success", time: new Date().getTime() });
         },
           (err) => {
-            that.toastOptions.msg = err;
-            that.toastyService.error(that.toastOptions);
+            that._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
+            
           }
         )
       }

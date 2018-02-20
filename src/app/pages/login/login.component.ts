@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { UserService } from '../../pages/sys/components/user/user.services';
 import { ToastyService, ToastyConfig, ToastOptions, ToastData } from 'ng2-toasty';
+import { GlobalState } from '../../global.state';
 import { HttpService } from './../../providers/httpClient';
 import { Md5 } from 'ts-md5/dist/md5';
 @Component({
@@ -31,6 +32,7 @@ export class Login {
     private toastyConfig: ToastyConfig,
     private _userService: UserService,
     private _httpService: HttpService,
+    private _state: GlobalState,
     fb: FormBuilder) {
     this.toastyConfig.position = 'top-center';
     this.form = fb.group({
@@ -46,8 +48,8 @@ export class Login {
     if (this.form.valid) {
       this.submitted = true;
       if (!this.loginUserId.value || !this.loginPassword.value) {
-        this.toastOptions.msg = '用户ID或密码不能为空。';
-        this.toastyService.error(this.toastOptions);
+        const msg = '用户ID或密码不能为空。';
+        
         return;
       }
       const token = {
@@ -60,8 +62,8 @@ export class Login {
           this._httpService.setToken(data.data.accessToken);
           this.checkUserInfo();
         } else {
-          this.toastOptions.msg = data.msg;
-          this.toastyService.error(this.toastOptions);
+          const msg = data.msg;
+          
         }
       });
     }
@@ -70,8 +72,8 @@ export class Login {
   checkUserInfo() {
     this._userService.getUsersById(this.loginUserId.value).then((data) => {
       if (!data) {
-        this.toastOptions.msg = '用户不存在。';
-        this.toastyService.error(this.toastOptions);
+        const msg = '用户不存在。';
+        
       } else {
         const mima = data['pwd'];
         const pd = Md5.hashStr(this.loginPassword.value).toString();
@@ -83,7 +85,7 @@ export class Login {
           this.toastyService.success(this.toastOptions);
           this._router.navigate(['/pages/dashboard']);
         } else {
-          this.toastOptions.msg = '密码错误。';
+          this.toastOptions.msg = "密码错误。";
           this.toastyService.error(this.toastOptions);
         }
       }
