@@ -27,7 +27,7 @@ export class DynamicFormComponent implements OnChanges, OnInit {
 
   @Output()
   submit: EventEmitter<any> = new EventEmitter<any>();
- 
+  back: EventEmitter<any> = new EventEmitter<any>();
   form: FormGroup;
 
   get controls() { return this.config.filter(({ type }) => type !== 'button'); }

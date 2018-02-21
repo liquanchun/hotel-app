@@ -11,7 +11,6 @@ export class MenuService {
   getMenus(fnCallBack) {
     const that = this;
     this._httpService.getModelList(this.modelName).then(function (menus) {
-      console.log(menus);
       fnCallBack(that.createTree(menus, 0));
     });
   }
