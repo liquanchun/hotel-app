@@ -11,6 +11,7 @@ import { FieldConfig } from '../../../theme/components/dynamic-form/models/field
 import { BookService } from './book.services';
 import { GlobalState } from '../../../global.state';
 import { Common } from '../../../providers/common';
+import { SelectServiceComponent } from './../selectservice/selectservice.component';
 import { DynamicFormComponent }
   from '../../../theme/components/dynamic-form/containers/dynamic-form/dynamic-form.component';
 
@@ -190,21 +191,6 @@ export class BookComponent implements OnInit, AfterViewInit {
     'hideEdit': true
   };
   source: LocalDataSource = new LocalDataSource();
-
-  mySettings: IMultiSelectSettings = {
-    enableSearch: true,
-    checkedStyle: 'fontawesome',
-    buttonClasses: 'btn btn-default btn-block',
-    dynamicTitleMaxItems: 3,
-    selectionLimit: 1,
-    autoUnselect: true,
-  };
-  myTexts: IMultiSelectTexts = {
-    defaultTitle: '--选择服务项目--',
-    searchPlaceholder: '查询...'
-  }
-  myOptionsSup: IMultiSelectOption[];
-  selectedSup = [];
   //服务项目
   serviceItemData = [];
 
@@ -292,22 +278,15 @@ export class BookComponent implements OnInit, AfterViewInit {
       this._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
 
     });
-
-    this._serviceItemService.getServiceItems().then((data) => {
-      this.serviceItemData = data;
-      const serItem = [];
-      _.each(data, f => {
-        serItem.push({ id: f.id, name: f.name });
-      })
-      this.myOptionsSup = serItem;
-    });
-
   }
 
   onDelete(event) {
     if (window.confirm('你确定要取消吗?')) {
       this.bookService.delete(event.data.id).then((data) => {
+        this._state.notifyDataChanged("showMessage.open", { message: "删除成功", type: "error", time: new Date().getTime() });
         this.getDataList();
+      }, (err) => {
+        this._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
       });
     }
   }

@@ -27,6 +27,7 @@ import { BookComponent } from './book/book.component';
 import { MemberComponent } from './member/member.component';
 import { CustomerComponent } from './customer/customer.component';
 import { ServiceItemComponent } from './serviceitem/serviceitem.component';
+import { SelectServiceComponent  } from './selectservice/selectservice.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -48,7 +49,8 @@ import { ServiceItemComponent } from './serviceitem/serviceitem.component';
     BookComponent,
     MemberComponent,
     CustomerComponent,
-    ServiceItemComponent
+    ServiceItemComponent,
+    SelectServiceComponent
   ],
   providers: [GlobalState, Config, HttpService, AppState,Common,DicService]
 })
