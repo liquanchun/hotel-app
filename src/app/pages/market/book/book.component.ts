@@ -9,6 +9,7 @@ import { ServiceItemService } from '../serviceitem/serviceitem.services';
 import { NgbdModalContent } from '../../../modal-content.component'
 import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
 import { BookService } from './book.services';
+import { DicService } from '../../sys/dic/dic.services';
 import { GlobalState } from '../../../global.state';
 import { Common } from '../../../providers/common';
 import { SelectServiceComponent } from './../selectservice/selectservice.component';
@@ -24,15 +25,16 @@ import { fail } from 'assert';
   selector: 'app-book',
   templateUrl: './book.component.html',
   styleUrls: ['./book.component.scss'],
-  providers: [BookService, HouseinfoService, HouseTypeService,ServiceItemService],
+  providers: [BookService, HouseinfoService, HouseTypeService, ServiceItemService],
 })
 export class BookComponent implements OnInit, AfterViewInit {
   @ViewChild(DynamicFormComponent) form: DynamicFormComponent;
+  @ViewChild(SelectServiceComponent)
+  private serviceComponent: SelectServiceComponent;
 
   loading = false;
   title = '预定管理';
   query: string = '';
-
   settings = {
     mode: 'external',
     actions: {
@@ -83,7 +85,7 @@ export class BookComponent implements OnInit, AfterViewInit {
         title: '保留时间',
         type: 'string',
       },
-      checkInType: {
+      checkInTypeTxt: {
         title: '入住方式',
         type: 'string',
       },
@@ -130,18 +132,21 @@ export class BookComponent implements OnInit, AfterViewInit {
       label: '预抵时间',
       name: 'reachTime',
       time: '15:30',
+      validation: [Validators.required],
     },
     {
       type: 'input',
       label: '天数',
       name: 'days',
       placeholder: '输入天数',
+      validation: [Validators.required],
     },
     {
       type: 'datepicker',
       label: '预离时间',
       name: 'leaveTime',
       time: '15:30',
+      validation: [Validators.required],
     },
     {
       type: 'datepicker',
@@ -154,11 +159,7 @@ export class BookComponent implements OnInit, AfterViewInit {
       label: '入住方式',
       name: 'checkInType',
       check: 'radio',
-      options: [
-        { id: '全天房', name: '全天房' },
-        { id: '钟点房', name: '钟点房' },
-        { id: '特殊房', name: '特殊房' },
-      ]
+      options: []
     },
     {
       type: 'check',
@@ -172,12 +173,13 @@ export class BookComponent implements OnInit, AfterViewInit {
       label: '房间数',
       name: 'houseNum',
       placeholder: '输入房间数',
+      validation: [Validators.required],
     },
     {
       label: '保存',
       name: 'submit',
       type: 'button',
-      callback: function () {
+      callback: function (data) {
       },
     },
   ];
@@ -191,22 +193,34 @@ export class BookComponent implements OnInit, AfterViewInit {
     'hideEdit': true
   };
   source: LocalDataSource = new LocalDataSource();
+  bookData: any;
   //服务项目
   serviceItemData = [];
+  //表单值
+  formValue: any;
 
   constructor(
     private modalService: NgbModal,
     private bookService: BookService,
     private houseinfoService: HouseinfoService,
     private _houseTypeService: HouseTypeService,
-    private _serviceItemService:ServiceItemService,
+    private _serviceItemService: ServiceItemService,
+    private _dicService: DicService,
     private _common: Common,
     private _state: GlobalState) {
     this._state.subscribe('backup-click', (data) => {
-      this.onCreate(false);
+      this.showEditDiv(false);
     });
   }
   ngOnInit() {
+
+    this._dicService.getDicByName('入住方式', (data) => {
+      let cfg = _.find(this.config, f => { return f['name'] == 'checkInType'; });
+      if (cfg) {
+        cfg.options = data;
+      }
+    });
+
     this.getDataList();
     this.getHouseType();
   }
@@ -222,26 +236,42 @@ export class BookComponent implements OnInit, AfterViewInit {
     this.form.setDisabled('submit', true);
   }
   submit(book: { [name: string]: any }) {
-    if (book.reachTime) {
-      book.reachTime = this._common.getDateString2(book.reachTime);
+    if (!book.checkInType) {
+      this._state.notifyDataChanged("showMessage.open", { message: "请选择入住方式", type: "warning", time: new Date().getTime() });
+      return;
     }
-    if (book.leaveTime) {
-      book.leaveTime = this._common.getDateString2(book.leaveTime);
+    if (!book.houseTypeId) {
+      this._state.notifyDataChanged("showMessage.open", { message: "请选择房型", type: "warning", time: new Date().getTime() });
+      return;
     }
-    if (book.retainTime) {
-      book.retainTime = this._common.getDateString2(book.retainTime);
+    console.log(book);
+    const bookingObj = {
+      booking: book,
+      bookservices: this.serviceComponent.selectedItem
     }
-    this.bookService.create(book).then((data) => {
+
+    if (bookingObj.booking.reachTime) {
+      bookingObj.booking.reachTime = this._common.getDateString2(book.reachTime);
+    }
+    if (bookingObj.booking.leaveTime) {
+      bookingObj.booking.leaveTime = this._common.getDateString2(book.leaveTime);
+    }
+    if (bookingObj.booking.retainTime) {
+      bookingObj.booking.retainTime = this._common.getDateString2(book.retainTime);
+    }
+
+    this.bookService.create(bookingObj).then((data) => {
       const msg = "新增成功。";
       this._state.notifyDataChanged("showMessage.open", { message: msg, type: "success", time: new Date().getTime() });
       this.getDataList();
+      this.showEditDiv(false);
     },
       (err) => {
         this._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
       }
     )
   }
-  onCreate(isEdit = true) {
+  showEditDiv(isEdit = true) {
     this.gridClasses = {
       'showEdit': !isEdit,
       'hideEdit': isEdit
@@ -250,6 +280,14 @@ export class BookComponent implements OnInit, AfterViewInit {
       'showEdit': isEdit,
       'hideEdit': !isEdit
     };
+  }
+
+  onCreate() {
+    this.form.clearValue();
+    this.serviceComponent.clearData();
+    this.serviceComponent.setDisableEdit(true);
+    this.showEditDiv();
+    this.form.hideSubmit(false);
   }
   onSearch(query: string = '') {
     this.source.setFilter([
@@ -268,10 +306,12 @@ export class BookComponent implements OnInit, AfterViewInit {
       conf.options = opt;
     });
   }
-  getDataList(): void {
+  getDataList(type = 2): void {
+
     this.loading = true;
-    this.bookService.getBooks().then((data) => {
+    this.bookService.getBooks(type).then((data) => {
       this.loading = false;
+      this.bookData = data;
       this.source.load(data);
     }, (err) => {
       this.loading = false;
@@ -300,6 +340,29 @@ export class BookComponent implements OnInit, AfterViewInit {
   }
 
   onEdit(event) {
-
+    const data = _.find(this.bookData, f => { return f['id'] == event.data.id; });
+    this.formValue = data;
+    if (_.isString(data['retainTime'])) {
+      this.formValue.retainTime = this._common.getDateObject(data['retainTime']);
+      this.formValue.leaveTime = this._common.getDateObject(data['leaveTime']);
+      this.formValue.reachTime = this._common.getDateObject(data['reachTime']);
+    }
+    const that = this;
+    _.delay(function (that) {
+      const sf = that;
+      _.each(that.config, (e) => {
+        if (sf.formValue && sf.formValue[e.name]) {
+          if (_.isArray(sf.formValue[e.name]) || _.isObject(sf.formValue[e.name])) {
+            sf.form.setValue(e.name, sf.formValue[e.name]);
+          } else {
+            sf.form.setValue(e.name, sf.formValue[e.name].toString());
+          }
+        }
+      });
+    }, 50, this);
+    this.showEditDiv();
+    this.form.hideSubmit(true);
+    this.serviceComponent.setDisableEdit(false);
+    this.serviceComponent.loadData(data['orderNo']);
   }
 }

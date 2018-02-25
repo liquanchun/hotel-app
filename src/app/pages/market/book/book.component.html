@@ -13,9 +13,9 @@
               </div>
               <div class="col-2">
                 <div class="btn-group margin8" role="group" aria-label="Basic example">
-                  <button (click)="getDataList()" type="button" class="btn btn-info btn-sm">
+                  <button (click)="getDataList(1)" type="button" class="btn btn-info btn-sm">
                     <i class="fa fa-refresh" aria-hidden="true"></i> 正常</button>
-                  <button (click)="getDataList()" type="button" class="btn btn-info btn-sm">
+                  <button (click)="getDataList(0)" type="button" class="btn btn-info btn-sm">
                     <i class="fa fa-refresh" aria-hidden="true"></i> 取消</button>
                 </div>
               </div>
@@ -37,8 +37,8 @@
             <dynamic-form [config]="config" #form="dynamicForm" (back)="backup($event)" (submit)="submit($event)">
             </dynamic-form>
           </div>
-          <div class="col-md-5">
-             <app-selectservice #service="selectServiceComponent"></app-selectservice>
+          <div class="col-md-6">
+             <app-selectservice></app-selectservice>
           </div>
         </div>
       </div>

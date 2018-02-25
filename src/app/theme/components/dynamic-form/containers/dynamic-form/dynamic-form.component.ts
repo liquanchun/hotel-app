@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angu
 import { FormGroup, FormBuilder } from '@angular/forms';
 
 import { FieldConfig } from '../../models/field-config.interface';
-
+import * as _ from 'lodash';
 @Component({
   exportAs: 'dynamicForm',
   selector: 'dynamic-form',
@@ -27,10 +27,9 @@ export class DynamicFormComponent implements OnChanges, OnInit {
 
   @Output()
   submit: EventEmitter<any> = new EventEmitter<any>();
-  back: EventEmitter<any> = new EventEmitter<any>();
   form: FormGroup;
 
-  get controls() { return this.config.filter(({ type }) => type !== 'button'); }
+  get controls() { return this.config.filter(({ type }) => type !== 'button' && type !== 'submit'); }
   get changes() { return this.form.valueChanges; }
   get valid() { return this.form.valid; }
   get value() { return this.form.value; }
@@ -94,5 +93,19 @@ export class DynamicFormComponent implements OnChanges, OnInit {
 
   setValue(name: string, value: any) {
     this.form.controls[name].setValue(value, { emitEvent: true });
+  }
+
+  hideSubmit(show: boolean) {
+    let cfg = this.config.find(({ name }) => name === 'submit');
+    cfg.hide = show;
+  }
+
+  clearValue() {
+    const that = this;
+    _.each(that.config, (e) => {
+      if (that.form.controls[e.name]) {
+        that.form.controls[e.name].setValue('', { emitEvent: false });
+      }
+    });
   }
 }

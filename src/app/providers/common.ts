@@ -36,7 +36,13 @@ export class Common {
         const year = Number.parseInt(date.split('-')[0]);
         const month = Number.parseInt(date.split('-')[1]);
         const day = Number.parseInt(date.split('-')[2]);
-        return { "year": year, "month": month, "day": day };
+
+        const dateArr = date.split(' ');
+        let time = "00:00";
+        if (dateArr.length == 2) {
+            time = dateArr[1];
+        }
+        return { "year": year, "month": month, "day": day, "time": time };
     }
     // 根据日期对象获取日期字符串
     getDateString(date: any): string {
@@ -48,7 +54,7 @@ export class Common {
         return `${date.year}-${_.padStart(date.month, 2, '0')}-${_.padStart(date.day, 2, '0')}${time}`
     }
 
-    getSplitDate(date:string){
+    getSplitDate(date: string) {
         return date.split(' ')[0];
     }
 }

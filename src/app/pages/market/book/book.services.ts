@@ -8,8 +8,8 @@ export class BookService {
   constructor(private _httpService: HttpService) {
   }
 
-  getBooks() {
-    return this._httpService.getModelList(this.modelName);
+  getBooks(type) {
+    return this._httpService.getModelList(this.modelName + "/type/" + type);
   }
 
   create(model: any) {

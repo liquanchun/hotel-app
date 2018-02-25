@@ -45,7 +45,7 @@ export class FormDatepickerComponent implements Field,AfterViewInit,OnInit {
         if(data){
           that.selectVal = data;
           if(that.selectTime){
-            that.selectVal.time =  `${that.selectTime}:00`;
+            that.selectVal['time'] =  `${that.selectTime}:00`;
           }
         }
       });

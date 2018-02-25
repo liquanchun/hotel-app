@@ -4,12 +4,12 @@ import * as _ from 'lodash';
 
 @Injectable()
 export class SelectServiceService {
-  private modelName = 'YxSelectService';  // URL to web api
+  private modelName = 'YxBookservice';  // URL to web api
   constructor(private _httpService: HttpService) {
   }
 
-  getSelectServices() {
-    return this._httpService.getModelList(this.modelName);
+  getSelectServices(orderNo:string) {
+    return this._httpService.getModelList(this.modelName + "/" + orderNo);
   }
 
   create(model: any) {
