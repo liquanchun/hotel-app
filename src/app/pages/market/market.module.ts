@@ -24,6 +24,7 @@ import { ComponentsModule } from '../components/components.module';
 import { routing } from './market.routing';
 import { MarketComponent } from './market.component';
 import { BookComponent } from './book/book.component';
+import { CheckInComponent } from './book/checkin.component';
 import { MemberComponent } from './member/member.component';
 import { CustomerComponent } from './customer/customer.component';
 import { ServiceItemComponent } from './serviceitem/serviceitem.component';
@@ -50,8 +51,10 @@ import { SelectServiceComponent  } from './selectservice/selectservice.component
     MemberComponent,
     CustomerComponent,
     ServiceItemComponent,
-    SelectServiceComponent
+    SelectServiceComponent,
+    CheckInComponent
   ],
+  entryComponents: [CheckInComponent],
   providers: [GlobalState, Config, HttpService, AppState,Common,DicService]
 })
 export class MarketModule {}

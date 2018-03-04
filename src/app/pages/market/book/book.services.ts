@@ -12,6 +12,10 @@ export class BookService {
     return this._httpService.getModelList(this.modelName + "/type/" + type);
   }
 
+  getBookById(id) {
+    return this._httpService.getModelList(this.modelName + "/" + id);
+  }
+
   create(model: any) {
     delete model.id;
     return this._httpService.create(this.modelName, model);

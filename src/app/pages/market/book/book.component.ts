@@ -13,6 +13,8 @@ import { DicService } from '../../sys/dic/dic.services';
 import { GlobalState } from '../../../global.state';
 import { Common } from '../../../providers/common';
 import { SelectServiceComponent } from './../selectservice/selectservice.component';
+import { CheckInComponent } from './checkin.component';
+import { Router } from '@angular/router';
 import { DynamicFormComponent }
   from '../../../theme/components/dynamic-form/containers/dynamic-form/dynamic-form.component';
 
@@ -102,6 +104,16 @@ export class BookComponent implements OnInit, AfterViewInit {
         title: '渠道',
         type: 'string',
       },
+      button: {
+        title: '入住',
+        type: 'custom',
+        renderComponent: CheckInComponent,
+        onComponentInitFunction(instance) {
+          instance.save.subscribe(row => {
+            alert(`${row.orderNo} saved!`)
+          });
+        },
+      }
     }
   };
 
@@ -199,7 +211,7 @@ export class BookComponent implements OnInit, AfterViewInit {
   //表单值
   formValue: any;
 
-  constructor(
+  constructor(private _router: Router,
     private modalService: NgbModal,
     private bookService: BookService,
     private houseinfoService: HouseinfoService,
@@ -211,6 +223,15 @@ export class BookComponent implements OnInit, AfterViewInit {
     this._state.subscribe('backup-click', (data) => {
       this.showEditDiv(false);
     });
+
+    this._state.subscribe('checkin.click', (data) => {
+      const book = _.find(this.bookData, f => { return f['id'] == data.id; });
+      console.log(book);
+      _.delay(function (that) {
+        that._router.navigate(['/pages/frontdesk/checkin'], { queryParams: { id: data.id,orderNo: book['orderNo'] } });
+      }, 300, this);
+    });
+
   }
   ngOnInit() {
 
@@ -312,6 +333,7 @@ export class BookComponent implements OnInit, AfterViewInit {
     this.bookService.getBooks(type).then((data) => {
       this.loading = false;
       this.bookData = data;
+      _.each(data, f => { f['button'] = f['id']; });
       this.source.load(data);
     }, (err) => {
       this.loading = false;

@@ -1,7 +1,7 @@
 import { Component, ViewChild, OnInit, AfterViewInit, Input } from '@angular/core';
 import { NgbModal, ModalDismissReasons, NgbAlert } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute,Params} from '@angular/router';
+import { ActivatedRoute, Params } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 
 import * as $ from 'jquery';
@@ -14,6 +14,7 @@ import { ReadIdCardService } from './idcardread.services';
 import { HouseTypeService } from '../../sys/house-type/house-type.services';
 import { SetPaytypeService } from '../../sys/set-paytype/set-paytype.services';
 import { DicService } from '../../sys/dic/dic.services';
+import { BookService } from '../../market/book/book.services';
 
 import { GlobalState } from '../../../global.state';
 import { ButtonViewComponent } from './buttonview.component';
@@ -24,13 +25,13 @@ import { ReturnStatement } from '@angular/compiler/src/output/output_ast';
   selector: 'app-qt-checkin',
   templateUrl: './checkin.component.html',
   styleUrls: ['./checkin.component.scss'],
-  providers: [CheckinService, HouseinfoService, ReadIdCardService, HouseTypeService, SetPaytypeService, DicService],
+  providers: [CheckinService, HouseinfoService, ReadIdCardService, HouseTypeService, SetPaytypeService, DicService, BookService],
 })
 export class CheckinComponent implements OnInit {
   @Input() showEditButton: boolean = true;
   title = '客人入住';
   private isSaved: boolean = false;
-  
+
   private checkIn: any = {
     cusname: '',
     cusphone: '',
@@ -171,7 +172,9 @@ export class CheckinComponent implements OnInit {
   selectedHouse: any = [];
 
   //链接过来的房间号
-  private checkInCode:string;
+  private checkInCode: string;
+  //链接过来的预约单号
+  private bookOrderNo: string;
 
   constructor(
     private _state: GlobalState,
@@ -180,6 +183,7 @@ export class CheckinComponent implements OnInit {
     private _houseTypeService: HouseTypeService,
     private _readIdCardService: ReadIdCardService,
     private _setPaytypeService: SetPaytypeService,
+    private _bookService: BookService,
     private _dicService: DicService,
     private route: ActivatedRoute,
     fb: FormBuilder) {
@@ -194,8 +198,16 @@ export class CheckinComponent implements OnInit {
     });
   }
   ngOnInit() {
-    this.getDataList();
     this.checkInCode = this.route.snapshot.params['code'];
+    this.bookOrderNo = this.route.snapshot.queryParams["orderNo"];
+    const id = this.route.snapshot.queryParams["id"];
+    const promise = new Promise(this.getDataList);
+    promise.then(() => {
+      if (this.bookOrderNo) {
+        this.title = this.title + "（预约单号：" + this.bookOrderNo + "）";
+        this.getBookOrder(id);
+      }
+    });
   }
   onSubmit(values: Object): void {
   }
@@ -205,19 +217,32 @@ export class CheckinComponent implements OnInit {
     this.checkIn.cusname = cust.name;
     this.checkIn.idCard = cust.idcard;
   }
+  //从预约订单链接过来的
+  getBookOrder(id) {
+    this._bookService.getBookById(id).then((data) => {
+      if (data) {
+        this.checkIn.cusname = data['cusname'];
+        this.checkIn.cusphone = data['mobile'];
+        this.checkIn.idCard = data['iDCard'];
+        this.checkIn.inType = data['checkInType'];
+        console.log(data['houseTypeId']);
+      }
+    });
+  }
 
-  getDataList(): void {
+  getDataList(resolve, reject) {
     //待选择的房价
     this._houseinfoService.getHouseinfos().then((data) => {
       this.houseInfoSelect = _.filter(data, (f) => { return f['state'] == '1001'; });
-      
+
       //初始化链接过来的房屋
-      if(this.checkInCode){
-        const findHouse = _.find(data,f => {return f['code'] == this.checkInCode ;});
+      if (this.checkInCode) {
+        const findHouse = _.find(data, f => { return f['code'] == this.checkInCode; });
         this.setCheckInHouse(findHouse);
       }
       this.popGrid.load(this.houseInfoSelect);
       this.getHouseType();
+      resolve();
     });
 
     this._setPaytypeService.getSetPaytypes().then((data) => {
@@ -230,7 +255,7 @@ export class CheckinComponent implements OnInit {
     this._dicService.getDicByName('客源', (data) => { this.comeType = data; });
   }
 
-  setCheckInHouse(house){
+  setCheckInHouse(house) {
     this.selectedHouse.push(
       {
         houseTypeTxt: house['houseTypeTxt'],
@@ -244,10 +269,10 @@ export class CheckinComponent implements OnInit {
         prereceivefee: house['preFee'],
         houseFee: house['houseFee']
       });
-      this.refreshTable();
+    this.refreshTable();
   }
-  
-  getHouseType(){
+
+  getHouseType() {
     //房型
     this._houseTypeService.getHouseTypes().then((data) => {
       const that = this;
@@ -289,7 +314,7 @@ export class CheckinComponent implements OnInit {
     this.refreshTable();
   }
   //刷新表格数据
-  refreshTable(){
+  refreshTable() {
     this.checkIn.prereceivefee = _.sumBy(this.selectedHouse, function (o) { return o['prereceivefee']; });
     this.checkIn.houseFee = _.sumBy(this.selectedHouse, function (o) { return o['houseFee']; });
     this.selectedGrid.load(this.selectedHouse);
@@ -376,6 +401,6 @@ export class CheckinComponent implements OnInit {
         that._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
         that.isSaved = false;
       }
-      )
+    )
   }
 }
