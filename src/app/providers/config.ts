@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class Config {
 	// 是否生产模式
-	isProduct = false;
+	isProduct = true;
 	// 服务器地址
 	server = '';
 	// 列表每页数量
@@ -23,7 +23,7 @@ export class Config {
 	constructor() {
 		if (this.isProduct) {
 
-			this.server = 'http://localhost:5000/';
+			this.server = 'http://47.104.186.92:85/';
 			// this.server = 'http://58.248.27.170:8082/';
 
 			this.pageSize = 20;
