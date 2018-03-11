@@ -110,7 +110,6 @@ export class BookComponent implements OnInit, AfterViewInit {
         renderComponent: CheckInComponent,
         onComponentInitFunction(instance) {
           instance.save.subscribe(row => {
-            alert(`${row.orderNo} saved!`)
           });
         },
       }
@@ -135,7 +134,7 @@ export class BookComponent implements OnInit, AfterViewInit {
     {
       type: 'input',
       label: '身份证',
-      name: 'iDCard',
+      name: 'idCard',
       placeholder: '输入身份证',
       validation: [Validators.required],
     },
@@ -174,10 +173,9 @@ export class BookComponent implements OnInit, AfterViewInit {
       options: []
     },
     {
-      type: 'check',
+      type: 'select',
       label: '房型',
       name: 'houseTypeId',
-      check: 'radio',
       options: []
     },
     {
@@ -226,7 +224,6 @@ export class BookComponent implements OnInit, AfterViewInit {
 
     this._state.subscribe('checkin.click', (data) => {
       const book = _.find(this.bookData, f => { return f['id'] == data.id; });
-      console.log(book);
       _.delay(function (that) {
         that._router.navigate(['/pages/frontdesk/checkin'], { queryParams: { id: data.id,orderNo: book['orderNo'] } });
       }, 300, this);
@@ -238,7 +235,11 @@ export class BookComponent implements OnInit, AfterViewInit {
     this._dicService.getDicByName('入住方式', (data) => {
       let cfg = _.find(this.config, f => { return f['name'] == 'checkInType'; });
       if (cfg) {
-        cfg.options = data;
+        let opt = [];
+        _.each(data, d => {
+          opt.push({ id: d['id'], name: d['name'] });
+        });
+        cfg.options = opt;
       }
     });
 
@@ -333,7 +334,6 @@ export class BookComponent implements OnInit, AfterViewInit {
     this.bookService.getBooks(type).then((data) => {
       this.loading = false;
       this.bookData = data;
-      _.each(data, f => { f['button'] = f['id']; });
       this.source.load(data);
     }, (err) => {
       this.loading = false;
@@ -345,7 +345,7 @@ export class BookComponent implements OnInit, AfterViewInit {
   onDelete(event) {
     if (window.confirm('你确定要取消吗?')) {
       this.bookService.delete(event.data.id).then((data) => {
-        this._state.notifyDataChanged("showMessage.open", { message: "删除成功", type: "error", time: new Date().getTime() });
+        this._state.notifyDataChanged("showMessage.open", { message: "取消成功", type: "success", time: new Date().getTime() });
         this.getDataList();
       }, (err) => {
         this._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
@@ -381,7 +381,7 @@ export class BookComponent implements OnInit, AfterViewInit {
           }
         }
       });
-    }, 50, this);
+    }, 100, this);
     this.showEditDiv();
     this.form.hideSubmit(true);
     this.serviceComponent.setDisableEdit(false);

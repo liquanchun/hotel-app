@@ -9,7 +9,7 @@ export class SelectServiceService {
   }
 
   getSelectServices(orderNo:string) {
-    return this._httpService.getModelList(this.modelName + "/" + orderNo);
+    return this._httpService.getModelList(this.modelName + "/orderno/" + orderNo);
   }
 
   create(model: any) {

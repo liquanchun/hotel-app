@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 @Component({
   selector: 'checkin-button-view',
   template: `
-	    <div class="btn-group" role="group" aria-label="Basic example">
+	    <div *ngIf="rowData.status=='未完成'" class="btn-group" role="group" aria-label="Basic example">
         <button type="button" style="line-height: 15px;" class="btn btn-success btn-sm tablebutton" (click)="onClick()">入住</button>
       </div>
     `,
@@ -25,12 +25,13 @@ export class CheckInComponent implements ViewCell, OnInit {
   ) { }
 
   ngOnInit() {
+
   }
 
   onClick() {
     this.save.emit(this.rowData);
 
     const getTimestamp = new Date().getTime();
-    this._state.notifyDataChanged('checkin.click', { id: this.value, time: getTimestamp });
+    this._state.notifyDataChanged('checkin.click', { id: this.rowData.id, time: getTimestamp });
   }
 }

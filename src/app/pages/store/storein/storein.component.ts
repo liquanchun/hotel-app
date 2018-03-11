@@ -223,17 +223,18 @@ export class StoreinComponent implements OnInit {
     private _orgService: OrgService,
     private modalService: NgbModal,
     private _state: GlobalState) {
-
-    this._state.subscribe('print.storein', (data) => {
-      this.printOrder = _.find(this.storeInData, f => { return f['id'] == data.id; });
-      this.printOrderDetail = _.filter(this.storeInDetailData, f => { return f['orderno'] == this.printOrder.orderNo; });
-      _.delay(function (that) {
-        that.print();
-      }, 300, this);
-    });
-
   }
   ngOnInit() {
+    this._state.subscribe('print.storein', (data) => {
+      this.printOrder = _.find(this.storeInData, f => { return f['id'] == data.id; });
+      if (this.printOrder) {
+        this.printOrderDetail = _.filter(this.storeInDetailData, f => { return f['orderno'] == this.printOrder.orderNo; });
+        _.delay(function (that) {
+          that.print();
+        }, 300, this);
+      }
+    });
+
     this.getDataList();
   }
   onSearch(query: string = '') {
@@ -269,7 +270,7 @@ export class StoreinComponent implements OnInit {
         this.getDataList();
       }, (err) => {
         this._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
-        
+
       });
     }
   }
@@ -370,7 +371,7 @@ export class StoreinComponent implements OnInit {
     }, (err) => {
       this.loading = false;
       this._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
-      
+
     });
   }
 

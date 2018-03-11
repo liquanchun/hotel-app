@@ -6,6 +6,7 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
 
 import { NgaModule } from '../../theme/nga.module';
 import { DynamicFormModule } from '../../theme/components/dynamic-form/dynamic-form.module';
+import { MarketModule } from '../market/market.module';
 
 import { Config } from '../../providers/config';
 import { GlobalState } from '../../global.state';
@@ -41,6 +42,7 @@ import {ToastyModule} from 'ng2-toasty';
     NgbModule,
     LoadingModule,
     Ng2SmartTableModule,
+    MarketModule,
     ToastyModule.forRoot()
   ],
   declarations: [

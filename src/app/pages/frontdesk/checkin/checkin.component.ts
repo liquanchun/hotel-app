@@ -8,6 +8,8 @@ import * as $ from 'jquery';
 import * as _ from 'lodash';
 import { Md5 } from 'ts-md5/dist/md5';
 
+import { SelectServiceComponent } from '../../market/selectservice/selectservice.component';
+
 import { HouseinfoService } from '../../house/houseinfo/houseinfo.services';
 import { CheckinService } from './checkin.services';
 import { ReadIdCardService } from './idcardread.services';
@@ -29,6 +31,9 @@ import { ReturnStatement } from '@angular/compiler/src/output/output_ast';
 })
 export class CheckinComponent implements OnInit {
   @Input() showEditButton: boolean = true;
+  @ViewChild(SelectServiceComponent)
+  private serviceComponent: SelectServiceComponent;
+
   title = '客人入住';
   private isSaved: boolean = false;
 
@@ -36,18 +41,19 @@ export class CheckinComponent implements OnInit {
     cusname: '',
     cusphone: '',
     idCard: '',
-    inType: '',
+    inType: 100,
     comeType: '',
     payType: '',
     billNo: '',
     remark: '',
     houseFee: 0,
-    prereceivefee: 0
+    prereceivefee: 0,
+    bookOrderNo: ''
   };
   private selectedRow: any;
   private paytype: any = [];
   private checkinType: any = [
-    { id: 1, name: '全天房' }, { id: 2, name: '钟点房' }, { id: 3, name: '特殊房' }, { id: 4, name: '免费房' }
+    { id: 100, name: '全天房' }, { id: 200, name: '钟点房' }, { id: 300, name: '特殊房' }, { id: 400, name: '免费房' }
   ];
   private comeType: any = [];
   settingsHouse = {
@@ -69,7 +75,7 @@ export class CheckinComponent implements OnInit {
       confirmDelete: true
     },
     columns: {
-      houseType: {
+      houseTypeTxt: {
         title: '房型',
         type: 'string',
         filter: false,
@@ -173,8 +179,6 @@ export class CheckinComponent implements OnInit {
 
   //链接过来的房间号
   private checkInCode: string;
-  //链接过来的预约单号
-  private bookOrderNo: string;
 
   constructor(
     private _state: GlobalState,
@@ -187,7 +191,8 @@ export class CheckinComponent implements OnInit {
     private _dicService: DicService,
     private route: ActivatedRoute,
     fb: FormBuilder) {
-
+  }
+  ngOnInit() {
     this._state.subscribe('read.idcard', (data) => {
       let newrowdata = _.find(this.selectedHouse, function (o) { return o['houseCode'] == data.code; });
       if (newrowdata) {
@@ -196,18 +201,20 @@ export class CheckinComponent implements OnInit {
       }
       this.selectedGrid.refresh();
     });
-  }
-  ngOnInit() {
+
     this.checkInCode = this.route.snapshot.params['code'];
-    this.bookOrderNo = this.route.snapshot.queryParams["orderNo"];
+    this.checkIn.bookOrderNo = this.route.snapshot.queryParams["orderNo"];
     const id = this.route.snapshot.queryParams["id"];
-    const promise = new Promise(this.getDataList);
-    promise.then(() => {
-      if (this.bookOrderNo) {
-        this.title = this.title + "（预约单号：" + this.bookOrderNo + "）";
-        this.getBookOrder(id);
-      }
-    });
+
+    Promise.all([this.getDataList(), this.getPaytypeService(), this.getDic()])
+      .then(() => {
+        if (this.checkIn.bookOrderNo) {
+          this.title = this.title + "（预约单号：" + this.checkIn.bookOrderNo + "）";
+          this.getBookOrder(id);
+          // this.serviceComponent.setDisableEdit(false);
+          this.serviceComponent.loadData(this.checkIn.bookOrderNo);
+        }
+      });
   }
   onSubmit(values: Object): void {
   }
@@ -221,38 +228,77 @@ export class CheckinComponent implements OnInit {
   getBookOrder(id) {
     this._bookService.getBookById(id).then((data) => {
       if (data) {
-        this.checkIn.cusname = data['cusname'];
+        this.checkIn.cusname = data['cusName'];
         this.checkIn.cusphone = data['mobile'];
-        this.checkIn.idCard = data['iDCard'];
+        this.checkIn.idCard = data['idCard'];
         this.checkIn.inType = data['checkInType'];
-        console.log(data['houseTypeId']);
+
+        const houses = _.filter(this.houseInfoSelect, (f) => { return f['state'] == '1001' && f['houseType'] == data['houseTypeId']; });
+        if (houses) {
+          //预定房间数
+          for (let i = 0; i < data['houseNum']; i++) {
+            let hs = houses[i];
+            this.selectedHouse.push({
+              houseTypeTxt: hs['houseTypeTxt'],
+              houseType: hs['houseType'],
+              houseCode: hs['code'],
+              days: data['days'],
+              coupons: 1,
+              cusname: this.checkIn.cusname,
+              idcard: this.checkIn.idCard,
+              button: '读取身份证_' + hs['code'],
+              prereceivefee: hs['preFee'],
+              houseFee: hs['houseFee']
+            });
+          }
+          this.refreshTable();
+        }
       }
     });
   }
 
-  getDataList(resolve, reject) {
-    //待选择的房价
-    this._houseinfoService.getHouseinfos().then((data) => {
-      this.houseInfoSelect = _.filter(data, (f) => { return f['state'] == '1001'; });
+  getDataList() {
+    const that = this;
+    var p = new Promise(function (resolve, reject) {
+      //待选择的房价
+      that._houseinfoService.getHouseinfos().then((data) => {
+        that.houseInfoSelect = _.filter(data, (f) => { return f['state'] == '1001'; });
 
-      //初始化链接过来的房屋
-      if (this.checkInCode) {
-        const findHouse = _.find(data, f => { return f['code'] == this.checkInCode; });
-        this.setCheckInHouse(findHouse);
-      }
-      this.popGrid.load(this.houseInfoSelect);
-      this.getHouseType();
-      resolve();
-    });
-
-    this._setPaytypeService.getSetPaytypes().then((data) => {
-      const that = this;
-      _.each(data, function (d) {
-        that.paytype.push({ id: d.id, name: d.name });
+        //初始化链接过来的房屋
+        if (that.checkInCode) {
+          const findHouse = _.find(data, f => { return f['code'] == that.checkInCode; });
+          that.setCheckInHouse(findHouse);
+        }
+        that.popGrid.load(that.houseInfoSelect);
+        that.getHouseType();
+        resolve();
       });
     });
+    return p;
+  }
 
-    this._dicService.getDicByName('客源', (data) => { this.comeType = data; });
+  getPaytypeService() {
+    const that = this;
+    var p = new Promise(function (resolve, reject) {
+      that._setPaytypeService.getSetPaytypes().then((data) => {
+        _.each(data, function (d) {
+          that.paytype.push({ id: d.id, name: d.name });
+        });
+        resolve();
+      });
+    });
+    return p;
+  }
+
+  getDic() {
+    const that = this;
+    var p = new Promise(function (resolve, reject) {
+      that._dicService.getDicByName('客源', (data) => {
+        that.comeType = data;
+        resolve();
+      });
+    });
+    return p;
   }
 
   setCheckInHouse(house) {
@@ -316,7 +362,7 @@ export class CheckinComponent implements OnInit {
   //刷新表格数据
   refreshTable() {
     this.checkIn.prereceivefee = _.sumBy(this.selectedHouse, function (o) { return o['prereceivefee']; });
-    this.checkIn.houseFee = _.sumBy(this.selectedHouse, function (o) { return o['houseFee']; });
+    this.checkIn.houseFee = _.sumBy(this.selectedHouse, function (o) { return o['houseFee'] * o['days']; });
     this.selectedGrid.load(this.selectedHouse);
   }
   // 删除
@@ -394,6 +440,7 @@ export class CheckinComponent implements OnInit {
         that.checkIn.prereceivefee = '';
         that.checkIn.payType = '';
         that.checkIn.billNo = '';
+        that.checkIn.bookOrderNo = '';
         that.selectedHouse = [];
         that.selectedGrid.load(that.selectedHouse);
       },

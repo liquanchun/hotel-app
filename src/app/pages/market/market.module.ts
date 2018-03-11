@@ -54,6 +54,7 @@ import { SelectServiceComponent  } from './selectservice/selectservice.component
     SelectServiceComponent,
     CheckInComponent
   ],
+  exports: [SelectServiceComponent],
   entryComponents: [CheckInComponent],
   providers: [GlobalState, Config, HttpService, AppState,Common,DicService]
 })

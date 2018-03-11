@@ -157,6 +157,7 @@ export class SelectServiceComponent implements OnInit, AfterViewInit {
         findSer['times'] = newSer['times'];
         findSer['serviceTime'] = newSer['serviceTime'];
         findSer['remark'] = newSer['remark'];
+        findSer['itemName'] = findSer['typeName'];
         this.selectedItem.push(findSer);
         this.source.load(this.selectedItem);
       }

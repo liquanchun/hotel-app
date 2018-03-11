@@ -202,18 +202,21 @@ export class StoreoutComponent implements OnInit {
     private _dicService: DicService,
     private _common: Common,
     private _router: Router,
-    private _orgService: OrgService, 
+    private _orgService: OrgService,
     private modalService: NgbModal,
     private _state: GlobalState) {
-    this._state.subscribe('print.storeout', (data) => {
-      this.printOrder = _.find(this.storeOutData, f => { return f['id'] == data.id; });
-      this.printOrderDetail = _.filter(this.storeOutDetailData, f => { return f['orderno'] == this.printOrder.orderNo; });
-      _.delay(function (that) {
-        that.print();
-      }, 300, this);
-    });
+
   }
   ngOnInit() {
+    this._state.subscribe('print.storeout', (data) => {
+      this.printOrder = _.find(this.storeOutData, f => { return f['id'] == data.id; });
+      if (this.printOrder) {
+        this.printOrderDetail = _.filter(this.storeOutDetailData, f => { return f['orderno'] == this.printOrder.orderNo; });
+        _.delay(function (that) {
+          that.print();
+        }, 300, this);
+      }
+    });
     this.getDataList();
   }
   onSearch(query: string = '') {
@@ -248,7 +251,7 @@ export class StoreoutComponent implements OnInit {
         this.getDataList();
       }, (err) => {
         this._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
-        
+
       });
     }
   }
@@ -317,16 +320,16 @@ export class StoreoutComponent implements OnInit {
         const that = this;
         this.storeOutDetailData = data['storeOutDetailList'];
         this.storeOutData = data['storeOutList'];
-        _.each(this.storeOutData, f => { 
+        _.each(this.storeOutData, f => {
           f['outTime'] = that._common.getSplitDate(f['outTime']);
           f['button'] = f['id'];
-         });
+        });
         this.source.load(this.storeOutData);
       }
     }, (err) => {
       this.loading = false;
       this._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
-      
+
     });
   }
 

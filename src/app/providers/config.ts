@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class Config {
 	// 是否生产模式
-	isProduct = true;
+	isProduct = false;
 	// 服务器地址
 	server = '';
 	// 列表每页数量
