@@ -62,8 +62,8 @@ export class Login {
           this._httpService.setToken(data.data.accessToken);
           this.checkUserInfo();
         } else {
-          const msg = data.msg;
-          
+          this.toastOptions.msg = data.msg;
+          this.toastyService.error(this.toastOptions);
         }
       });
     }

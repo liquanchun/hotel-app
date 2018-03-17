@@ -441,6 +441,7 @@ export class CheckinComponent implements OnInit {
         that.checkIn.payType = '';
         that.checkIn.billNo = '';
         that.checkIn.bookOrderNo = '';
+        that.checkIn.comeType='';
         that.selectedHouse = [];
         that.selectedGrid.load(that.selectedHouse);
       },

@@ -30,37 +30,31 @@ export class StatelogComponent implements OnInit {
         type: 'number',
         editable: false,
         filter: false,
-        width: '30px',
       },
       createdAt: {
         title: '变更时间',
         type: 'string',
-        width: '100px',
         filter: false,
       },
       houseCode: {
         title: '房号',
         type: 'string',
         filter: false,
-        width: '80px',
       },
       oldStateTxt: {
         title: '原状态',
         type: 'string',
         filter: false,
-        width: '80px',
       },
       newStateTxt: {
         title: '新状态',
         type: 'string',
         filter: false,
-        width: '80px',
       },
       orderNo: {
         title: '订单号',
         type: 'string',
         filter: false,
-        width: '80px',
       },
       createdBy: {
         title: '操作员',

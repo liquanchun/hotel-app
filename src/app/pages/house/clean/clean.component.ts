@@ -36,31 +36,26 @@ export class CleanComponent implements OnInit {
         type: 'number',
         editable: false,
         filter: false,
-        width: '30px',
       },
       cleanTime: {
         title: '房扫时间',
         type: 'string',
-        width: '100px',
         filter: false,
       },
       cleanMan: {
         title: '房扫人员',
         type: 'string',
         filter: false,
-        width: '80px',
       },
       houseCode: {
         title: '房号',
         type: 'string',
         filter: false,
-        width: '80px',
       },
       address: {
         title: '房型',
         type: 'string',
         filter: false,
-        width: '80px',
       },
       isOverStay: {
         title: '是否续住',

@@ -48,7 +48,7 @@
           </div>
         </div>
         <div class="col-md-7">
-            <app-selectservice [isNewService]="false"></app-selectservice>
+            <app-selectservice *ngIf="checkIn.bookOrderNo" [isNewService]="false"></app-selectservice>
          </div>
         <div class="col-md-10">
           <fieldset class="form-group">

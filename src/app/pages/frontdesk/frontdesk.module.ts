@@ -27,6 +27,7 @@ import { CheckoutComponent } from './checkout/checkout.component';
 import { CouponComponent } from './coupon/coupon.component';
 import { ScheduleComponent } from './schedule/schedule.component';
 import { ButtonViewComponent } from './checkin/buttonview.component';
+import { ServiceListComponent  } from './servicelist/servicelist.component';
 import {ToastyModule} from 'ng2-toasty';
 @NgModule({
   imports: [
@@ -52,7 +53,8 @@ import {ToastyModule} from 'ng2-toasty';
     CheckoutComponent,
     CouponComponent,
     ScheduleComponent,
-    ButtonViewComponent
+    ButtonViewComponent,
+    ServiceListComponent
   ],
   entryComponents: [ButtonViewComponent],
   providers: [GlobalState, Config, HttpService, AppState,Common]

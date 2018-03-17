@@ -65,11 +65,26 @@ $hover: 24;
 }
 
 button.btn.btn-primary {
-  @include buttonColor($primary, $primary);
-  &:active, &:target {
-    background-color: $primary-dark;
-  }
+  color: #fff;
+  background-color: #007bff;
+  border-color: #007bff;
 }
+button.btn.btn-secondary {
+  color: #fff;
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+button.btn.btn-dark {
+  color: #fff;
+  background-color: #343a40;
+  border-color: #343a40;
+}
+button.btn.btn-light {
+  color: #212529;
+  background-color: #f8f9fa;
+  border-color: #f8f9fa;
+}
+
 
 button.btn.btn-default {
   border-width: 1px;

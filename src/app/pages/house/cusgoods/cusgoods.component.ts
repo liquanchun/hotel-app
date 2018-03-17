@@ -47,31 +47,26 @@ export class CusgoodsComponent implements OnInit {
         type: 'number',
         editable: false,
         filter: false,
-        width: '30px',
       },
       createdAt: {
         title: '存放时间',
         type: 'string',
-        width: '100px',
         filter: false,
       },
       typeName: {
         title: '物品类型',
         type: 'string',
         filter: false,
-        width: '80px',
       },
       goodsName: {
         title: '名称',
         type: 'string',
         filter: false,
-        width: '80px',
       },
       goodsPrice: {
         title: '物品价值',
         type: 'string',
         filter: false,
-        width: '80px',
       },
       cusName: {
         title: '客人姓名',

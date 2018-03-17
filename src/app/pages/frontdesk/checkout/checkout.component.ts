@@ -3,7 +3,7 @@ import { NgbModal, ModalDismissReasons, NgbAlert } from '@ng-bootstrap/ng-bootst
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-
+import { ServiceListComponent } from '../servicelist/servicelist.component';
 import * as $ from 'jquery';
 import * as _ from 'lodash';
 import { Md5 } from 'ts-md5/dist/md5';
@@ -27,6 +27,9 @@ import { ReturnStatement } from '@angular/compiler/src/output/output_ast';
 })
 export class CheckoutComponent implements OnInit {
   @Input() showEditButton: boolean = true;
+  @ViewChild(ServiceListComponent)
+  private serviceComponent: ServiceListComponent;
+  
   title = '退房结账';
   private isSaved: boolean = false;
 
@@ -132,6 +135,8 @@ export class CheckoutComponent implements OnInit {
         this.checkIn.houseCode = code;
         this.checkIn.payType = 0;
         this.selectedGrid.load(data['orderDetailList']);
+
+        this.serviceComponent.loadData(this.checkIn.order);
       }
     },
       (err) => {

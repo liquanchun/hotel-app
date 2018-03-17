@@ -10,7 +10,7 @@
 
                     <div class="col-10">
                         <div class="row">
-                            <div class="col-7">
+                            <div class="col-9">
                                 <div class="btn-group margin8 pull-right" role="group" aria-label="Basic example">
                                     <button *ngFor="let hs of stateData;" (click)="getDataListById(hs.id)" type="button" class="btn {{hs.color}} btn-sm">
                                         <i class="fa fa-refresh" aria-hidden="true"></i> {{hs.name}}
@@ -18,23 +18,13 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="col-5">
+                            <div class="col-3">
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        入住标准
+                                        入住方式
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-right">
-                                        <button *ngFor="let hs of checkInData;" class="dropdown-item" type="button">{{hs.state}}
-                                        <span class="badge badge-danger">{{hs.count}}</span>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        入住渠道
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <button *ngFor="let hs of channelData;" class="dropdown-item" type="button">{{hs.state}}
+                                        <button *ngFor="let hs of checkInData;" class="dropdown-item"  (click)="SearchInType(hs.inType)"  type="button">{{hs.inTypeTxt}}
                                         <span class="badge badge-danger">{{hs.count}}</span>
                                         </button>
                                     </div>
@@ -44,10 +34,25 @@
                                         客源
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-right">
-                                        <button *ngFor="let hs of custData;" class="dropdown-item" type="button">{{hs.name}}
+                                        <button *ngFor="let hs of channelData;" class="dropdown-item" (click)="SearchComeType(hs.comeType)" type="button">{{hs.comeTypeTxt}}
+                                        <span class="badge badge-danger">{{hs.count}}</span>
                                         </button>
                                     </div>
                                 </div>
+
+                                <div class="btn-group margin8 pull-right" role="group" aria-label="Basic example">
+                                    <button (click)="refresh()" type="button" class="btn btn-info btn-sm">
+                                        <i class="fa fa-refresh" aria-hidden="true"></i> 刷新</button>
+                                </div>
+                                <!-- <div class="btn-group">
+                                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        客源
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <button *ngFor="let hs of custData;" class="dropdown-item" type="button">{{hs.name}}
+                                        </button>
+                                    </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -65,7 +70,7 @@
                             </div>
 
                             <p *ngIf="house.stateTxt == '空净'">
-                                <span class="text-info">
+                                <span class="text-primary">
                                 <i class="fa fa-square fa-2x" aria-hidden="true"></i>
                                 </span>
                             </p>
@@ -80,22 +85,22 @@
                                 </span>
                             </p>
                             <p *ngIf="house.stateTxt == '住人脏'">
-                                <span class="text-danger">
+                                <span class="text-info">
                                 <i class="fa fa-user fa-2x" aria-hidden="true"></i>
                                 </span>
                             </p>
                             <p *ngIf="house.stateTxt == '维修'">
-                                <span class="text-warning">
+                                <span class="text-dark">
                                 <i class="fa fa-wrench fa-2x" aria-hidden="true"></i>
                                 </span>
                             </p>
                             <p *ngIf="house.stateTxt == '预约'">
-                                <span class="text-primary">
+                                <span class="text-warning">
                                 <i class="fa fa-phone fa-2x" aria-hidden="true"></i>
                                 </span>
                             </p>
                             <p *ngIf="house.stateTxt == '预离'">
-                                <span class="text-dark">
+                                <span class="text-light">
                                 <i class="fa fa-sign-out fa-2x" aria-hidden="true"></i>
                                 </span>
                             </p>

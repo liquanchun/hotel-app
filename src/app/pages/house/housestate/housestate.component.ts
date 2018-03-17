@@ -32,19 +32,12 @@ export class HousestateComponent implements OnInit, AfterViewInit {
   stateData = [];
   //入住标准钮组
   checkInData = [
-    { state: '全天房', color: 'btn-info', icon: 'fa-refresh', count: 0 },
-    { state: '特殊房', color: 'btn-secondary', icon: 'fa-refresh', count: 0 },
-    { state: '钟点房', color: 'btn-success', icon: 'fa-refresh', count: 0 },
-    { state: '免费房', color: 'btn-danger', icon: 'fa-refresh', count: 0 },
   ];
   //入住渠道
   channelData = [
-    { state: '信用住', color: 'btn-info', icon: 'fa-refresh', count: 0 },
-    { state: '去哪儿', color: 'btn-secondary', icon: 'fa-refresh', count: 0 },
-    { state: '美团', color: 'btn-success', icon: 'fa-refresh', count: 0 },
-    { state: '携程', color: 'btn-danger', icon: 'fa-refresh', count: 0 },
-    { state: '艺龙', color: 'btn-warning', icon: 'fa-refresh', count: 0 },
   ];
+  //入住房间的方式统计
+  houseCheckIns = [];
   //客源
   custData = [];
 
@@ -149,7 +142,6 @@ export class HousestateComponent implements OnInit, AfterViewInit {
       },
         (err) => {
           that._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
-          
         }
       )
     };
@@ -173,7 +165,6 @@ export class HousestateComponent implements OnInit, AfterViewInit {
       },
         (err) => {
           that._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
-          
         }
       )
     };
@@ -184,7 +175,7 @@ export class HousestateComponent implements OnInit, AfterViewInit {
   }
 
   getDataList(): void {
-    this._dicService.getDicByName('客源', (data) => { this.custData = data; });
+    // this._dicService.getDicByName('客源', (data) => { this.custData = data; });
 
     this._dicService.getDicByName('房屋状态', (data) => {
       this.stateData = data;
@@ -203,6 +194,38 @@ export class HousestateComponent implements OnInit, AfterViewInit {
         });
       });
 
+      this.housestateService.getHouseCheckIn().then((data) => {
+        if (data) {
+          this.houseCheckIns = data["houseCheckIns"];
+          this.checkInData = data["houseInTypeList"];
+          this.channelData = data["houseComeTypeList"];
+        }
+      })
+
     });
+  }
+
+  SearchInType(intype) {
+    const that = this;
+    if (this.houseCheckIns) {
+      this.source = _.filter(this.sourcefilter, function (o) {
+        let intypes = _.filter(that.houseCheckIns, (f) => { return f["inType"] == intype; });
+        return _.some(intypes, ['code', o['code']]);
+      })
+    }
+  }
+
+  SearchComeType(cometype) {
+    const that = this;
+    if (this.houseCheckIns) {
+      this.source = _.filter(this.sourcefilter, function (o) {
+        let intypes = _.filter(that.houseCheckIns, (f) => { return f["comeType"] == cometype; });
+        return _.some(intypes, ['code', o['code']]);
+      })
+    }
+  }
+
+  refresh(){
+    this.source = this.sourcefilter;
   }
 }

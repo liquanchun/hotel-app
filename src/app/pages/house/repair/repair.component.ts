@@ -33,43 +33,36 @@ export class RepairComponent implements OnInit {
         type: 'number',
         editable: false,
         filter: false,
-        width: '30px',
       },
       houseCode: {
         title: '房号',
         type: 'string',
         filter: false,
-        width: '80px',
       },
       startTime: {
         title: '开始时间',
         type: 'string',
-        width: '100px',
         filter: false,
       },
       endTime: {
         title: '结束时间',
         type: 'string',
-        width: '100px',
         filter: false,
       },
       status: {
         title: '维修状态',
         type: 'string',
         filter: false,
-        width: '80px',
       },
       reason: {
         title: '维修原因',
         type: 'string',
         filter: false,
-        width: '80px',
       },
       result: {
         title: '维修结果',
         type: 'string',
         filter: false,
-        width: '80px',
       },
       remark: {
         title: '备注',
