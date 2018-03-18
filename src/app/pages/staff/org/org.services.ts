@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpService } from '../../../../providers/httpClient';
+import { HttpService } from '../../../providers/httpClient';
 import * as _ from 'lodash';
 
 @Injectable()

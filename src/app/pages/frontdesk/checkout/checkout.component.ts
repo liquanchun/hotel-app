@@ -10,7 +10,7 @@ import { Md5 } from 'ts-md5/dist/md5';
 
 import { HouseinfoService } from '../../house/houseinfo/houseinfo.services';
 import { CheckinService } from './../checkin/checkin.services';
-import { HouseTypeService } from '../../sys/house-type/house-type.services';
+import { HouseTypeService } from '../../market/house-type/house-type.services';
 import { SetPaytypeService } from '../../sys/set-paytype/set-paytype.services';
 import { DicService } from '../../sys/dic/dic.services';
 import { CheckoutService } from './checkout.services';

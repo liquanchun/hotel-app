@@ -45,31 +45,26 @@ export class TemplateComponent implements OnInit {
         type: 'number',
         editable: false,
         filter: false,
-        width: '30px',
       },
       tmp_name: {
         title: '模板名称',
         type: 'string',
         filter: false,
-        width: '80px',
       },
       to_business: {
         title: '所属业务',
         type: 'string',
         filter: false,
-        width: '80px',
       },
       tmp_content: {
         title: '模板内容',
         type: 'string',
         filter: false,
-        width: '80px',
       },
       createdAt: {
         title: '操作时间',
         type: 'string',
         filter: false,
-        width: '80px',
       },
       createdBy: {
         title: '操作人',

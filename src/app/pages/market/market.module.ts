@@ -23,12 +23,15 @@ import { ComponentsModule } from '../components/components.module';
 
 import { routing } from './market.routing';
 import { MarketComponent } from './market.component';
-import { BookComponent } from './book/book.component';
-import { CheckInComponent } from './book/checkin.component';
-import { MemberComponent } from './member/member.component';
+
 import { CustomerComponent } from './customer/customer.component';
 import { ServiceItemComponent } from './serviceitem/serviceitem.component';
 import { SelectServiceComponent  } from './selectservice/selectservice.component';
+import { HouseTypeComponent } from './house-type/house-type.component';
+import { HouseFeeComponent } from './house-fee/house-fee.component';
+import { SetGroupComponent } from './set-group/set-group.component';
+import { SetAgentComponent } from './set-agent/set-agent.component';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -47,15 +50,15 @@ import { SelectServiceComponent  } from './selectservice/selectservice.component
   ],
   declarations: [
     MarketComponent,
-    BookComponent,
-    MemberComponent,
     CustomerComponent,
     ServiceItemComponent,
     SelectServiceComponent,
-    CheckInComponent
+    HouseTypeComponent,
+    HouseFeeComponent,
+    SetGroupComponent,
+    SetAgentComponent,
   ],
   exports: [SelectServiceComponent],
-  entryComponents: [CheckInComponent],
   providers: [GlobalState, Config, HttpService, AppState,Common,DicService]
 })
 export class MarketModule {}

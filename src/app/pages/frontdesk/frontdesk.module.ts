@@ -28,6 +28,8 @@ import { CouponComponent } from './coupon/coupon.component';
 import { ScheduleComponent } from './schedule/schedule.component';
 import { ButtonViewComponent } from './checkin/buttonview.component';
 import { ServiceListComponent  } from './servicelist/servicelist.component';
+import { BookComponent } from './book/book.component';
+import { CheckInComponent } from './book/checkin.component';
 import {ToastyModule} from 'ng2-toasty';
 @NgModule({
   imports: [
@@ -54,9 +56,11 @@ import {ToastyModule} from 'ng2-toasty';
     CouponComponent,
     ScheduleComponent,
     ButtonViewComponent,
-    ServiceListComponent
+    ServiceListComponent,
+    BookComponent,
+    CheckInComponent,
   ],
-  entryComponents: [ButtonViewComponent],
+  entryComponents: [ButtonViewComponent,CheckInComponent],
   providers: [GlobalState, Config, HttpService, AppState,Common]
 })
 export class FrontdeskModule {}

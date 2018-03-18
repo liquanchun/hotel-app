@@ -2,9 +2,9 @@ import { Component, ViewChild, OnInit, AfterViewInit } from '@angular/core';
 import * as _ from 'lodash';
 import * as $ from 'jquery';
 import { BaThemeConfigProvider } from '../../../theme';
-import { OrgComponent } from '../components/org/org.component';
-import { UserComponent } from '../components/user/user.component';
-import { OrgService } from '../components/org/org.services';
+import { OrgComponent } from '../org/org.component';
+import { UserComponent } from '../user/user.component';
+import { OrgService } from '../org/org.services';
 import { GlobalState } from '../../../global.state';
 @Component({
   selector: 'app-org-user',

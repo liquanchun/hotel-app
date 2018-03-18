@@ -2,19 +2,18 @@ import { Component, ViewChild, OnInit, AfterViewInit, Input, Output, EventEmitte
 import { NgbModal, ModalDismissReasons, NgbAlert } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { FieldConfig } from '../../../../theme/components/dynamic-form/models/field-config.interface';
-import { NgbdModalContent } from '../../../../modal-content.component'
+import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
+import { NgbdModalContent } from '../../../modal-content.component'
 import * as $ from 'jquery';
 import * as _ from 'lodash';
 import { Md5 } from 'ts-md5/dist/md5';
 
 import { UserService } from './user.services';
-import { UserModel } from '../../models/user.model';
-import { GlobalState } from '../../../../global.state';
+import { GlobalState } from '../../../global.state';
 
 
 @Component({
-  selector: 'app-sys-user',
+  selector: 'app-staff-user',
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.scss'],
   providers: [UserService],

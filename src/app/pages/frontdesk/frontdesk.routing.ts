@@ -6,6 +6,7 @@ import { CheckinComponent } from './checkin/checkin.component';
 import { CheckoutComponent } from './checkout/checkout.component';
 import { CouponComponent } from './coupon/coupon.component';
 import { ScheduleComponent } from './schedule/schedule.component';
+import { BookComponent } from './book/book.component';
 
 const routes: Routes = [
   {
@@ -19,6 +20,7 @@ const routes: Routes = [
       { path: 'checkout/:code', component: CheckoutComponent },
       { path: 'coupon', component: CouponComponent },
       { path: 'schedule', component: ScheduleComponent },
+      { path: 'book', component: BookComponent },
     ]
   }
 ];

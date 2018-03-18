@@ -3,7 +3,7 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 
-import { MemberService } from './member.services';
+import { QueryService } from './query.services';
 import { GlobalState } from '../../../global.state';
 import { Common } from '../../../providers/common';
 
@@ -11,12 +11,12 @@ import * as $ from 'jquery';
 import * as _ from 'lodash';
 
 @Component({
-  selector: 'app-member',
-  templateUrl: './member.component.html',
-  styleUrls: ['./member.component.scss'],
-  providers: [MemberService],
+  selector: 'app-member-query',
+  templateUrl: './query.component.html',
+  styleUrls: ['./query.component.scss'],
+  providers: [QueryService],
 })
-export class MemberComponent implements OnInit {
+export class QueryComponent implements OnInit {
 
   title = '会员信息管理';
   query: string = '';
@@ -91,7 +91,7 @@ export class MemberComponent implements OnInit {
   source: LocalDataSource = new LocalDataSource();
 
   constructor(
-    private memberService: MemberService,
+    private memberService: QueryService,
     private _common: Common,
     private _state: GlobalState) {
   }

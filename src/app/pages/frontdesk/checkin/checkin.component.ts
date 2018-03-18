@@ -13,7 +13,7 @@ import { SelectServiceComponent } from '../../market/selectservice/selectservice
 import { HouseinfoService } from '../../house/houseinfo/houseinfo.services';
 import { CheckinService } from './checkin.services';
 import { ReadIdCardService } from './idcardread.services';
-import { HouseTypeService } from '../../sys/house-type/house-type.services';
+import { HouseTypeService } from '../../market/house-type/house-type.services';
 import { SetPaytypeService } from '../../sys/set-paytype/set-paytype.services';
 import { DicService } from '../../sys/dic/dic.services';
 import { BookService } from '../../market/book/book.services';

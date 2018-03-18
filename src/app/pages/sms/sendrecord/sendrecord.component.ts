@@ -42,37 +42,31 @@ export class SendrecordComponent implements OnInit {
         type: 'number',
         editable: false,
         filter: false,
-        width: '30px',
       },
       createdAt: {
         title: '发送时间',
         type: 'string',
         filter: false,
-        width: '80px',
       },
       mobile: {
         title: '手机号码',
         type: 'string',
         filter: false,
-        width: '80px',
       },
       business: {
         title: '业务',
         type: 'string',
         filter: false,
-        width: '80px',
       },
       content: {
         title: '内容',
         type: 'string',
         filter: false,
-        width: '80px',
       },
       status: {
         title: '状态',
         type: 'string',
         filter: false,
-        width: '80px',
       },
     }
   };

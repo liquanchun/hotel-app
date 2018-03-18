@@ -3,7 +3,7 @@ import { HttpService } from '../../../providers/httpClient';
 import * as _ from 'lodash';
 
 @Injectable()
-export class MemberService {
+export class QueryService {
   private modelName = 'yxmember';  // URL to web api
   constructor(private _httpService: HttpService) {
   }

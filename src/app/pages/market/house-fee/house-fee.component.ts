@@ -5,7 +5,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { NgbdModalContent } from '../../../modal-content.component'
 import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
 import { HouseFeeService } from './house-fee.services';
-import { HouseTypeService } from '../../sys/house-type/house-type.services';
+import { HouseTypeService } from '../../market/house-type/house-type.services';
 import { GlobalState } from '../../../global.state';
 
 import * as $ from 'jquery';

@@ -4,7 +4,7 @@ import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/fo
 
 import { TreeNode, TreeModel, TREE_ACTIONS, KEYS, IActionMapping, ITreeOptions } from 'angular-tree-component';
 import { OrgService } from './org.services';
-import { GlobalState } from '../../../../global.state';
+import { GlobalState } from '../../../global.state';
 
 import * as $ from 'jquery';
 import * as _ from 'lodash';

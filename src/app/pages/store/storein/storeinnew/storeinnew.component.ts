@@ -11,8 +11,8 @@ import * as _ from 'lodash';
 import { StoreinNewService } from './storeinnew.services';
 import { DicService } from '../../../sys/dic/dic.services';
 import { SupplierService } from '../../supplier/supplier.services';
-import { UserService } from '../../../sys/components/user/user.services';
-import { OrgService } from '../../../sys/components/org/org.services';
+import { UserService } from '../../../staff/user/user.services';
+import { OrgService } from '../../../staff/org/org.services';
 
 import { GlobalState } from '../../../../global.state';
 import { GoodsService } from '../../goods/goods.services';

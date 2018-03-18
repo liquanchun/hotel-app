@@ -16,18 +16,11 @@ import { UserInfoComponent } from './userinfo/userinfo.component';
 import { SysComponent } from './sys.component';
 import { UserRoleComponent } from './user-role/user-role.component';
 import { RoleMenuComponent } from './role-menu/role-menu.component';
-import { OrgUserComponent } from './org-user/org-user.component';
 import { DicComponent } from './dic/dic.component';
-import { HouseTypeComponent } from './house-type/house-type.component';
-import { HouseFeeComponent } from './house-fee/house-fee.component';
-import { MemberComponent } from './member/member.component';
-import { SetGroupComponent } from './set-group/set-group.component';
-import { SetAgentComponent } from './set-agent/set-agent.component';
 import { SetPaytypeComponent } from './set-paytype/set-paytype.component';
 
 import { FunctionComponent } from './components/function/function.component';
 import { MenuComponent } from './components/menu/menu.component';
-import { OrgComponent } from './components/org/org.component';
 import { RoleComponent } from './components/role/role.component';
 import { UserComponent } from './components/user/user.component';
 import { SelectUserComponent } from './components/selectuser/selectuser.component';
@@ -65,21 +58,14 @@ import { ToastyModule } from 'ng2-toasty';
     RoleMenuComponent,
     FunctionComponent,
     MenuComponent,
-    OrgComponent,
     RoleComponent,
     UserComponent,
     DicComponent,
-    OrgUserComponent,
     SelectUserComponent,
-    HouseTypeComponent,
-    HouseFeeComponent,
-    MemberComponent,
-    SetGroupComponent,
-    SetAgentComponent,
     SetPaytypeComponent,
     UserInfoComponent,
   ],
-  exports: [OrgComponent],
+  
   providers: [Config, HttpService, AppState, Common]
 })
 export class SysModule { }

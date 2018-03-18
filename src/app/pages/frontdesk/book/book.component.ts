@@ -4,15 +4,15 @@ import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/fo
 import { LocalDataSource } from 'ng2-smart-table';
 import { IMultiSelectOption, IMultiSelectSettings, IMultiSelectTexts } from 'angular-2-dropdown-multiselect';
 import { HouseinfoService } from '../../house/houseinfo/houseinfo.services';
-import { HouseTypeService } from '../../sys/house-type/house-type.services';
-import { ServiceItemService } from '../serviceitem/serviceitem.services';
+import { HouseTypeService } from '../../market/house-type/house-type.services';
+import { ServiceItemService } from '../../market/serviceitem/serviceitem.services';
 import { NgbdModalContent } from '../../../modal-content.component'
 import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
 import { BookService } from './book.services';
 import { DicService } from '../../sys/dic/dic.services';
 import { GlobalState } from '../../../global.state';
 import { Common } from '../../../providers/common';
-import { SelectServiceComponent } from './../selectservice/selectservice.component';
+import { SelectServiceComponent } from '../../market/selectservice/selectservice.component';
 import { CheckInComponent } from './checkin.component';
 import { Router } from '@angular/router';
 import { DynamicFormComponent }

@@ -7,7 +7,7 @@ import { FieldConfig } from '../../../theme/components/dynamic-form/models/field
 import { NgbdModalContent } from '../../../modal-content.component'
 
 import { HouseinfoService } from './houseinfo.services';
-import { HouseTypeService } from '../../sys/house-type/house-type.services';
+import { HouseTypeService } from '../../market/house-type/house-type.services';
 
 import { GlobalState } from '../../../global.state';
 import { Common } from '../../../providers/common';

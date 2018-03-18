@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { IMultiSelectOption, IMultiSelectSettings, IMultiSelectTexts } from 'angular-2-dropdown-multiselect';
-import { OrgService } from '../../sys/components/org/org.services';
+import { OrgService } from '../../staff/org/org.services';
 import { LocalDataSource } from 'ng2-smart-table';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { StoreoutService } from './storeout.services';

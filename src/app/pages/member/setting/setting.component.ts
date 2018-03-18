@@ -5,20 +5,20 @@ import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/fo
 import { LocalDataSource } from 'ng2-smart-table';
 import { NgbdModalContent } from '../../../modal-content.component'
 import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
-import { MemberService } from './member.services';
-import { HouseTypeService } from '../house-type//house-type.services';
+import { SettingService } from './setting.services';
+import { HouseTypeService } from '../../market/house-type//house-type.services';
 import { GlobalState } from '../../../global.state';
 
 import * as $ from 'jquery';
 import * as _ from 'lodash';
 
 @Component({
-  selector: 'app-member',
-  templateUrl: './member.component.html',
-  styleUrls: ['./member.component.scss'],
-  providers: [MemberService, HouseTypeService],
+  selector: 'app-member-setting',
+  templateUrl: './setting.component.html',
+  styleUrls: ['./setting.component.scss'],
+  providers: [SettingService, HouseTypeService],
 })
-export class MemberComponent implements OnInit, AfterViewInit {
+export class SettingComponent implements OnInit, AfterViewInit {
   loading = false;
   query: string = '';
 
@@ -549,7 +549,7 @@ export class MemberComponent implements OnInit, AfterViewInit {
 
   constructor(
     private modalService: NgbModal,
-    private memberService: MemberService,
+    private memberService: SettingService,
     private houseTypeService: HouseTypeService,
     private _state: GlobalState) {
     this.getDataList('');

@@ -7,7 +7,11 @@
         </div>
         <div class="col-9 pullright">
           <div class="btn-group margin8 pull-right" role="group" aria-label="Basic example">
-            <div *ngIf="!editable"  class="dropdown-menu">
+            <button *ngIf="!editable" type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+              aria-expanded="false">
+              设置部门
+            </button>
+            <div *ngIf="!editable" class="dropdown-menu">
               <a *ngFor="let org of orgList" class="dropdown-item" (click)="onSetOrgClick(org)" href="javascript:void(0);">{{org.deptName}}</a>
             </div>
             <button *ngIf="editable" (click)="onNewUser()" type="button" class="btn btn-info">
