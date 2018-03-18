@@ -4,10 +4,10 @@
       <div class="row">
         <!--用户角色信息card  -->
         <div class="col-2">
-          <app-sys-org></app-sys-org>
+          <app-staff-org></app-staff-org>
         </div>
         <div class="col-10">
-          <app-staff-user (message)="onMessage($event)" [editable]="false" [checkable]="true"></app-staff-user>
+          <app-staff-user (message)="onMessage($event)" [checkable]="true"></app-staff-user>
         </div>
       </div>
     </ba-card>

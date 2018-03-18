@@ -3,7 +3,7 @@ import { HttpService } from '../../../providers/httpClient';
 
 @Injectable()
 export class UserService {
-  private modelName = 'sysuser';  // URL to web api
+  private modelName = 'sysstaff';  // URL to web api
   constructor(private _httpService: HttpService) {
   }
 
@@ -13,8 +13,8 @@ export class UserService {
   getUsersById(userId:any) {
     return this._httpService.getModelList(this.modelName + '/' + userId);
   }
-  getUsersByOrgId(orgId:any) {
-    return this._httpService.getModelList(this.modelName + '/org/' + orgId);
+  updateOrgId(empno:any,orgId:any) {
+    return this._httpService.getModelList(this.modelName + '/'+ empno +'/' + orgId);
   }
   delete(id: any) {
     return this._httpService.delete(this.modelName , id);

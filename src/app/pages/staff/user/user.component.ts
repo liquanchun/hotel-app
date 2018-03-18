@@ -9,6 +9,7 @@ import * as _ from 'lodash';
 import { Md5 } from 'ts-md5/dist/md5';
 
 import { UserService } from './user.services';
+import { OrgService } from '../org/org.services';
 import { GlobalState } from '../../../global.state';
 
 
@@ -16,11 +17,10 @@ import { GlobalState } from '../../../global.state';
   selector: 'app-staff-user',
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.scss'],
-  providers: [UserService],
+  providers: [UserService, OrgService],
 })
 export class UserComponent implements OnInit, AfterViewInit {
 
-  @Input() editable: boolean = true;
   @Input() checkable: boolean = false;
   @Output()
   message = new EventEmitter();
@@ -44,13 +44,13 @@ export class UserComponent implements OnInit, AfterViewInit {
     },
     hideSubHeader: true,
     columns: {
-      userName: {
-        title: '用户名',
+      name: {
+        title: '员工姓名',
         type: 'string',
         filter: false,
       },
-      userId: {
-        title: '用户ID',
+      employeeNo: {
+        title: '工号',
         type: 'string',
         filter: false,
       },
@@ -59,14 +59,29 @@ export class UserComponent implements OnInit, AfterViewInit {
         type: 'string',
         filter: false,
       },
-      roleNames: {
-        title: '角色',
+      webChat: {
+        title: '微信',
         type: 'string',
         filter: false,
       },
-      isValid: {
-        title: '是否启用',
-        type: 'bool',
+      idCard: {
+        title: '身份证',
+        type: 'string',
+        filter: false,
+      },
+      address: {
+        title: '住址',
+        type: 'string',
+        filter: false,
+      },
+      title: {
+        title: '职位',
+        type: 'string',
+        filter: false,
+      },
+      orgIdTxt: {
+        title: '所属部门',
+        type: 'string',
         filter: false,
       }
     }
@@ -75,24 +90,16 @@ export class UserComponent implements OnInit, AfterViewInit {
   config: FieldConfig[] = [
     {
       type: 'input',
-      label: '用户名',
-      name: 'userName',
-      placeholder: '输入用户名',
+      label: '员工姓名',
+      name: 'name',
+      placeholder: '输入员工姓名',
       validation: [Validators.required],
     },
     {
       type: 'input',
-      label: '用户Id',
-      name: 'userId',
-      placeholder: '输入用户Id',
-      validation: [Validators.required],
-    },
-    {
-      type: 'input',
-      label: '密码',
-      name: 'pwd',
-      placeholder: '输入密码',
-      password: true,
+      label: '工号',
+      name: 'employeeNo',
+      placeholder: '输入工号'
     },
     {
       type: 'input',
@@ -101,16 +108,28 @@ export class UserComponent implements OnInit, AfterViewInit {
       placeholder: '输入电话',
     },
     {
-      type: 'check',
-      label: '角色',
-      name: 'roleIds',
-      check: 'checkbox',
-      options: this.roles
+      type: 'input',
+      label: '微信',
+      name: 'webChat',
+      placeholder: '输入微信',
     },
     {
-      type: 'truefalse',
-      label: '是否启用',
-      name: 'isValid',
+      type: 'input',
+      label: '身份证',
+      name: 'idCard',
+      placeholder: '输入身份证',
+    },
+    {
+      type: 'input',
+      label: '住址',
+      name: 'address',
+      placeholder: '输入住址',
+    },
+    {
+      type: 'input',
+      label: '职位',
+      name: 'title',
+      placeholder: '输入职位',
     },
   ];
   source: LocalDataSource = new LocalDataSource();
@@ -118,21 +137,15 @@ export class UserComponent implements OnInit, AfterViewInit {
   userData: any;
   selectOrg: any;
   selectUser: any = [];
+  orgList: any;
 
   constructor(
     private modalService: NgbModal,
     private _state: GlobalState,
+    private _orgService: OrgService,
     private userService: UserService) {
 
     const that = this;
-    this._state.subscribe('role.dataChanged', (roles) => {
-      _.each(roles, r => {
-        that.roles.push({ id: r.id, name: r.roleName });
-      })
-    });
-    this._state.subscribe('role.selectedChanged', (role) => {
-      this.onSearchRole(role.roleName);
-    });
     this._state.subscribe('org.selectedChanged', (org) => {
       this.selectOrg = org.data;
       this.onSearchOrg(org.data.id);
@@ -166,6 +179,10 @@ export class UserComponent implements OnInit, AfterViewInit {
       this.loading = false;
       this.message.emit({ type: 'error', msg: err });
     });
+
+    this._orgService.getAll().then((data) => {
+      this.orgList = data;
+    });
   }
 
   ngAfterViewInit() {
@@ -175,33 +192,32 @@ export class UserComponent implements OnInit, AfterViewInit {
   rowClicked(event): void {
     if (this.checkable) {
       if (event.isSelected) {
-        this.selectUser.push({ id: event.data.id, name: event.data.userName });
+        this.selectUser.push({ id: event.data.employeeNo, name: event.data.name });
       } else {
         _.remove(this.selectUser, function (n) {
-          return n['id'] == event.data.id;
+          return n['id'] == event.data.employeeNo;
         });
       }
     }
   }
 
-  onSearchRole(orgid: number) {
-    this.source.reset();
-    this.source.load(_.filter(this.userData, f => { return f['roleNames'].indexOf(orgid) > -1; }));
-  }
   onSearchOrg(orgid: number) {
     this.source.reset();
     this.source.load(_.filter(this.userData, f => { return f['orgId'] == orgid; }));
   }
   onSearch(query: string = '') {
     this.source.setFilter([
-      { field: 'userName', search: query },
+      { field: 'name', search: query },
     ], false);
   }
+
   onSetOrgClick(org) {
     const that = this;
     if (this.selectUser) {
-      let userIds = [];
-      _.each(this.selectUser, f => { userIds.push(f.id); });
+      _.each(this.selectUser, f => {
+        that.userService.updateOrgId(f['id'], org.id);
+      });
+      this.getUserList();
     } else {
       that.message.emit({ type: 'warning', msg: "请勾选要设置的用户。" });
     }
@@ -209,11 +225,10 @@ export class UserComponent implements OnInit, AfterViewInit {
   onNewUser() {
     const that = this;
     const modalRef = this.modalService.open(NgbdModalContent);
-    modalRef.componentInstance.title = '新增用户';
+    modalRef.componentInstance.title = '新增员工';
     modalRef.componentInstance.config = this.config;
     modalRef.componentInstance.saveFun = (result, closeBack) => {
       let user = JSON.parse(result);
-      user.pwd = Md5.hashStr(user.pwd).toString();
       that.userService.create(user).then((data) => {
         closeBack();
         that.message.emit({ type: 'success', msg: "新增成功。" });
@@ -229,9 +244,8 @@ export class UserComponent implements OnInit, AfterViewInit {
   onEdit(event) {
     const that = this;
     const modalRef = this.modalService.open(NgbdModalContent);
-    modalRef.componentInstance.title = '修改用户';
+    modalRef.componentInstance.title = '修改员工';
     let newConfig = this.config;
-    _.remove(newConfig, f => { return f.name == 'pwd'; });
     modalRef.componentInstance.config = newConfig;
     modalRef.componentInstance.formValue = event.data;
     modalRef.componentInstance.saveFun = (result, closeBack) => {

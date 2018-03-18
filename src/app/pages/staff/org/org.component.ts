@@ -30,7 +30,7 @@ const actionMapping: IActionMapping = {
 };
 
 @Component({
-  selector: 'app-sys-org',
+  selector: 'app-staff-org',
   templateUrl: './org.component.html',
   styleUrls: ['./org.component.scss'],
   providers: [OrgService],

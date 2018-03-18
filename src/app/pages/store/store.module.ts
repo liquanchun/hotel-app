@@ -32,6 +32,7 @@ import { SupplierComponent } from './supplier/Supplier.component';
 import { StoreinNewComponent } from './storein/storeinnew/storeinnew.component';
 import { StoreoutNewComponent } from './storeout/storeoutnew/storeoutnew.component';
 import { SysModule } from './../sys/sys.module';
+import { StaffModule } from './../staff/staff.module';
 import { ToastyModule } from 'ng2-toasty';
 @NgModule({
   imports: [
@@ -48,6 +49,7 @@ import { ToastyModule } from 'ng2-toasty';
     LoadingModule,
     Ng2SmartTableModule,
     SysModule,
+    StaffModule,
     ToastyModule.forRoot()
   ],
   declarations: [

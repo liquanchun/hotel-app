@@ -60,8 +60,18 @@ export class UserComponent implements OnInit, AfterViewInit {
         type: 'string',
         filter: false,
       },
+      webChat: {
+        title: '微信',
+        type: 'string',
+        filter: false,
+      },
       roleNames: {
         title: '角色',
+        type: 'string',
+        filter: false,
+      },
+      lastLoginTime: {
+        title: '最近登录',
         type: 'string',
         filter: false,
       },
@@ -100,6 +110,12 @@ export class UserComponent implements OnInit, AfterViewInit {
       label: '电话',
       name: 'mobile',
       placeholder: '输入电话',
+    },
+    {
+      type: 'input',
+      label: '微信',
+      name: 'webChat',
+      placeholder: '输入微信',
     },
     {
       type: 'check',
