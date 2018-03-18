@@ -5,7 +5,7 @@ import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/fo
 import { LocalDataSource } from 'ng2-smart-table';
 import { NgbdModalContent } from '../../../modal-content.component'
 import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
-import { SettingService } from './setting.services';
+import { DiscountService } from './discount.services';
 import { HouseTypeService } from '../../market/house-type//house-type.services';
 import { GlobalState } from '../../../global.state';
 
@@ -13,16 +13,16 @@ import * as $ from 'jquery';
 import * as _ from 'lodash';
 
 @Component({
-  selector: 'app-member-setting',
-  templateUrl: './setting.component.html',
-  styleUrls: ['./setting.component.scss'],
-  providers: [SettingService, HouseTypeService],
+  selector: 'app-member-discount',
+  templateUrl: './discount.component.html',
+  styleUrls: ['./discount.component.scss'],
+  providers: [DiscountService, HouseTypeService],
 })
-export class SettingComponent implements OnInit, AfterViewInit {
+export class DiscountComponent implements OnInit, AfterViewInit {
   loading = false;
   query: string = '';
 
-  settingsCard = {
+  discountsCard = {
     mode: 'external',
     actions: {
       columnTitle: '操作'
@@ -67,7 +67,7 @@ export class SettingComponent implements OnInit, AfterViewInit {
     }
   };
 
-  settingsCardUpgrade = {
+  discountsIntegral = {
     mode: 'external',
     actions: {
       columnTitle: '操作'
@@ -89,24 +89,39 @@ export class SettingComponent implements OnInit, AfterViewInit {
         filter: false,
         width: '30px',
       },
-      oldCardTxt: {
-        title: '旧卡',
-        filter: false,
+      name: {
+        title: '名称',
         type: 'string',
+        filter: false
       },
-      newCardTxt: {
-        title: '新卡',
-        filter: false,
+      inteType: {
+        title: '方式类型',
         type: 'string',
+        filter: false
       },
-      needInte: {
-        title: '升级所需积分',
+      cardTypeTxt: {
+        title: '会员卡类型',
+        type: 'string',
+        filter: false
+      },
+      dayOrFee: {
+        title: '天数/金额',
         type: 'number',
         filter: false
       },
-      takeInte: {
-        title: '升级消耗积分',
+      integral: {
+        title: '积分',
         type: 'number',
+        filter: false
+      },
+      startDate: {
+        title: '活动开始日期',
+        type: 'string',
+        filter: false
+      },
+      endDate: {
+        title: '活动结束日期',
+        type: 'string',
         filter: false
       },
       remark: {
@@ -147,33 +162,51 @@ export class SettingComponent implements OnInit, AfterViewInit {
     }
   ];
 
-  configCardUpgrade: FieldConfig[] = [
-    {
-      label: '旧卡',
-      name: 'oldCard',
-      type: 'select',
-      placeholder: '请选择',
-      options: []
-    },
-    {
-      label: '新卡',
-      name: 'newCard',
-      type: 'select',
-      placeholder: '请选择',
-      options: []
-    },
+  configIntegral: FieldConfig[] = [
     {
       type: 'input',
-      label: '升级所需积分',
-      name: 'needInte',
-      placeholder: '输入升级所需积分',
+      label: '名称',
+      name: 'name',
+      placeholder: '输入名称',
       validation: [Validators.required],
     },
     {
       type: 'input',
-      label: '升级消耗积分',
-      name: 'takeInte',
-      placeholder: '输入升级消耗积分',
+      label: '方式类型',
+      name: 'type',
+      placeholder: '输入方式类型',
+      validation: [Validators.required],
+    },
+    {
+      type: 'check',
+      label: '会员卡类型',
+      name: 'cardType',
+      check: 'radio',
+      options: []
+    },
+    {
+      type: 'input',
+      label: '金额',
+      name: 'dayOrFee',
+      placeholder: '输入金额',
+    },
+    {
+      type: 'input',
+      label: '积分',
+      name: 'integral',
+      placeholder: '输入积分',
+    },
+    {
+      type: 'datepicker',
+      label: '活动开始日期',
+      name: 'startDate',
+      placeholder: '输入活动开始日期',
+    },
+    {
+      type: 'datepicker',
+      label: '活动结束日期',
+      name: 'endDate',
+      placeholder: '输入活动结束日期',
     },
     {
       type: 'input',
@@ -184,19 +217,19 @@ export class SettingComponent implements OnInit, AfterViewInit {
   ];
 
   sourceCard: LocalDataSource = new LocalDataSource();
-  sourceCardUpgrade: LocalDataSource = new LocalDataSource();
+  sourceIntegral: LocalDataSource = new LocalDataSource();
   modalConfig: any = {};
 
   constructor(
     private modalService: NgbModal,
-    private memberService: SettingService,
+    private memberService: DiscountService,
     private houseTypeService: HouseTypeService,
     private _state: GlobalState) {
     this.getDataList('');
   }
   ngOnInit() {
     this.modalConfig.SetCard = this.configCard;
-    this.modalConfig.SetCardUpgrade = this.configCardUpgrade;
+    this.modalConfig.SetIntegral = this.configIntegral;
   }
   ngAfterViewInit() {
 
@@ -209,12 +242,10 @@ export class SettingComponent implements OnInit, AfterViewInit {
         this.sourceCard.load(data);
         this.loading = false;
         const that = this;
-        let cardT2 = _.find(this.configCardUpgrade, function (f) { return f.name == 'oldCard'; });
-        let cardT3 = _.find(this.configCardUpgrade, function (f) { return f.name == 'newCard'; });
+        let cardT1 = _.find(this.configIntegral, function (f) { return f.name == 'cardType'; });
 
         _.each(data, function (d) {
-          cardT2.options.push({ id: d.id, name: d.name });
-          cardT3.options.push({ id: d.id, name: d.name });
+          cardT1.options.push({ id: d.id, name: d.name });
         });
       }, (err) => {
         this.loading = false;
@@ -223,9 +254,9 @@ export class SettingComponent implements OnInit, AfterViewInit {
       });
     }
 
-    if (!modalname || modalname == 'SetCardUpgrade') {
-      this.memberService.getMembers('SetCardUpgrade').then((data) => {
-        this.sourceCardUpgrade.load(data);
+    if (!modalname || modalname == 'SetIntegral') {
+      this.memberService.getMembers('SetIntegral').then((data) => {
+        this.sourceIntegral.load(data);
       });
     }
   }

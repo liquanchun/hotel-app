@@ -5,7 +5,7 @@ import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/fo
 import { LocalDataSource } from 'ng2-smart-table';
 import { NgbdModalContent } from '../../../modal-content.component'
 import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
-import { SettingService } from './setting.services';
+import { ExchangeService } from './exchange.services';
 import { HouseTypeService } from '../../market/house-type//house-type.services';
 import { GlobalState } from '../../../global.state';
 
@@ -13,16 +13,16 @@ import * as $ from 'jquery';
 import * as _ from 'lodash';
 
 @Component({
-  selector: 'app-member-setting',
-  templateUrl: './setting.component.html',
-  styleUrls: ['./setting.component.scss'],
-  providers: [SettingService, HouseTypeService],
+  selector: 'app-member-exchange',
+  templateUrl: './exchange.component.html',
+  styleUrls: ['./exchange.component.scss'],
+  providers: [ExchangeService, HouseTypeService],
 })
-export class SettingComponent implements OnInit, AfterViewInit {
+export class ExchangeComponent implements OnInit, AfterViewInit {
   loading = false;
   query: string = '';
 
-  settingsCard = {
+  exchangesInteExchange = {
     mode: 'external',
     actions: {
       columnTitle: '操作'
@@ -45,18 +45,38 @@ export class SettingComponent implements OnInit, AfterViewInit {
         width: '30px',
       },
       name: {
-        title: '会员卡',
+        title: '名称',
         type: 'string',
         filter: false
       },
-      level: {
-        title: '级别',
+      exchangeType: {
+        title: '兑换类型',
+        type: 'string',
+        filter: false
+      },
+      cardTypeTxt: {
+        title: '会员卡类型',
+        filter: false,
+        type: 'string',
+      },
+      giftName: {
+        title: '礼品名称',
+        type: 'string',
+        filter: false
+      },
+      exchangeInte: {
+        title: '所需积分',
         type: 'number',
         filter: false
       },
-      cardFee: {
-        title: '卡费',
-        type: 'number',
+      startDate: {
+        title: '活动开始日期',
+        type: 'string',
+        filter: false
+      },
+      endDate: {
+        title: '活动结束日期',
+        type: 'string',
         filter: false
       },
       remark: {
@@ -67,7 +87,7 @@ export class SettingComponent implements OnInit, AfterViewInit {
     }
   };
 
-  settingsCardUpgrade = {
+  exchangesInteHouse = {
     mode: 'external',
     actions: {
       columnTitle: '操作'
@@ -89,24 +109,39 @@ export class SettingComponent implements OnInit, AfterViewInit {
         filter: false,
         width: '30px',
       },
-      oldCardTxt: {
-        title: '旧卡',
-        filter: false,
+      name: {
+        title: '名称',
         type: 'string',
-      },
-      newCardTxt: {
-        title: '新卡',
-        filter: false,
-        type: 'string',
-      },
-      needInte: {
-        title: '升级所需积分',
-        type: 'number',
         filter: false
       },
       takeInte: {
-        title: '升级消耗积分',
+        title: '所需积分',
         type: 'number',
+        filter: false
+      },
+      cardTypeTxt: {
+        title: '会员卡类型',
+        filter: false,
+        type: 'string'
+      },
+      houseTypeTxt: {
+        title: '兑换房型',
+        type: 'string',
+        filter: false
+      },
+      useWeeks: {
+        title: '有效星期',
+        type: 'string',
+        filter: false
+      },
+      startDate: {
+        title: '活动开始日期',
+        type: 'string',
+        filter: false
+      },
+      endDate: {
+        title: '活动结束日期',
+        type: 'string',
         filter: false
       },
       remark: {
@@ -117,27 +152,51 @@ export class SettingComponent implements OnInit, AfterViewInit {
     }
   };
 
-  configCard: FieldConfig[] = [
+  configInteExchange: FieldConfig[] = [
     {
       type: 'input',
-      label: '会员卡',
+      label: '名称',
       name: 'name',
-      placeholder: '输入会员卡',
+      placeholder: '输入名称',
       validation: [Validators.required],
     },
     {
       type: 'input',
-      label: '级别',
-      name: 'level',
-      placeholder: '输入级别',
+      label: '兑换类型',
+      name: 'exchangeType',
+      placeholder: '输入兑换类型',
       validation: [Validators.required],
     },
     {
+      type: 'check',
+      label: '会员卡类型',
+      name: 'cardType',
+      check: 'radio',
+      options: []
+    },
+    {
       type: 'input',
-      label: '卡费',
-      name: 'cardFee',
-      placeholder: '输入卡费',
-      validation: [Validators.required],
+      label: '礼品名称',
+      name: 'giftName',
+      placeholder: '输入礼品名称',
+    },
+    {
+      type: 'input',
+      label: '所需积分',
+      name: 'exchangeInte',
+      placeholder: '输入所需积分',
+    },
+    {
+      type: 'input',
+      label: '活动开始日期',
+      name: 'startDate',
+      placeholder: '输入活动开始日期',
+    },
+    {
+      type: 'input',
+      label: '活动结束日期',
+      name: 'endDate',
+      placeholder: '输入活动结束日期',
     },
     {
       type: 'input',
@@ -147,33 +206,51 @@ export class SettingComponent implements OnInit, AfterViewInit {
     }
   ];
 
-  configCardUpgrade: FieldConfig[] = [
-    {
-      label: '旧卡',
-      name: 'oldCard',
-      type: 'select',
-      placeholder: '请选择',
-      options: []
-    },
-    {
-      label: '新卡',
-      name: 'newCard',
-      type: 'select',
-      placeholder: '请选择',
-      options: []
-    },
+  configInteHouse: FieldConfig[] = [
     {
       type: 'input',
-      label: '升级所需积分',
-      name: 'needInte',
-      placeholder: '输入升级所需积分',
+      label: '名称',
+      name: 'name',
+      placeholder: '输入名称',
       validation: [Validators.required],
     },
     {
       type: 'input',
-      label: '升级消耗积分',
+      label: '所需积分',
       name: 'takeInte',
-      placeholder: '输入升级消耗积分',
+      placeholder: '输入所需积分',
+      validation: [Validators.required],
+    },
+    {
+      type: 'check',
+      label: '会员卡类型',
+      name: 'cardType',
+      check: 'radio',
+      options: []
+    },
+    {
+      type: 'select',
+      label: '兑换房型',
+      name: 'houseType',
+      options: []
+    },
+    {
+      type: 'multiselect',
+      label: '有效星期',
+      name: 'useWeeks',
+      options: []
+    },
+    {
+      type: 'input',
+      label: '活动开始日期',
+      name: 'startDate',
+      placeholder: '输入活动开始日期',
+    },
+    {
+      type: 'input',
+      label: '活动结束日期',
+      name: 'endDate',
+      placeholder: '输入活动结束日期',
     },
     {
       type: 'input',
@@ -183,51 +260,54 @@ export class SettingComponent implements OnInit, AfterViewInit {
     }
   ];
 
-  sourceCard: LocalDataSource = new LocalDataSource();
-  sourceCardUpgrade: LocalDataSource = new LocalDataSource();
+  sourceInteExchange: LocalDataSource = new LocalDataSource();
+  sourceInteHouse: LocalDataSource = new LocalDataSource();
   modalConfig: any = {};
 
   constructor(
     private modalService: NgbModal,
-    private memberService: SettingService,
+    private memberService: ExchangeService,
     private houseTypeService: HouseTypeService,
     private _state: GlobalState) {
     this.getDataList('');
   }
   ngOnInit() {
-    this.modalConfig.SetCard = this.configCard;
-    this.modalConfig.SetCardUpgrade = this.configCardUpgrade;
+    this.modalConfig.SetInteExchange = this.configInteExchange;
+    this.modalConfig.SetInteHouse = this.configInteHouse;
   }
   ngAfterViewInit() {
 
   }
 
   getDataList(modalname): void {
-    if (!modalname || modalname == 'SetCard') {
-      this.loading = true;
-      this.memberService.getMembers('SetCard').then((data) => {
-        this.sourceCard.load(data);
-        this.loading = false;
-        const that = this;
-        let cardT2 = _.find(this.configCardUpgrade, function (f) { return f.name == 'oldCard'; });
-        let cardT3 = _.find(this.configCardUpgrade, function (f) { return f.name == 'newCard'; });
-
-        _.each(data, function (d) {
-          cardT2.options.push({ id: d.id, name: d.name });
-          cardT3.options.push({ id: d.id, name: d.name });
-        });
-      }, (err) => {
-        this.loading = false;
-        this._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
-        
+    if (!modalname || modalname == 'SetInteExchange') {
+      this.memberService.getMembers('SetInteExchange').then((data) => {
+        this.sourceInteExchange.load(data);
       });
     }
 
-    if (!modalname || modalname == 'SetCardUpgrade') {
-      this.memberService.getMembers('SetCardUpgrade').then((data) => {
-        this.sourceCardUpgrade.load(data);
+    if (!modalname || modalname == 'SetInteHouse') {
+      this.memberService.getMembers('SetInteHouse').then((data) => {
+        let cardT1 = _.find(this.configInteHouse, function (f) { return f.name == 'useWeeks'; });
+        cardT1.options = [
+          { id: '星期一', name: '星期一' },
+          { id: '星期二', name: '星期二' },
+          { id: '星期三', name: '星期三' },
+          { id: '星期四', name: '星期四' },
+          { id: '星期五', name: '星期五' },
+          { id: '星期六', name: '星期六' },
+          { id: '星期日', name: '星期日' },
+        ];
+        this.sourceInteHouse.load(data);
       });
     }
+
+    this.houseTypeService.getHouseTypes().then((data) => {
+      let cardT1 = _.find(this.configInteHouse, function (f) { return f.name == 'houseType'; });
+      _.each(data, (d) => {
+        cardT1.options.push({ id: d.id, name: d.typeName });
+      });
+    });
   }
 
   onCreate(modalname, title) {

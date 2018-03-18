@@ -5,7 +5,7 @@ import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/fo
 import { LocalDataSource } from 'ng2-smart-table';
 import { NgbdModalContent } from '../../../modal-content.component'
 import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
-import { SettingService } from './setting.services';
+import { IntegralService } from './integral.services';
 import { HouseTypeService } from '../../market/house-type//house-type.services';
 import { GlobalState } from '../../../global.state';
 
@@ -13,16 +13,16 @@ import * as $ from 'jquery';
 import * as _ from 'lodash';
 
 @Component({
-  selector: 'app-member-setting',
-  templateUrl: './setting.component.html',
-  styleUrls: ['./setting.component.scss'],
-  providers: [SettingService, HouseTypeService],
+  selector: 'app-member-integral',
+  templateUrl: './integral.component.html',
+  styleUrls: ['./integral.component.scss'],
+  providers: [IntegralService, HouseTypeService],
 })
-export class SettingComponent implements OnInit, AfterViewInit {
+export class IntegralComponent implements OnInit, AfterViewInit {
   loading = false;
   query: string = '';
 
-  settingsCard = {
+  integralsIntegral = {
     mode: 'external',
     actions: {
       columnTitle: '操作'
@@ -45,18 +45,38 @@ export class SettingComponent implements OnInit, AfterViewInit {
         width: '30px',
       },
       name: {
-        title: '会员卡',
+        title: '名称',
         type: 'string',
         filter: false
       },
-      level: {
-        title: '级别',
+      inteType: {
+        title: '方式类型',
+        type: 'string',
+        filter: false
+      },
+      cardTypeTxt: {
+        title: '会员卡类型',
+        type: 'string',
+        filter: false
+      },
+      dayOrFee: {
+        title: '天数/金额',
         type: 'number',
         filter: false
       },
-      cardFee: {
-        title: '卡费',
+      integral: {
+        title: '积分',
         type: 'number',
+        filter: false
+      },
+      startDate: {
+        title: '活动开始日期',
+        type: 'string',
+        filter: false
+      },
+      endDate: {
+        title: '活动结束日期',
+        type: 'string',
         filter: false
       },
       remark: {
@@ -67,77 +87,51 @@ export class SettingComponent implements OnInit, AfterViewInit {
     }
   };
 
-  settingsCardUpgrade = {
-    mode: 'external',
-    actions: {
-      columnTitle: '操作'
-    },
-    hideSubHeader: true,
-    edit: {
-      editButtonContent: '<i class="ion-edit"></i>',
-      confirmSave: true,
-    },
-    delete: {
-      deleteButtonContent: '<i class="ion-trash-a"></i>',
-      confirmDelete: true
-    },
-    columns: {
-      id: {
-        title: 'ID',
-        type: 'number',
-        editable: false,
-        filter: false,
-        width: '30px',
-      },
-      oldCardTxt: {
-        title: '旧卡',
-        filter: false,
-        type: 'string',
-      },
-      newCardTxt: {
-        title: '新卡',
-        filter: false,
-        type: 'string',
-      },
-      needInte: {
-        title: '升级所需积分',
-        type: 'number',
-        filter: false
-      },
-      takeInte: {
-        title: '升级消耗积分',
-        type: 'number',
-        filter: false
-      },
-      remark: {
-        title: '备注',
-        type: 'string',
-        filter: false
-      }
-    }
-  };
-
-  configCard: FieldConfig[] = [
+  configIntegral: FieldConfig[] = [
     {
       type: 'input',
-      label: '会员卡',
+      label: '名称',
       name: 'name',
-      placeholder: '输入会员卡',
+      placeholder: '输入名称',
       validation: [Validators.required],
     },
     {
       type: 'input',
-      label: '级别',
-      name: 'level',
-      placeholder: '输入级别',
+      label: '方式类型',
+      name: 'type',
+      placeholder: '输入方式类型',
       validation: [Validators.required],
     },
     {
+      type: 'check',
+      label: '会员卡类型',
+      name: 'cardType',
+      check: 'radio',
+      options: []
+    },
+    {
       type: 'input',
-      label: '卡费',
-      name: 'cardFee',
-      placeholder: '输入卡费',
-      validation: [Validators.required],
+      label: '金额',
+      name: 'dayOrFee',
+      placeholder: '输入金额',
+    },
+    {
+      type: 'input',
+      label: '积分',
+      name: 'integral',
+      placeholder: '输入积分',
+    },
+    {
+      type: 'datepicker',
+      label: '活动开始日期',
+      name: 'startDate',
+      placeholder: '输入活动开始日期',
+    },
+    {
+      type: 'datepicker',
+      label: '活动结束日期',
+      name: 'endDate',
+      placeholder: '输入活动结束日期',
     },
     {
       type: 'input',
@@ -147,85 +141,28 @@ export class SettingComponent implements OnInit, AfterViewInit {
     }
   ];
 
-  configCardUpgrade: FieldConfig[] = [
-    {
-      label: '旧卡',
-      name: 'oldCard',
-      type: 'select',
-      placeholder: '请选择',
-      options: []
-    },
-    {
-      label: '新卡',
-      name: 'newCard',
-      type: 'select',
-      placeholder: '请选择',
-      options: []
-    },
-    {
-      type: 'input',
-      label: '升级所需积分',
-      name: 'needInte',
-      placeholder: '输入升级所需积分',
-      validation: [Validators.required],
-    },
-    {
-      type: 'input',
-      label: '升级消耗积分',
-      name: 'takeInte',
-      placeholder: '输入升级消耗积分',
-    },
-    {
-      type: 'input',
-      label: '备注',
-      name: 'remark',
-      placeholder: '输入备注',
-    }
-  ];
-
-  sourceCard: LocalDataSource = new LocalDataSource();
-  sourceCardUpgrade: LocalDataSource = new LocalDataSource();
+  sourceIntegral: LocalDataSource = new LocalDataSource();
   modalConfig: any = {};
 
   constructor(
     private modalService: NgbModal,
-    private memberService: SettingService,
+    private memberService: IntegralService,
     private houseTypeService: HouseTypeService,
     private _state: GlobalState) {
     this.getDataList('');
   }
   ngOnInit() {
-    this.modalConfig.SetCard = this.configCard;
-    this.modalConfig.SetCardUpgrade = this.configCardUpgrade;
+    this.modalConfig.SetIntegral = this.configIntegral;
   }
   ngAfterViewInit() {
 
   }
 
   getDataList(modalname): void {
-    if (!modalname || modalname == 'SetCard') {
-      this.loading = true;
-      this.memberService.getMembers('SetCard').then((data) => {
-        this.sourceCard.load(data);
-        this.loading = false;
-        const that = this;
-        let cardT2 = _.find(this.configCardUpgrade, function (f) { return f.name == 'oldCard'; });
-        let cardT3 = _.find(this.configCardUpgrade, function (f) { return f.name == 'newCard'; });
 
-        _.each(data, function (d) {
-          cardT2.options.push({ id: d.id, name: d.name });
-          cardT3.options.push({ id: d.id, name: d.name });
-        });
-      }, (err) => {
-        this.loading = false;
-        this._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
-        
-      });
-    }
-
-    if (!modalname || modalname == 'SetCardUpgrade') {
-      this.memberService.getMembers('SetCardUpgrade').then((data) => {
-        this.sourceCardUpgrade.load(data);
+    if (!modalname || modalname == 'SetIntegral') {
+      this.memberService.getMembers('SetIntegral').then((data) => {
+        this.sourceIntegral.load(data);
       });
     }
   }
