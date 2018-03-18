@@ -22,7 +22,9 @@ import { MemberComponent } from './member.component';
 import { routing } from './member.routing';
 import { SettingComponent  } from './setting/setting.component';
 import { QueryComponent } from './query/query.component';
-
+import { DiscountComponent } from './discount/discount.component';
+import { ExchangeComponent } from './exchange/exchange.component';
+import { IntegralComponent } from './integral/integral.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -41,7 +43,10 @@ import { QueryComponent } from './query/query.component';
   declarations: [
     MemberComponent,
     SettingComponent,
-    QueryComponent
+    QueryComponent,
+    DiscountComponent,
+    ExchangeComponent,
+    IntegralComponent
   ],
   providers: [GlobalState, Config, HttpService, AppState,Common]
 })
