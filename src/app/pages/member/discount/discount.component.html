@@ -4,23 +4,23 @@
             <ngb-tab title="房价折扣">
                 <ng-template ngbTabContent>
                     <div class="btn-group margin8 pull-right" role="group" aria-label="Basic example">
-                        <button (click)="onCreate('SetCard','新增房价折扣')" type="button" class="btn btn-info btn-sm">
+                        <button (click)="onCreate('SetCardDiscount','HouseDiscount','新增房价折扣')" type="button" class="btn btn-info btn-sm">
               <i class="fa fa-refresh" aria-hidden="true"></i> 新增房价折扣</button>
                     </div>
                     <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '4px' }"></ngx-loading>
-                    <ng2-smart-table [settings]="discountsCard" [source]="sourceCard" (edit)="onEdit('SetCard','修改房价折扣',$event)" (delete)="onDelete('SetCard',$event)"></ng2-smart-table>
+                    <ng2-smart-table [settings]="houseDiscount" [source]="sourceHouseDiscount" (delete)="onDelete('SetDiscount',$event)"></ng2-smart-table>
                 </ng-template>
             </ngb-tab>
             <ngb-tab title="服务项目折扣">
-                <ng-template ngbTabContent>
-                    <div class="btn-group margin8 pull-right" role="group" aria-label="Basic example">
-                        <button (click)="onCreate('SetIntegral','新增服务项目折扣')" type="button" class="btn btn-info btn-sm">
-              <i class="fa fa-refresh" aria-hidden="true"></i> 新增服务项目折扣</button>
-                    </div>
-                    <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '4px' }"></ngx-loading>
-                    <ng2-smart-table [settings]="discountsIntegral" [source]="sourceIntegral" (edit)="onEdit('SetIntegral','修改服务项目折扣',$event)" (delete)="onDelete('SetIntegral',$event)"></ng2-smart-table>
-                </ng-template>
-            </ngb-tab>
+                    <ng-template ngbTabContent>
+                        <div class="btn-group margin8 pull-right" role="group" aria-label="Basic example">
+                            <button (click)="onCreate('SetCardDiscount','ServiceDiscount','新增服务项目折扣')" type="button" class="btn btn-info btn-sm">
+                  <i class="fa fa-refresh" aria-hidden="true"></i> 新增服务项目折扣</button>
+                        </div>
+                        <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '4px' }"></ngx-loading>
+                        <ng2-smart-table [settings]="serviceDiscount" [source]="sourceServiceDiscount" (delete)="onDelete('SetDiscount',$event)"></ng2-smart-table>
+                    </ng-template>
+                </ngb-tab>
         </ngb-tabset>
 
     </div>

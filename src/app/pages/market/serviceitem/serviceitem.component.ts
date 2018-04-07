@@ -3,7 +3,7 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
-import { NgbdModalContent } from '../../../modal-content.component'
+import { NgbdModalContent } from '../../../modal-content.component';
 import { ServiceItemService } from './serviceitem.services';
 import { GlobalState } from '../../../global.state';
 import { DicService } from '../../sys/dic/dic.services';

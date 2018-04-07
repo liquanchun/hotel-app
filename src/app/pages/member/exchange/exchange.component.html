@@ -13,28 +13,30 @@
         </ng-template>
       </ngb-tab>
 
-      <ngb-tab title="积分兑换规则">
+      <ngb-tab title="积分换房活动规则">
         <ng-template ngbTabContent>
           <div class="btn-group margin8 pull-right" role="group" aria-label="Basic example">
-            <button (click)="onCreate('SetInteExchange','新增积分兑换规则')" type="button" class="btn btn-info btn-sm">
-              <i class="fa fa-refresh" aria-hidden="true"></i> 新增积分兑换规则</button>
-          </div>
-          <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '4px' }"></ngx-loading>
-          <ng2-smart-table [settings]="exchangesInteExchange" [source]="sourceInteExchange" (edit)="onEdit('SetInteExchange','修改积分兑换规则',$event)"
-            (delete)="onDelete('SetInteExchange',$event)"></ng2-smart-table>
-        </ng-template>
-      </ngb-tab>
-      <ngb-tab title="积分换房活动">
-        <ng-template ngbTabContent>
-          <div class="btn-group margin8 pull-right" role="group" aria-label="Basic example">
-            <button (click)="onCreate('SetInteHouse','新增积分换房活动')" type="button" class="btn btn-info btn-sm">
+            <button (click)="onCreate('SetCardExchange','SetHouseExchange','新增积分换房活动')" type="button" class="btn btn-info btn-sm">
               <i class="fa fa-refresh" aria-hidden="true"></i> 新增积分换房活动</button>
           </div>
           <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '4px' }"></ngx-loading>
-          <ng2-smart-table [settings]="exchangesInteHouse" [source]="sourceInteHouse" (edit)="onEdit('SetInteHouse','修改积分换房活动',$event)"
-            (delete)="onDelete('SetInteHouse',$event)"></ng2-smart-table>
+          <ng2-smart-table [settings]="houseExchange" [source]="sourceHouseExchange"
+            (delete)="onDelete('SetCardExchange',$event)"></ng2-smart-table>
         </ng-template>
       </ngb-tab>
+
+      <ngb-tab title="积分兑换服务规则">
+        <ng-template ngbTabContent>
+          <div class="btn-group margin8 pull-right" role="group" aria-label="Basic example">
+            <button (click)="onCreate('SetCardExchange','SetServiceExchange','新增积分兑换服务规则')" type="button" class="btn btn-info btn-sm">
+              <i class="fa fa-refresh" aria-hidden="true"></i> 新增积分兑换规则</button>
+          </div>
+          <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '4px' }"></ngx-loading>
+          <ng2-smart-table [settings]="serviceExchange" [source]="sourceServiceExchange"
+            (delete)="onDelete('SetCardExchange',$event)"></ng2-smart-table>
+        </ng-template>
+      </ngb-tab>
+
     </ngb-tabset>
 
   </div>

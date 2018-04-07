@@ -16,7 +16,7 @@ import { ReadIdCardService } from './idcardread.services';
 import { HouseTypeService } from '../../market/house-type/house-type.services';
 import { SetPaytypeService } from '../../sys/set-paytype/set-paytype.services';
 import { DicService } from '../../sys/dic/dic.services';
-import { BookService } from '../../market/book/book.services';
+import { BookService } from '../book/book.services';
 
 import { GlobalState } from '../../../global.state';
 import { ButtonViewComponent } from './buttonview.component';

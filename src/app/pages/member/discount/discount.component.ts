@@ -7,7 +7,10 @@ import { NgbdModalContent } from '../../../modal-content.component'
 import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
 import { DiscountService } from './discount.services';
 import { HouseTypeService } from '../../market/house-type//house-type.services';
+import { SettingService } from '../setting/setting.services';
+import { ServiceItemService } from '../../market/serviceitem/serviceitem.services';
 import { GlobalState } from '../../../global.state';
+import { Common } from '../../../providers/common';
 
 import * as $ from 'jquery';
 import * as _ from 'lodash';
@@ -16,67 +19,19 @@ import * as _ from 'lodash';
   selector: 'app-member-discount',
   templateUrl: './discount.component.html',
   styleUrls: ['./discount.component.scss'],
-  providers: [DiscountService, HouseTypeService],
+  providers: [DiscountService, HouseTypeService, SettingService,ServiceItemService],
 })
 export class DiscountComponent implements OnInit, AfterViewInit {
   loading = false;
   query: string = '';
 
-  discountsCard = {
+  houseDiscount = {
     mode: 'external',
     actions: {
-      columnTitle: '操作'
+      columnTitle: '操作',
+      edit: false
     },
     hideSubHeader: true,
-    edit: {
-      editButtonContent: '<i class="ion-edit"></i>',
-      confirmSave: true,
-    },
-    delete: {
-      deleteButtonContent: '<i class="ion-trash-a"></i>',
-      confirmDelete: true
-    },
-    columns: {
-      id: {
-        title: 'ID',
-        type: 'number',
-        editable: false,
-        filter: false,
-        width: '30px',
-      },
-      name: {
-        title: '会员卡',
-        type: 'string',
-        filter: false
-      },
-      level: {
-        title: '级别',
-        type: 'number',
-        filter: false
-      },
-      cardFee: {
-        title: '卡费',
-        type: 'number',
-        filter: false
-      },
-      remark: {
-        title: '备注',
-        type: 'string',
-        filter: false
-      }
-    }
-  };
-
-  discountsIntegral = {
-    mode: 'external',
-    actions: {
-      columnTitle: '操作'
-    },
-    hideSubHeader: true,
-    edit: {
-      editButtonContent: '<i class="ion-edit"></i>',
-      confirmSave: true,
-    },
     delete: {
       deleteButtonContent: '<i class="ion-trash-a"></i>',
       confirmDelete: true
@@ -94,33 +49,28 @@ export class DiscountComponent implements OnInit, AfterViewInit {
         type: 'string',
         filter: false
       },
-      inteType: {
-        title: '方式类型',
-        type: 'string',
-        filter: false
-      },
       cardTypeTxt: {
-        title: '会员卡类型',
+        title: '卡类型',
         type: 'string',
         filter: false
       },
-      dayOrFee: {
-        title: '天数/金额',
-        type: 'number',
+      houseTypeTxt: {
+        title: '房型',
+        type: 'string',
         filter: false
       },
-      integral: {
-        title: '积分',
+      discount: {
+        title: '折扣',
         type: 'number',
         filter: false
       },
       startDate: {
-        title: '活动开始日期',
+        title: '开始日期',
         type: 'string',
         filter: false
       },
       endDate: {
-        title: '活动结束日期',
+        title: '结束日期',
         type: 'string',
         filter: false
       },
@@ -132,37 +82,65 @@ export class DiscountComponent implements OnInit, AfterViewInit {
     }
   };
 
-  configCard: FieldConfig[] = [
-    {
-      type: 'input',
-      label: '会员卡',
-      name: 'name',
-      placeholder: '输入会员卡',
-      validation: [Validators.required],
+  serviceDiscount = {
+    mode: 'external',
+    actions: {
+      columnTitle: '操作',
+      edit: false
     },
-    {
-      type: 'input',
-      label: '级别',
-      name: 'level',
-      placeholder: '输入级别',
-      validation: [Validators.required],
+    hideSubHeader: true,
+    delete: {
+      deleteButtonContent: '<i class="ion-trash-a"></i>',
+      confirmDelete: true
     },
-    {
-      type: 'input',
-      label: '卡费',
-      name: 'cardFee',
-      placeholder: '输入卡费',
-      validation: [Validators.required],
-    },
-    {
-      type: 'input',
-      label: '备注',
-      name: 'remark',
-      placeholder: '输入备注',
+    columns: {
+      id: {
+        title: 'ID',
+        type: 'number',
+        editable: false,
+        filter: false,
+        width: '30px',
+      },
+      name: {
+        title: '名称',
+        type: 'string',
+        filter: false
+      },
+      cardTypeTxt: {
+        title: '卡类型',
+        type: 'string',
+        filter: false
+      },
+      serviceItemTxt: {
+        title: '服务项目',
+        type: 'string',
+        filter: false
+      },
+      discount: {
+        title: '折扣',
+        type: 'number',
+        filter: false
+      },
+      startDate: {
+        title: '开始日期',
+        type: 'string',
+        filter: false
+      },
+      endDate: {
+        title: '结束日期',
+        type: 'string',
+        filter: false
+      },
+      remark: {
+        title: '备注',
+        type: 'string',
+        filter: false
+      }
     }
-  ];
+  };
 
-  configIntegral: FieldConfig[] = [
+
+  configDiscount: FieldConfig[] = [
     {
       type: 'input',
       label: '名称',
@@ -171,42 +149,34 @@ export class DiscountComponent implements OnInit, AfterViewInit {
       validation: [Validators.required],
     },
     {
-      type: 'input',
-      label: '方式类型',
-      name: 'type',
-      placeholder: '输入方式类型',
-      validation: [Validators.required],
+      type: 'select',
+      label: '会员卡类型',
+      name: 'cardTypeId',
+      options: []
     },
     {
-      type: 'check',
-      label: '会员卡类型',
-      name: 'cardType',
-      check: 'radio',
+      type: 'select',
+      label: '房型',
+      name: 'houseTypeId',
       options: []
     },
     {
       type: 'input',
-      label: '金额',
-      name: 'dayOrFee',
-      placeholder: '输入金额',
-    },
-    {
-      type: 'input',
-      label: '积分',
-      name: 'integral',
+      label: '折扣',
+      name: 'discount',
       placeholder: '输入积分',
     },
     {
       type: 'datepicker',
-      label: '活动开始日期',
+      label: '开始日期',
       name: 'startDate',
-      placeholder: '输入活动开始日期',
+      placeholder: '输入开始日期',
     },
     {
       type: 'datepicker',
-      label: '活动结束日期',
+      label: '结束日期',
       name: 'endDate',
-      placeholder: '输入活动结束日期',
+      placeholder: '输入结束日期',
     },
     {
       type: 'input',
@@ -216,58 +186,140 @@ export class DiscountComponent implements OnInit, AfterViewInit {
     }
   ];
 
-  sourceCard: LocalDataSource = new LocalDataSource();
-  sourceIntegral: LocalDataSource = new LocalDataSource();
+  configService: FieldConfig[] = [
+    {
+      type: 'input',
+      label: '名称',
+      name: 'name',
+      placeholder: '输入名称',
+      validation: [Validators.required],
+    },
+    {
+      type: 'select',
+      label: '会员卡类型',
+      name: 'cardTypeId',
+      options: []
+    },
+    {
+      type: 'select',
+      label: '服务项目',
+      name: 'serviceItemId',
+      options: []
+    },
+    {
+      type: 'input',
+      label: '折扣',
+      name: 'discount',
+      placeholder: '输入积分',
+    },
+    {
+      type: 'datepicker',
+      label: '开始日期',
+      name: 'startDate',
+      placeholder: '输入开始日期',
+    },
+    {
+      type: 'datepicker',
+      label: '结束日期',
+      name: 'endDate',
+      placeholder: '输入结束日期',
+    },
+    {
+      type: 'input',
+      label: '备注',
+      name: 'remark',
+      placeholder: '输入备注',
+    }
+  ];
+
+  sourceHouseDiscount: LocalDataSource = new LocalDataSource();
+  sourceServiceDiscount: LocalDataSource = new LocalDataSource();
   modalConfig: any = {};
 
   constructor(
     private modalService: NgbModal,
-    private memberService: DiscountService,
+    private discountService: DiscountService,
     private houseTypeService: HouseTypeService,
+    private settingService: SettingService,
+    private serviceItemService:ServiceItemService,
+    private _common:Common,
     private _state: GlobalState) {
     this.getDataList('');
   }
   ngOnInit() {
-    this.modalConfig.SetCard = this.configCard;
-    this.modalConfig.SetIntegral = this.configIntegral;
+    this.modalConfig.HouseDiscount = this.configDiscount;
+    this.modalConfig.ServiceDiscount = this.configService;
   }
   ngAfterViewInit() {
 
   }
 
   getDataList(modalname): void {
-    if (!modalname || modalname == 'SetCard') {
-      this.loading = true;
-      this.memberService.getMembers('SetCard').then((data) => {
-        this.sourceCard.load(data);
-        this.loading = false;
-        const that = this;
-        let cardT1 = _.find(this.configIntegral, function (f) { return f.name == 'cardType'; });
 
-        _.each(data, function (d) {
-          cardT1.options.push({ id: d.id, name: d.name });
-        });
-      }, (err) => {
-        this.loading = false;
-        this._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
-        
+    this.loading = true;
+    this.discountService.getMembers('SetCardDiscount').then((data) => {
+      const housetype = _.filter(data, function (o) { return o.houseTypeId > 0; });
+      this.sourceHouseDiscount.load(housetype);
+      const serviceItem = _.filter(data, function (o) { return o.serviceItemId > 0; });
+      this.sourceServiceDiscount.load(serviceItem);
+      this.loading = false;
+    });
+    //会员卡类型
+    this.settingService.getMembers("SetCard").then((data) => {
+      let card = [];
+      _.each(data, f => {
+        card.push({ id: f['id'], name: f['name'] });
       });
-    }
+      let cfg = _.find(this.configDiscount, f => { return f['name'] == 'cardTypeId'; });
+      if (cfg) {
+        cfg.options = card;
+      }
 
-    if (!modalname || modalname == 'SetIntegral') {
-      this.memberService.getMembers('SetIntegral').then((data) => {
-        this.sourceIntegral.load(data);
+      let cfg2 = _.find(this.configService, f => { return f['name'] == 'cardTypeId'; });
+      if (cfg2) {
+        cfg2.options = card;
+      }
+    })
+    //房型
+    this.houseTypeService.getHouseTypes().then((data)=>{
+      let house = [];
+      _.each(data, f => {
+        house.push({ id: f['id'], name: f['typeName'] });
       });
-    }
+      let cfg = _.find(this.configDiscount, f => { return f['name'] == 'houseTypeId'; });
+      if (cfg) {
+        cfg.options = house;
+      }
+    });
+    //服务项目
+    this.serviceItemService.getServiceItems().then((data) => {
+      let service = [];
+      _.each(data, f => {
+        service.push({ id: f['id'], name: f['name'] });
+      });
+      let cfg = _.find(this.configService, f => { return f['name'] == 'serviceItemId'; });
+      if (cfg) {
+        cfg.options = service;
+      }
+    })
+    
   }
 
-  onCreate(modalname, title) {
+  onCreate(modalname,config, title) {
     const that = this;
     const modalRef = this.modalService.open(NgbdModalContent);
     modalRef.componentInstance.title = title;
-    modalRef.componentInstance.config = this.modalConfig[modalname];
+    modalRef.componentInstance.config = this.modalConfig[config];
     modalRef.componentInstance.saveFun = (result, closeBack) => {
-      that.memberService.create(modalname, JSON.parse(result)).then((data) => {
+      let rst = JSON.parse(result);
+      if (rst.startDate) {
+        rst.startDate = this._common.getDateString2(rst.startDate);
+      }
+      if (rst.endDate) {
+        rst.endDate = this._common.getDateString2(rst.endDate);
+      }
+      console.log(rst);
+      that.discountService.create(modalname, rst).then((data) => {
         closeBack();
         const msg = "新增成功。";
         that._state.notifyDataChanged("showMessage.open", { message: msg, type: "success", time: new Date().getTime() });
@@ -275,29 +327,6 @@ export class DiscountComponent implements OnInit, AfterViewInit {
       },
         (err) => {
           that._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
-          
-        }
-      )
-    };
-  }
-
-  onEdit(modalname, title, event) {
-    console.log(event);
-    const that = this;
-    const modalRef = this.modalService.open(NgbdModalContent);
-    modalRef.componentInstance.title = title;
-    modalRef.componentInstance.config = this.modalConfig[modalname];
-    modalRef.componentInstance.formValue = event.data;
-    modalRef.componentInstance.saveFun = (result, closeBack) => {
-      that.memberService.update(modalname, event.data.id, JSON.parse(result)).then((data) => {
-        closeBack();
-        const msg = "新增成功。";
-        that._state.notifyDataChanged("showMessage.open", { message: msg, type: "success", time: new Date().getTime() });
-        that.getDataList(modalname);
-      },
-        (err) => {
-          that._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
-          
         }
       )
     };
@@ -306,13 +335,13 @@ export class DiscountComponent implements OnInit, AfterViewInit {
   //删除
   onDelete(modalname, event) {
     if (window.confirm('你确定要删除吗?')) {
-      this.memberService.delete(modalname, event.data.id).then((data) => {
+      this.discountService.delete(modalname, event.data.id).then((data) => {
         const msg = "删除成功。";
         this._state.notifyDataChanged("showMessage.open", { message: msg, type: "success", time: new Date().getTime() });
         this.getDataList(modalname);
       }, (err) => {
         this._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
-        
+
       });
     }
   }

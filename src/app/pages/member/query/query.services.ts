@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 
 @Injectable()
 export class QueryService {
-  private modelName = 'yxmember';  // URL to web api
+  private modelName = 'yxcustomer';  // URL to web api
   constructor(private _httpService: HttpService) {
   }
 

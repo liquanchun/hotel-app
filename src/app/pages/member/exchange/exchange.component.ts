@@ -6,8 +6,10 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { NgbdModalContent } from '../../../modal-content.component'
 import { FieldConfig } from '../../../theme/components/dynamic-form/models/field-config.interface';
 import { ExchangeService } from './exchange.services';
+import { ServiceItemService } from '../../market/serviceitem/serviceitem.services';
 import { HouseTypeService } from '../../market/house-type//house-type.services';
 import { GlobalState } from '../../../global.state';
+import { Common } from '../../../providers/common';
 
 import * as $ from 'jquery';
 import * as _ from 'lodash';
@@ -16,22 +18,19 @@ import * as _ from 'lodash';
   selector: 'app-member-exchange',
   templateUrl: './exchange.component.html',
   styleUrls: ['./exchange.component.scss'],
-  providers: [ExchangeService, HouseTypeService],
+  providers: [ExchangeService, HouseTypeService,ServiceItemService],
 })
 export class ExchangeComponent implements OnInit, AfterViewInit {
   loading = false;
   query: string = '';
 
-  exchangesInteExchange = {
+  houseExchange = {
     mode: 'external',
     actions: {
-      columnTitle: '操作'
+      columnTitle: '操作',
+      edit:false
     },
     hideSubHeader: true,
-    edit: {
-      editButtonContent: '<i class="ion-edit"></i>',
-      confirmSave: true,
-    },
     delete: {
       deleteButtonContent: '<i class="ion-trash-a"></i>',
       confirmDelete: true
@@ -49,22 +48,12 @@ export class ExchangeComponent implements OnInit, AfterViewInit {
         type: 'string',
         filter: false
       },
-      exchangeType: {
-        title: '兑换类型',
+      houseTypeTxt: {
+        title: '房型',
         type: 'string',
         filter: false
       },
-      cardTypeTxt: {
-        title: '会员卡类型',
-        filter: false,
-        type: 'string',
-      },
-      giftName: {
-        title: '礼品名称',
-        type: 'string',
-        filter: false
-      },
-      exchangeInte: {
+      integral: {
         title: '所需积分',
         type: 'number',
         filter: false
@@ -87,16 +76,60 @@ export class ExchangeComponent implements OnInit, AfterViewInit {
     }
   };
 
-  exchangesInteHouse = {
+  recordExchange = {
     mode: 'external',
     actions: {
-      columnTitle: '操作'
+      columnTitle: '操作',
+      edit:false
     },
     hideSubHeader: true,
-    edit: {
-      editButtonContent: '<i class="ion-edit"></i>',
-      confirmSave: true,
+    delete: {
+      deleteButtonContent: '<i class="ion-trash-a"></i>',
+      confirmDelete: true
     },
+    columns: {
+      id: {
+        title: 'ID',
+        type: 'number',
+        editable: false,
+        filter: false,
+        width: '30px',
+      },
+      name: {
+        title: '兑换时间',
+        type: 'string',
+        filter: false
+      },
+      mobile: {
+        title: '会员卡号',
+        type: 'string',
+        filter: false
+      },
+      exchangeItem: {
+        title: '兑换内容',
+        type: 'string',
+        filter: false
+      },
+      integral: {
+        title: '消耗积分',
+        type: 'number',
+        filter: false
+      },
+      remark: {
+        title: '备注',
+        type: 'string',
+        filter: false
+      }
+    }
+  };
+
+  serviceExchange = {
+    mode: 'external',
+    actions: {
+      columnTitle: '操作',
+      edit:false
+    },
+    hideSubHeader: true,
     delete: {
       deleteButtonContent: '<i class="ion-trash-a"></i>',
       confirmDelete: true
@@ -114,26 +147,16 @@ export class ExchangeComponent implements OnInit, AfterViewInit {
         type: 'string',
         filter: false
       },
-      takeInte: {
-        title: '所需积分',
-        type: 'number',
+      serviceItemTxt: {
+        title: '服务项目',
+        type: 'string',
         filter: false
       },
-      cardTypeTxt: {
-        title: '会员卡类型',
+      integral: {
+        title: '所需积分',
         filter: false,
         type: 'string'
       },
-      houseTypeTxt: {
-        title: '兑换房型',
-        type: 'string',
-        filter: false
-      },
-      useWeeks: {
-        title: '有效星期',
-        type: 'string',
-        filter: false
-      },
       startDate: {
         title: '活动开始日期',
         type: 'string',
@@ -152,102 +175,34 @@ export class ExchangeComponent implements OnInit, AfterViewInit {
     }
   };
 
-  configInteExchange: FieldConfig[] = [
+  configHouseExchange: FieldConfig[] = [
     {
       type: 'input',
       label: '名称',
       name: 'name',
       placeholder: '输入名称',
       validation: [Validators.required],
-    },
-    {
-      type: 'input',
-      label: '兑换类型',
-      name: 'exchangeType',
-      placeholder: '输入兑换类型',
-      validation: [Validators.required],
-    },
-    {
-      type: 'check',
-      label: '会员卡类型',
-      name: 'cardType',
-      check: 'radio',
-      options: []
-    },
-    {
-      type: 'input',
-      label: '礼品名称',
-      name: 'giftName',
-      placeholder: '输入礼品名称',
-    },
-    {
-      type: 'input',
-      label: '所需积分',
-      name: 'exchangeInte',
-      placeholder: '输入所需积分',
-    },
-    {
-      type: 'input',
-      label: '活动开始日期',
-      name: 'startDate',
-      placeholder: '输入活动开始日期',
-    },
-    {
-      type: 'input',
-      label: '活动结束日期',
-      name: 'endDate',
-      placeholder: '输入活动结束日期',
-    },
-    {
-      type: 'input',
-      label: '备注',
-      name: 'remark',
-      placeholder: '输入备注',
-    }
-  ];
-
-  configInteHouse: FieldConfig[] = [
-    {
-      type: 'input',
-      label: '名称',
-      name: 'name',
-      placeholder: '输入名称',
-      validation: [Validators.required],
-    },
-    {
-      type: 'input',
-      label: '所需积分',
-      name: 'takeInte',
-      placeholder: '输入所需积分',
-      validation: [Validators.required],
-    },
-    {
-      type: 'check',
-      label: '会员卡类型',
-      name: 'cardType',
-      check: 'radio',
-      options: []
     },
     {
       type: 'select',
-      label: '兑换房型',
-      name: 'houseType',
-      options: []
-    },
-    {
-      type: 'multiselect',
-      label: '有效星期',
-      name: 'useWeeks',
+      label: '房型',
+      name: 'houseTypeId',
       options: []
     },
     {
       type: 'input',
+      label: '所需积分',
+      name: 'integral',
+      placeholder: '输入所需积分',
+    },
+    {
+      type: 'datepicker',
       label: '活动开始日期',
       name: 'startDate',
       placeholder: '输入活动开始日期',
     },
     {
-      type: 'input',
+      type: 'datepicker',
       label: '活动结束日期',
       name: 'endDate',
       placeholder: '输入活动结束日期',
@@ -260,85 +215,116 @@ export class ExchangeComponent implements OnInit, AfterViewInit {
     }
   ];
 
-  sourceInteExchange: LocalDataSource = new LocalDataSource();
-  sourceInteHouse: LocalDataSource = new LocalDataSource();
+  configServiceExchange: FieldConfig[] = [
+    {
+      type: 'input',
+      label: '名称',
+      name: 'name',
+      placeholder: '输入名称',
+      validation: [Validators.required],
+    },
+    {
+      type: 'select',
+      label: '服务项目',
+      name: 'serviceItemId',
+      options: []
+    },
+    {
+      type: 'input',
+      label: '所需积分',
+      name: 'integral',
+      placeholder: '输入所需积分',
+    },
+    {
+      type: 'datepicker',
+      label: '活动开始日期',
+      name: 'startDate',
+      placeholder: '输入活动开始日期',
+    },
+    {
+      type: 'datepicker',
+      label: '活动结束日期',
+      name: 'endDate',
+      placeholder: '输入活动结束日期',
+    },
+    {
+      type: 'input',
+      label: '备注',
+      name: 'remark',
+      placeholder: '输入备注',
+    }
+  ];
+
+  sourceHouseExchange: LocalDataSource = new LocalDataSource();
+  sourceServiceExchange: LocalDataSource = new LocalDataSource();
   modalConfig: any = {};
 
   constructor(
     private modalService: NgbModal,
-    private memberService: ExchangeService,
+    private exchangeService: ExchangeService,
     private houseTypeService: HouseTypeService,
+    private serviceItemService:ServiceItemService,
+    private _common:Common,
     private _state: GlobalState) {
     this.getDataList('');
   }
   ngOnInit() {
-    this.modalConfig.SetInteExchange = this.configInteExchange;
-    this.modalConfig.SetInteHouse = this.configInteHouse;
+    this.modalConfig.SetHouseExchange = this.configHouseExchange;
+    this.modalConfig.SetServiceExchange = this.configServiceExchange;
   }
   ngAfterViewInit() {
 
   }
 
   getDataList(modalname): void {
-    if (!modalname || modalname == 'SetInteExchange') {
-      this.memberService.getMembers('SetInteExchange').then((data) => {
-        this.sourceInteExchange.load(data);
-      });
-    }
 
-    if (!modalname || modalname == 'SetInteHouse') {
-      this.memberService.getMembers('SetInteHouse').then((data) => {
-        let cardT1 = _.find(this.configInteHouse, function (f) { return f.name == 'useWeeks'; });
-        cardT1.options = [
-          { id: '星期一', name: '星期一' },
-          { id: '星期二', name: '星期二' },
-          { id: '星期三', name: '星期三' },
-          { id: '星期四', name: '星期四' },
-          { id: '星期五', name: '星期五' },
-          { id: '星期六', name: '星期六' },
-          { id: '星期日', name: '星期日' },
-        ];
-        this.sourceInteHouse.load(data);
-      });
-    }
-
-    this.houseTypeService.getHouseTypes().then((data) => {
-      let cardT1 = _.find(this.configInteHouse, function (f) { return f.name == 'houseType'; });
-      _.each(data, (d) => {
-        cardT1.options.push({ id: d.id, name: d.typeName });
-      });
+    this.loading = true;
+    this.exchangeService.getMembers('SetCardExchange').then((data) => {
+      const housetype = _.filter(data, function (o) { return o.houseTypeId > 0; });
+      this.sourceHouseExchange.load(housetype);
+      const serviceItem = _.filter(data, function (o) { return o.serviceItemId > 0; });
+      this.sourceServiceExchange.load(serviceItem);
+      this.loading = false;
     });
+
+    //房型
+    this.houseTypeService.getHouseTypes().then((data)=>{
+      let house = [];
+      _.each(data, f => {
+        house.push({ id: f['id'], name: f['typeName'] });
+      });
+      let cfg = _.find(this.configHouseExchange, f => { return f['name'] == 'houseTypeId'; });
+      if (cfg) {
+        cfg.options = house;
+      }
+    });
+    //服务项目
+    this.serviceItemService.getServiceItems().then((data) => {
+      let service = [];
+      _.each(data, f => {
+        service.push({ id: f['id'], name: f['name'] });
+      });
+      let cfg = _.find(this.configServiceExchange, f => { return f['name'] == 'serviceItemId'; });
+      if (cfg) {
+        cfg.options = service;
+      }
+    })
   }
 
-  onCreate(modalname, title) {
+  onCreate(modalname,config, title) {
     const that = this;
     const modalRef = this.modalService.open(NgbdModalContent);
     modalRef.componentInstance.title = title;
-    modalRef.componentInstance.config = this.modalConfig[modalname];
+    modalRef.componentInstance.config = this.modalConfig[config];
     modalRef.componentInstance.saveFun = (result, closeBack) => {
-      that.memberService.create(modalname, JSON.parse(result)).then((data) => {
-        closeBack();
-        const msg = "新增成功。";
-        that._state.notifyDataChanged("showMessage.open", { message: msg, type: "success", time: new Date().getTime() });
-        that.getDataList(modalname);
-      },
-        (err) => {
-          that._state.notifyDataChanged("showMessage.open", { message: err, type: "error", time: new Date().getTime() });
-          
-        }
-      )
-    };
-  }
-
-  onEdit(modalname, title, event) {
-    console.log(event);
-    const that = this;
-    const modalRef = this.modalService.open(NgbdModalContent);
-    modalRef.componentInstance.title = title;
-    modalRef.componentInstance.config = this.modalConfig[modalname];
-    modalRef.componentInstance.formValue = event.data;
-    modalRef.componentInstance.saveFun = (result, closeBack) => {
-      that.memberService.update(modalname, event.data.id, JSON.parse(result)).then((data) => {
+      let rst = JSON.parse(result);
+      if (rst.startDate) {
+        rst.startDate = this._common.getDateString2(rst.startDate);
+      }
+      if (rst.endDate) {
+        rst.endDate = this._common.getDateString2(rst.endDate);
+      }
+      that.exchangeService.create(modalname, rst).then((data) => {
         closeBack();
         const msg = "新增成功。";
         that._state.notifyDataChanged("showMessage.open", { message: msg, type: "success", time: new Date().getTime() });
@@ -355,7 +341,7 @@ export class ExchangeComponent implements OnInit, AfterViewInit {
   //删除
   onDelete(modalname, event) {
     if (window.confirm('你确定要删除吗?')) {
-      this.memberService.delete(modalname, event.data.id).then((data) => {
+      this.exchangeService.delete(modalname, event.data.id).then((data) => {
         const msg = "删除成功。";
         this._state.notifyDataChanged("showMessage.open", { message: msg, type: "success", time: new Date().getTime() });
         this.getDataList(modalname);

@@ -353,7 +353,7 @@ export class StoreinNewComponent implements OnInit {
       const orguser = _.filter(this.users, f => { return f['orgId'] == orgId; });
       this.operatorList = [];
       _.each(orguser, f => {
-        that.operatorList.push({ id: f['id'], name: f['userName'] });
+        that.operatorList.push({ id: f['id'], name: f['name'] });
       })
       //that.myOptionsOper = operatorList;
     }
