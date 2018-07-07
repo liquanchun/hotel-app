@@ -18,6 +18,7 @@ import { UserRoleComponent } from './user-role/user-role.component';
 import { RoleMenuComponent } from './role-menu/role-menu.component';
 import { DicComponent } from './dic/dic.component';
 import { SetPaytypeComponent } from './set-paytype/set-paytype.component';
+import { SetPhotoComponent } from './setphoto/setphoto.component';
 
 import { FunctionComponent } from './components/function/function.component';
 import { MenuComponent } from './components/menu/menu.component';
@@ -35,6 +36,8 @@ import { TreeModule } from 'angular-tree-component';
 import { LoadingModule } from 'ngx-loading';
 import { ComponentsModule } from '../components/components.module';
 import { ToastyModule } from 'ng2-toasty';
+import { FileUploadModule } from 'ng2-file-upload';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -50,6 +53,7 @@ import { ToastyModule } from 'ng2-toasty';
     LoadingModule,
     DashboardModule,
     Ng2SmartTableModule,
+    FileUploadModule,
     ToastyModule.forRoot()
   ],
   declarations: [
@@ -64,6 +68,7 @@ import { ToastyModule } from 'ng2-toasty';
     SelectUserComponent,
     SetPaytypeComponent,
     UserInfoComponent,
+    SetPhotoComponent
   ],
   
   providers: [Config, HttpService, AppState, Common]

@@ -8,6 +8,7 @@ import { SysComponent } from './sys.component';
 
 import { SetPaytypeComponent } from './set-paytype/set-paytype.component';
 import { UserInfoComponent } from './userinfo/userinfo.component';
+import { SetPhotoComponent } from './setphoto/setphoto.component';
 // noinspection TypeScriptValidateTypes
 const routes: Routes = [
   {
@@ -19,6 +20,7 @@ const routes: Routes = [
       { path: 'dic', component: DicComponent },
       { path: 'set-paytype', component: SetPaytypeComponent },
       { path: 'userinfo', component: UserInfoComponent },
+      { path: 'setphoto', component: SetPhotoComponent },
     ]
   },
 ];

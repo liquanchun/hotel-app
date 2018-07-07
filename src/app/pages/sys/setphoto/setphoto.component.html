@@ -1,0 +1,48 @@
+<div class="row">
+  <div class="col-md-12">
+    <ba-card title="相册管理" baCardClass="with-scroll">
+      <div class="row">
+        <div class="col-md-6">
+          <input type="file" ng2FileSelect [uploader]="uploader" (change)="selectedFileOnChanged($event)" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2">
+          <select [(ngModel)]="photoModel.typeName">
+            <option value="">--图片类别--</option>
+            <option [value]="option.id" *ngFor="let option of photoType">
+              {{ option.name }}
+            </option>
+          </select>
+        </div>
+        <div class="col-md-5">
+          <div class="form-group row">
+            <label for="inputName" class="col-sm-2 col-form-label">图片标签</label>
+            <div class="col-sm-10">
+              <input [(ngModel)]="photoModel.tags" type="text" class="form-control" id="inputName" placeholder="输入图片标签">
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group row">
+            <div class="col-sm-10 btn-group">
+              <button type="button" [disabled]="isSaved" (click)="onSave()" class="btn btn-info">{{ isSaved ? '正在保存...':'保存'}}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </ba-card>
+
+    <ba-card baCardClass="with-scroll">
+        <div class="row">
+            <div *ngFor="let image of photos" (mouseenter)="toggle=true;"
+            (mouseleave)="toggle=false;" class="col-md-2">
+              <span *ngIf="toggle" style="display: block;text-align:right"><a href="javascript:void();"(click)="deleteImage(image.id)">删除</a> </span>
+              <a href="javascript:void();" (click)="openImage(image.fileName)" ><img [src]="image.fileName" width="200"></a>
+              <span style="display: block;text-align:center">{{image.tags}}</span>
+            </div>
+          </div>
+    </ba-card>
+  </div>
+</div>

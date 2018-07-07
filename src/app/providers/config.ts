@@ -20,6 +20,9 @@ export class Config {
 	ios_file_black_list = [];
 	// 引导页版本号
 	tutorialVersion = '';
+	//图片上传地址
+	imageUrl='http://localhost:3000';
+
 	constructor() {
 		if (this.isProduct) {
 
